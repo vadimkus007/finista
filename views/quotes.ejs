@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <% include menu %>
+    <table class = "tableQuotes">
+      <thead>
+        <tr>
+          <th>Тикер</th>
+          <th>Компания</th>
+          <th>Цена</th>
+          <th>Изменение</th>
+          <th>Размер лота</th>
+          <th>Валюта</th>
+        </tr>
+      </thead>
+      <tfoot>
+      </tfoot>
+      <tbody>
+        <% for (var i = 0; i < sequrities.length; i++) { %>
+        <% var prevAdmittedQuote = sequrities[i][23] %>
+        <% var offer = marketdata[i][2] %>
+        <% var change = 100 * (offer - prevAdmittedQuote) / prevAdmittedQuote %>
+          <tr>
+            <td><%= sequrities[i][0] %></td>
+            <td><%= sequrities[i][2] %></td>
+            <td><%= offer %></td>
+            <td><%= change.toFixed(2) %></td>
+            <td><%= sequrities[i][4] %></td>
+            <td><%= sequrities[i][24] %></td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </body>
+</html>
