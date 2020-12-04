@@ -28,18 +28,20 @@ class Moex {
         }
     }
 
-    static getBoards(cb) {
-        let items = [];
-        
-        cb(null, items);
-    };
+    static getSequrities(request, cb) {
+        let url = `http://iss.moex.com/iss/engines/${request.engine || 'stock'}/markets/${request.market || 'shares'}/boards/${request.board || 'TQBR'}/securities.json?iss.meta=off`;
+        fetch(url)
+            .then(checkResponseStatus)
+            .then(response => response.json())
+            .then(data => cb(null, data))
+            .catch(err => console.log(err));
+    }
 
     static getQuotes(cb) {
         let url = 'http://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities.json?iss.meta=off';
         fetch(url)
             .then(checkResponseStatus)
             .then(response => response.json())
-//            .then(data => console.log(data))
             .then(data => cb(null, data))
             .catch(err => console.log(err));
     }
