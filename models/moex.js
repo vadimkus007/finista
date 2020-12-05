@@ -8,15 +8,6 @@ function checkResponseStatus(res) {
     }
 }
 
-// Constants for url formation
-const prefix = 'http://iss.moex.com';
-const postfix = '.xml';
-const iss = '/iss';
-const issHistory = '/iss/history';
-const engines = '/engines';         // engines e.g. stocks etc
-const markets = '/markets';        // markets
-const boards = '/boards';
-const securities = '/securities';
 
 
 // Class for getting quotes from MOEX API
@@ -26,6 +17,26 @@ class Moex {
         for (let key in obj) {
             this[key] = obj[key];
         }
+    }
+
+    static getBoardsInfo(secid, cb) {
+        let url = `http://iss.moex.com/iss/securities/${secid}.json?iss.meta=off&iss.only=boards`;
+        fetch(url)
+            .then(checkResponseStatus)
+            .then(res => res.json())
+            .then(res => cb(null, res))
+            .catch(err => console.log(err));
+    }
+
+    static getSecurityInfo(request, cb) {
+
+        let url = `http://iss.moex.com/iss/engines/${request['engines']}/markets/${request['markets']}/boards/${request['boards']}/securities/${request['secid']}.json?iss.meta=off`;
+
+        fetch(url)
+            .then(checkResponseStatus)
+            .then(response => response.json())
+            .then(data => cb(null, data))
+            .catch(err => console.log(err));
     }
 
     static getSequrities(request, cb) {

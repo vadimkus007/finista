@@ -24,9 +24,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Routing
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.get('/quotes', quotes.list)
+app.get('/quotes', quotes.list);
 //app.get('/post', entries.form);
 //app.post('/post', entries.submit);
+app.get('/quotes/:secid', quotes.info);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

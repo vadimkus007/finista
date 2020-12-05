@@ -1,0 +1,46 @@
+{
+ 
+    "development": {
+ 
+        "username": "root",
+ 
+        "password": "1qaz0okm",
+ 
+        "database": "finista",
+ 
+        "host": "localhost",
+ 
+        "dialect": "mysql"
+ 
+    },
+ 
+    "test": {
+ 
+        "username": "",
+ 
+        "password": null,
+ 
+        "database": "",
+ 
+        "host": "",
+ 
+        "dialect": "mysql"
+ 
+    },
+ 
+    "production": {
+ 
+        "username": "",
+ 
+        "password": null,
+ 
+        "database": "",
+ 
+        "host": "localhost",
+ 
+        "dialect": "mysql"
+ 
+    }
+
+}
+ 

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <% include menu %>
+    <div class="info-header">
+        <h2>Информация</h2> 
+    </div>
+    <div class="info-share-page">
+        <div class="info-share-name">
+            <%= data['secname'] %> (<%= data['secid'] %>)
+        </div>
+        <div class="info-share-about">
+            <p>Размер лота <%= data['lotsize'] %></p>
+            <p>Последняя цена  <%= data['last'] %> <%= data['currencyid'] %></p>
+            <p>Изменения за день  <%= data['lastchange'] %> <%= data['currencyid'] %></p>
+            <p>Изменения за день (%)  <%= data['lastchangeprcnt'] %></p>
+        </div>
+    </div>
+    </body>
+</html>
