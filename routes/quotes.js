@@ -1,13 +1,34 @@
 const Moex = require('../models/moex');
 
 exports.list = (req, res, next) => {
+    
+    let boardRequest = req.params.engines;
+
+    if (boardRequest !== 'stock') {
+        throw new Error(404);
+        return next(err);
+    }
+
     let request = {
         "engine": 'stock',
         "market": 'shares',
         "board": 'TQBR'
     };
+    
+    switch (boardRequest) {
+        case 'stock':
+            request['board'] = 'TQBR';
+            break;
+    }
+
+    
     Moex.getSequrities(request, (err, response) => {
         if (err) return next(err);
+
+        if (response['securities']['data'].length == 0) {
+            throw new Error(404, `Data not found`);
+            return next(err);
+        };
 
         let hostname = `${req.hostname}:3000`;
 
@@ -26,10 +47,15 @@ exports.list = (req, res, next) => {
 
 exports.info = (req, res, next) => {
 
+    let engines = req.params.engines;
     let secid = req.params.secid;
 
     Moex.getBoardsInfo(secid, (err, response) => {
         if (err) return next(err);
+        if (response['boards']['data'].length == 0) {
+            throw new Error(404, `Data not found`);
+            return next(err);
+        };
 
         var request = {
             'engines': response['boards']['data'][0][7],

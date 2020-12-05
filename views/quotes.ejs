@@ -33,7 +33,7 @@
         <% var currency = sequrities[i][24] %>
         <% if (currency == 'SUR') currency = 'RUB' %>        
           <tr>
-            <td><a href = "http://<%= hostname %>/quotes/<%= secid %>" ><%= secid %></a></td>
+            <td><a href = "http://<%= hostname %>/quotes/stock/<%= secid %>" ><%= secid %></a></td>
             <td><%= shortname %></td>
             <td><%= last %></td>
             <td><%= change.toFixed(2) %></td>
