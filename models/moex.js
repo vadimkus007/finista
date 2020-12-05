@@ -37,14 +37,6 @@ class Moex {
             .catch(err => console.log(err));
     }
 
-    static getQuotes(cb) {
-        let url = 'http://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities.json?iss.meta=off';
-        fetch(url)
-            .then(checkResponseStatus)
-            .then(response => response.json())
-            .then(data => cb(null, data))
-            .catch(err => console.log(err));
-    }
 }
 
 module.exports = Moex;
