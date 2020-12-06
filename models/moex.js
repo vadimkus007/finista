@@ -48,6 +48,14 @@ class Moex {
             .catch(err => console.log(err));
     }
 
+    static getCustom(request, cb) {
+        fetch(request)
+            .then(checkResponseStatus)
+            .then(response => response.json())
+            .then(data => cb(null, data))
+            .catch(err => console.log(err));
+    }
+
 }
 
 module.exports = Moex;

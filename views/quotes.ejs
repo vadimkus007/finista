@@ -15,7 +15,7 @@
 
       <div class="container">
         <div class="info-header">
-            <h2><% if (board == 'TQBR') var board = 'Акции российских компаний' %><%= board %></h2> 
+            <h2>Котировки</h2> 
         </div>
         
         <div class="main-content">
@@ -26,6 +26,9 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" data-toggle="tab" href="#etf">ETF/ПИФы</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#index">Индексы</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" data-toggle="tab" href="#bond">Облигации</a>
@@ -49,22 +52,14 @@
                 <tfoot>
                 </tfoot>
                 <tbody>
-                  <% for (var i = 0; i < sequrities.length; i++) { %>
-                  <% var secid = sequrities[i][0] %>
-                  <% var shortname = sequrities[i][2] %>
-                  <% var lotsize = sequrities[i][4] %>
-                  <% var prevAdmittedQuote = sequrities[i][23] %>
-                  <% var last = marketdata[i][12] %>
-                  <% var change = marketdata[i][25] %>
-                  <% var currency = sequrities[i][24] %>
-                  <% if (currency == 'SUR') currency = 'RUB' %>        
+                  <% for (var i = 0; i < data['stock'].length; i++) { %>   
                     <tr>
-                      <td><a href = "http://<%= hostname %>/quotes/<%= secid %>" ><%= secid %></a></td>
-                      <td><%= shortname %></td>
-                      <td><%= last %></td>
-                      <td><%= change.toFixed(2) %></td>
-                      <td><%= lotsize %></td>
-                      <td><%= currency %></td>
+                      <td><a href = "/quotes/<%= data['stock'][i]['secid'] %>" ><%= data['stock'][i]['secid'] %></a></td>
+                      <td><%= data['stock'][i]['shortname'] %></td>
+                      <td><%= data['stock'][i]['last'] %></td>
+                      <td><%= data['stock'][i]['change'] %></td>
+                      <td><%= data['stock'][i]['lotsize'] %></td>
+                      <td><%= data['stock'][i]['currency'] %></td>
                     </tr>
                   <% } %>
                 </tbody>
@@ -72,7 +67,61 @@
             </div>
 
             <div class="tab-pane fade" id="etf">
-              ETF
+              <table class = "tableQuotes">
+                <thead>
+                  <tr>
+                    <th>Тикер</th>
+                    <th>Компания</th>
+                    <th>Цена</th>
+                    <th>Изменение</th>
+                    <th>Размер лота</th>
+                    <th>Валюта</th>
+                  </tr>
+                </thead>
+                <tfoot>
+                </tfoot>
+                <tbody>
+                  <% for (var i = 0; i < data['etf'].length; i++) { %>   
+                    <tr>
+                      <td><a href = "/quotes/<%= data['etf'][i]['secid'] %>" ><%= data['etf'][i]['secid'] %></a></td>
+                      <td><%= data['etf'][i]['shortname'] %></td>
+                      <td><%= data['etf'][i]['last'] %></td>
+                      <td><%= data['etf'][i]['change'] %></td>
+                      <td><%= data['etf'][i]['lotsize'] %></td>
+                      <td><%= data['etf'][i]['currency'] %></td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="tab-pane fade" id="index">
+              <table class = "tableQuotes">
+                <thead>
+                  <tr>
+                    <th>Тикер</th>
+                    <th>Название</th>
+                    <th>Текущее значение</th>
+                    <th>Изменение за день</th>
+                    <th>изменение за месяц</th>
+                    <th>Изменение за год</th>
+                  </tr>
+                </thead>
+                <tfoot>
+                </tfoot>
+                <tbody>
+                  <% for (var i = 0; i < data['index'].length; i++) { %>   
+                    <tr>
+                      <td><a href = "/quotes/<%= data['index'][i]['secid'] %>" ><%= data['index'][i]['secid'] %></a></td>
+                      <td><%= data['index'][i]['shortname'] %></td>
+                      <td><%= data['index'][i]['lastvalue'] %></td>
+                      <td><%= data['index'][i]['lastchangetoopenprc'] %></td>
+                      <td><%= data['index'][i]['monthchangeprc'] %></td>
+                      <td><%= data['index'][i]['yearchangeprc'] %></td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
             </div>
 
             <div class="tab-pane fade" id="bond">
