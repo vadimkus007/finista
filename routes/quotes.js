@@ -2,25 +2,11 @@ const Moex = require('../models/moex');
 
 exports.list = (req, res, next) => {
     
-    let boardRequest = req.params.engines;
-
-    if (boardRequest !== 'stock') {
-        throw new Error(404);
-        return next(err);
-    }
-
     let request = {
         "engine": 'stock',
         "market": 'shares',
         "board": 'TQBR'
     };
-    
-    switch (boardRequest) {
-        case 'stock':
-            request['board'] = 'TQBR';
-            break;
-    }
-
     
     Moex.getSequrities(request, (err, response) => {
         if (err) return next(err);
@@ -47,7 +33,6 @@ exports.list = (req, res, next) => {
 
 exports.info = (req, res, next) => {
 
-    let engines = req.params.engines;
     let secid = req.params.secid;
 
     Moex.getBoardsInfo(secid, (err, response) => {
