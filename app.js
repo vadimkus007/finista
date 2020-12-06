@@ -1,13 +1,12 @@
-const quotes = require('./routes/quotes');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const quotesRouter = require('./routes/quotes');
 
 var app = express();
 
@@ -19,13 +18,15 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use('/bootstrap', express.static(path.join(__dirname, '/node_modules/bootstrap/dist/')));
+app.use('/popper', express.static(path.join(__dirname, '/node_modules/popper.js/dist/')));
 
 // Routing
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.get('/quotes', quotes.list);
-app.get('/quotes/:secid', quotes.info);
+app.get('/quotes', quotesRouter.list);
+app.get('/quotes/:secid', quotesRouter.info);
 //app.get('/post', entries.form);
 //app.post('/post', entries.submit);
 
