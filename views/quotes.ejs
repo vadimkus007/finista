@@ -5,6 +5,7 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <!-- Bootstrap core CSS -->
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/public/js/main.js"></script>
   </head>
 
   <body>
@@ -38,7 +39,10 @@
           <div class="tab-content">
             
             <div class="tab-pane fade show active" id="stock">
-              <table class = "tableQuotes">
+              <div class = "">
+                <input type="text" id="filterInputTable1" onkeyup="filterTable('filterInputTable1', 'filterTable1')" placeholder="Поиск по тикеру...">
+              </div>
+              <table class = "tableQuotes" id = "filterTable1">
                 <thead>
                   <tr>
                     <th>Тикер</th>
@@ -65,9 +69,14 @@
                 </tbody>
               </table>
             </div>
+            <div class="">
+            </div>
 
             <div class="tab-pane fade" id="etf">
-              <table class = "tableQuotes">
+              <div class = "">
+                <input type="text" id="filterInputTable2" onkeyup="filterTable('filterInputTable2', 'filterTable2')" placeholder="Поиск по тикеру...">
+              </div>
+              <table class = "tableQuotes" id = "filterTable2">
                 <thead>
                   <tr>
                     <th>Тикер</th>
@@ -96,7 +105,10 @@
             </div>
 
             <div class="tab-pane fade" id="index">
-              <table class = "tableQuotes">
+              <div class = "">
+                  <input type="text" id="filterInputTable3" onkeyup="filterTable('filterInputTable3', 'filterTable3')" placeholder="Поиск по тикеру...">
+                </div>
+              <table class = "tableQuotes" id = "filterTable3">
                 <thead>
                   <tr>
                     <th>Тикер</th>
