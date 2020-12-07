@@ -2,10 +2,10 @@
 <html>
   <head>
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/css/style.css' />
     <!-- Bootstrap core CSS -->
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <script src="/public/js/main.js"></script>
+    <script src="/js/main.js"></script>
   </head>
 
   <body>
@@ -40,9 +40,10 @@
             
             <div class="tab-pane fade show active" id="stock">
               <div class = "">
-                <input type="text" id="filterInputTable1" onkeyup="filterTable('filterInputTable1', 'filterTable1')" placeholder="Поиск по тикеру...">
+                <input type="text" class="filterInputTable" id="filterInputTable1" onkeyup="filterTable('filterInputTable1', 'filterTable1')" placeholder="Поиск по тикеру...">
+
               </div>
-              <table class = "tableQuotes" id = "filterTable1">
+              <table class = "filterTable" id = "filterTable1">
                 <thead>
                   <tr>
                     <th>Тикер</th>
@@ -74,9 +75,9 @@
 
             <div class="tab-pane fade" id="etf">
               <div class = "">
-                <input type="text" id="filterInputTable2" onkeyup="filterTable('filterInputTable2', 'filterTable2')" placeholder="Поиск по тикеру...">
+                <input type="text" class = "filterInputTable" id="filterInputTable2" onkeyup="filterTable('filterInputTable2', 'filterTable2')" placeholder="Поиск по тикеру...">
               </div>
-              <table class = "tableQuotes" id = "filterTable2">
+              <table class = "filterTable" id = "filterTable2">
                 <thead>
                   <tr>
                     <th>Тикер</th>
@@ -106,9 +107,9 @@
 
             <div class="tab-pane fade" id="index">
               <div class = "">
-                  <input type="text" id="filterInputTable3" onkeyup="filterTable('filterInputTable3', 'filterTable3')" placeholder="Поиск по тикеру...">
+                  <input type="text" class = "filterInputTable" id="filterInputTable3" onkeyup="filterTable('filterInputTable3', 'filterTable3')" placeholder="Поиск по тикеру...">
                 </div>
-              <table class = "tableQuotes" id = "filterTable3">
+              <table class = "filterTable" id = "filterTable3">
                 <thead>
                   <tr>
                     <th>Тикер</th>
