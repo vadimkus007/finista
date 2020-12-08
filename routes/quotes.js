@@ -1,4 +1,4 @@
-const Moex = require('../models/moex');
+const Moex = require('../lib/moex');
 
 exports.list = (req, res, next) => {
 
