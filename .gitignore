@@ -5,3 +5,4 @@ node_modules
 # хотите вносить, такие как .DC_Store (OSX), *.bak, etc.
 *~
 .DS_Store
+.env

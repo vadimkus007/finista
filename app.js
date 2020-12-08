@@ -4,11 +4,20 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-const quotesRouter = require('./routes/quotes');
-
 var app = express();
+var passport   = require('passport');
+var session    = require('express-session');
+var bodyParser = require('body-parser');
+var env = require('dotenv').config({path:'./.env'});
+
+//For BodyParser
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+// For Passport
+app.use(session({ secret: 'keyboard cat',resave: true, saveUninitialized:true})); // session secret
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,6 +32,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bootstrap', express.static(path.join(__dirname, '/node_modules/bootstrap/dist/')));
 app.use('/popper', express.static(path.join(__dirname, '/node_modules/popper.js/dist/')));
 
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const quotesRouter = require('./routes/quotes');
+const authRoute = require('./routes/auth')(app,passport);
+
 // Routing
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -31,6 +45,11 @@ app.get('/quotes/:secid', quotesRouter.info);
 //app.get('/post', entries.form);
 //app.post('/post', entries.submit);
 
+//Models
+var models = require("./models");
+
+//load passport strategies
+require('./config/passport/passport.js')(passport, models.user);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -46,6 +65,13 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+//Sync Database
+models.sequelize.sync().then(function() {
+    console.log('Nice! Database looks fine')
+}).catch(function(err) {
+    console.log(err, "Something went wrong with the Database Update!")
 });
 
 module.exports = app;

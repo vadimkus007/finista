@@ -7,6 +7,14 @@ a {
   color: #00B7FF;
 }
 
+/* Custom global styles */
+.perfect-centering {
+     position: absolute;
+     top: 50%;
+     left:50%;
+     transform: translate(-50%,-50%);
+   }
+
 /* Quotes table + filter inputbox*/
 
 .filterInputTable {
