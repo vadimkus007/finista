@@ -4,30 +4,30 @@
 <head>
     <title></title>
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/signin.css" rel="stylesheet">
      <script src="/js/main.js"></script>
 </head>
  
 <body>
 
-<div class="perfect-centering">
-<div class="container">
-  <div class="row">
-    <div class="col-sm-6 col-md-4 col-md-offset-4">
-      <div class="text-center login-title">Sign in to our Passport app</div>
+<div class="container h-100">
+  <div class="row justify-content-center align-items-center h-100">
+    <div class="signin_box text-center">
+      <div class="text-center login-title"></div>
         <div class="account-wall"><img class="center profile-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"/>
           <form id="signin" class="form-signin" action="signin" method="POST">
             <input class="form-control" type="text" name="email" placeholder="Email" required="required" autofocus="autofocus"/>
             <input class="form-control" type="password" name="password" placeholder="Password" required="required"/>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button><span class="clearfix"></span>
+            <button class="btn btn-md btn-primary btn-block" type="submit">Sign in</button><span class="clearfix"></span>
           </form>
         </div>
         <a class="text-center new-account" href="/signup">Create an account</a>
+        <div class="alert">
+          <div class="alert-message"><%= message %></div>
+        </div>
     </div>
   </div>
 </div>
-</div>
-
-
  
 </body>
  

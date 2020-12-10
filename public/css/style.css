@@ -7,6 +7,13 @@ a {
   color: #00B7FF;
 }
 
+table tr td{
+  text-align: left;
+}
+table tr td:first-child{
+  text-align: left;
+}
+
 /* Custom global styles */
 .perfect-centering {
      position: absolute;
@@ -19,13 +26,21 @@ a {
 
 .filterInputTable {
     background-image: url('/img/searchicon.png'); /* Add a search icon to input */
-    background-position: 10px 12px; /* Position the search icon */
+    background-position: 10px 10px; /* Position the search icon */
     background-repeat: no-repeat; /* Do not repeat the icon image */
     /*width: 100%; /* Full-width */
-    font-size: 16px; /* Increase font-size */
+    height: calc(1.5em + .75rem + 2px);
+    /*padding: .375rem .75rem;
+    /*font-size: 16px; /* Increase font-size */
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
     padding: 12px 20px 12px 40px; /* Add some padding */
+    background-clip: padding-box;
     border: 1px solid #ddd; /* Add a grey border */
+    border-radius: .25rem;
     margin-bottom: 12px; /* Add some space below the input */
+    margin-top: 12px;
 }
 
 .filterTable {
@@ -35,7 +50,6 @@ a {
 }
 
 .filterTable th, .filterTable td {
-    text-align: left; /* Left-align text */
     padding: 12px; /* Add padding */
 }
 

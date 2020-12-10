@@ -9,6 +9,7 @@ var passport   = require('passport');
 var session    = require('express-session');
 var bodyParser = require('body-parser');
 var env = require('dotenv').config({path:'./.env'});
+var flash = require('connect-flash');
 
 //For BodyParser
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -27,10 +28,14 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+app.use(flash());
+
 app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/bootstrap', express.static(path.join(__dirname, '/node_modules/bootstrap/dist/')));
 app.use('/popper', express.static(path.join(__dirname, '/node_modules/popper.js/dist/')));
+app.use('/bootstrap-table', express.static(path.join(__dirname, '/node_modules/bootstrap-table/dist/')));
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');

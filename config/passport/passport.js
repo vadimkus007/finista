@@ -127,7 +127,7 @@ passport.use('local-signin', new LocalStrategy(
             if (!user) {
  
                 return done(null, false, {
-                    message: 'Email does not exist'
+                    message: req.flash('message', 'Email does not exist')
                 });
  
             }
@@ -135,7 +135,7 @@ passport.use('local-signin', new LocalStrategy(
             if (!isValidPassword(user.password, password)) {
  
                 return done(null, false, {
-                    message: 'Incorrect password.'
+                    message: req.flash('message', 'Incorrect password.')
                 });
  
             }
@@ -150,7 +150,7 @@ passport.use('local-signin', new LocalStrategy(
             console.log("Error:", err);
  
             return done(null, false, {
-                message: 'Something went wrong with your Signin'
+                message: req.flash('message', 'Something went wrong with your Signin')
             });
  
         });

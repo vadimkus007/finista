@@ -1,0 +1,25 @@
+.form-signin .form-control {
+    margin-bottom: 0.5em;
+}
+
+.row {
+    width: 500px;
+    height: 600px;
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    margin-left: -250px;
+    margin-top: -300px;
+}
+
+.signin_box {
+
+}
+
+img {
+    margin-bottom: 0.5em;
+}
+
+.alert-message {
+    color: red;
+}

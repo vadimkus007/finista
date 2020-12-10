@@ -14,7 +14,8 @@ module.exports = function(app, passport) {
 
     app.post('/signin', passport.authenticate('local-signin', {
         successRedirect: '/dashboard',
-        failureRedirect: '/signin'
+        failureRedirect: '/signin',
+        failureFlash : true
     }));
 
     function isLoggedIn(req, res, next) {
