@@ -1,5 +1,7 @@
 const Moex = require('../lib/moex');
 
+var Highcharts = require('highcharts/highstock');
+
 var exports = module.exports = {}
 
 exports.list = (req, res, next) => {
@@ -53,16 +55,16 @@ exports.list = (req, res, next) => {
             data = [];
             for (var i = 0; i < dataETF['securities']['data'].length; i++) {
                 data.push({
-                    'secid': sdata[i][0],
-                    'shortname': sdata[i][1],
-                    'last': mdata[i][0],
-                    'open': mdata[i][1],
-                    'low': mdata[i][2],
-                    'high': mdata[i][3],
-                    'waprice': mdata[i][4],
-                    'valtoday': mdata[i][5],
-                    'time': mdata[i][6],
-                    'lasttoprevprice': mdata[i][7]
+                    'secid': dataETF['securities']['data'][i][0],
+                    'shortname': dataETF['securities']['data'][i][1],
+                    'last': dataETF['marketdata']['data'][i][0],
+                    'open': dataETF['marketdata']['data'][i][1],
+                    'low': dataETF['marketdata']['data'][i][2],
+                    'high': dataETF['marketdata']['data'][i][3],
+                    'waprice': dataETF['marketdata']['data'][i][4],
+                    'valtoday': dataETF['marketdata']['data'][i][5],
+                    'time': dataETF['marketdata']['data'][i][6],
+                    'lasttoprevprice': dataETF['marketdata']['data'][i][7]
                 });
             }
             
@@ -131,11 +133,15 @@ exports.info = (req, res, next) => {
             return next(err);
         };
 
+        var markets = response['boards']['data'][0][5];
+        var boards = response['boards']['data'][0][1];
+
         var request = {
             'engines': response['boards']['data'][0][7],
             'markets': response['boards']['data'][0][5],
             'boards': response['boards']['data'][0][1],
-            'secid': response['boards']['data'][0][0]
+            'secid': response['boards']['data'][0][0],
+            'params': 'iss.meta=off&iss.only=securities,marketdata&securities.columns=SECID,SHORTNAME,SECNAME,LOTSIZE,CURRENCYID&marketdata.columns=LAST,HIGH,LOW,LASTTOPREVPRICE,NUMTRADES,ISSUECAPITALIZATION,UPDATETIME,BID,OFFER'
         }
 
         Moex.getSecurityInfo(request, (err, result) => {
@@ -144,21 +150,44 @@ exports.info = (req, res, next) => {
 // Combine needed array for view
             let data = {
                 'secid': result['securities']['data'][0][0],
-                'secname': result['securities']['data'][0][9],
-                'lotsize': result['securities']['data'][0][4],
-                'currencyid': result['securities']['data'][0][24],
-                'last': result['marketdata']['data'][0][12],
-                'lastchange': result['marketdata']['data'][0][13],
-                'lastchangeprcnt': result['marketdata']['data'][0][14],
-                'updatetime': result['marketdata']['data'][0][32]
+                'shortname': result['securities']['data'][0][1],
+                'secname': result['securities']['data'][0][2],
+                'lotsize': result['securities']['data'][0][3],
+                'currencyid': result['securities']['data'][0][4],
+                'last': result['marketdata']['data'][0][0],
+                'high': result['marketdata']['data'][0][1],
+                'low': result['marketdata']['data'][0][2],
+                'lasttoprevprice': result['marketdata']['data'][0][3],
+                'numtrades': result['marketdata']['data'][0][4],
+                'issuecapitalization': result['marketdata']['data'][0][5],
+                'updatetime': result['marketdata']['data'][0][6],
+                'bid': result['marketdata']['data'][0][7],
+                'offer': result['marketdata']['data'][0][8]
             };
 
-            res.render('quote', {
-                title: 'Информация об инструменте', 
-                user: user,
-                data: data
-            });
+            // get History data
 
-        });
-    });
+            Moex.getHistory(secid, boards, markets,  (err, result) => {
+                
+                var candles = [];
+                result.forEach(items => {
+                    items.forEach(item => {
+                        item[0] = Date.parse(item[0]);
+                        candles.push(item);
+                    });
+                });
+                
+
+//                console.log(candles);
+
+                data['candles'] = candles;
+
+                res.render('quote', {
+                    title: 'Информация об инструменте', 
+                    user: user,
+                    data: data
+                }); 
+            }); // History
+        }); // Security Info
+    });  // Boards
 }

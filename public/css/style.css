@@ -70,3 +70,15 @@ table tr td:first-child{
     /* Add a grey background color to the table header and on hover */
     background-color: #f1f1f1;
 }
+
+.info-security-box {
+
+}
+
+ul.security-diggest {
+
+}
+
+ul.security-diggest li {
+  display: inline-block;
+}

@@ -35,6 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/bootstrap', express.static(path.join(__dirname, '/node_modules/bootstrap/dist/')));
 app.use('/popper', express.static(path.join(__dirname, '/node_modules/popper.js/dist/')));
+app.use('/highcharts', express.static(path.join(__dirname, '/node_modules/highcharts/')));
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');

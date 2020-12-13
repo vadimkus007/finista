@@ -18,17 +18,26 @@
                 <h2>Информация</h2> 
             </div>
 
-            <div class="info-share-page">
-                <div class="info-share-name">
-                    <%= data['secname'] %> (<%= data['secid'] %>)
+            <div class="info-security-page">
+                <div class="info-security-name text-center">
+                    <h3><%= data['secname'] %> (<%= data['secid'] %>)</h3>
                 </div>
-                <div class="info-share-about">
-                    <p>Размер лота <%= data['lotsize'] %></p>
-                    <p>Последняя цена  <%= data['last'] %> <%= data['currencyid'] %></p>
-                    <p>Изменения за день  <%= data['lastchange'] %> <%= data['currencyid'] %></p>
-                    <p>Изменения за день (%)  <%= data['lastchangeprcnt'] %></p>
+                
+                <div class="info-security-box">
+                    <ul class="security-diggest">
+                        <li><%= data['last'] %> <%= data['currencyid'] %>(<%= data['lasttoprevprice'] %> %)</li>
+                        <li>Размер лота <%= data['lotsize'] %></li>
+                        <li>Предложение  <%= data['bid'] %> Спрос  <%= data['offer'] %></li>
+                        <li>Максимум <%= data['high'] %>Минимум <%= data['low'] %></li>
+                        <li>Сделок сегодня <%= data['numtrades'] %>Капитализация <%= data['issuecapitalization'] %></li>
+                    </ul>
+                </div>
+
+                <div id="highcharts" style="height: 400px; min-width: 310px">
+
                 </div>
             </div>
+
         </div>
     </main>
 
@@ -42,4 +51,33 @@
     <script src="/popper/popper.min.js"></script>
     <!-- Подключаем Bootstrap -->
     <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Highcharts -->
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/data.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+    <script>
+        Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (chart_data) {
+            var candles = <%- JSON.stringify(data) %>;
+
+        // Create the chart
+            Highcharts.stockChart('highcharts', {
+                rangeSelector: {
+                    selected: 3
+                },
+
+                title: {
+                    text: '<%- data['secid'] %> Stock Diagramm'
+                },
+
+                series: [{
+                    name: '<%- data['secid'] %>',
+                    data: candles['candles'],
+                    tooltip: {
+                        valueDecimals: 2
+                    }
+                }]
+            });
+        });
+    </script>
 </html>
