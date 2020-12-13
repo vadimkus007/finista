@@ -2,6 +2,8 @@ const Moex = require('../lib/moex');
 
 exports.list = (req, res, next) => {
 
+    
+
     var result = {};
 
     let request = {'engine': 'stock', 'market': 'shares', 'board': 'TQBR'};

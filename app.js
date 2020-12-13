@@ -35,7 +35,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/bootstrap', express.static(path.join(__dirname, '/node_modules/bootstrap/dist/')));
 app.use('/popper', express.static(path.join(__dirname, '/node_modules/popper.js/dist/')));
-app.use('/bootstrap-table', express.static(path.join(__dirname, '/node_modules/bootstrap-table/dist/')));
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -45,10 +44,8 @@ const authRoute = require('./routes/auth')(app,passport);
 // Routing
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.get('/quotes', quotesRouter.list);
-app.get('/quotes/:secid', quotesRouter.info);
-//app.get('/post', entries.form);
-//app.post('/post', entries.submit);
+//app.get('/quotes', quotesRouter.list);
+//app.get('/quotes/:secid', quotesRouter.info);
 
 //Models
 var models = require("./models");
