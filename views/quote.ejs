@@ -25,16 +25,40 @@
                 
                 <div class="info-security-box">
                     <ul class="security-diggest">
-                        <li><%= data['last'] %> <%= data['currencyid'] %>(<%= data['lasttoprevprice'] %> %)</li>
-                        <li>Размер лота <%= data['lotsize'] %></li>
-                        <li>Предложение  <%= data['bid'] %> Спрос  <%= data['offer'] %></li>
-                        <li>Максимум <%= data['high'] %>Минимум <%= data['low'] %></li>
-                        <li>Сделок сегодня <%= data['numtrades'] %>Капитализация <%= data['issuecapitalization'] %></li>
+                        <li><div style="font-size:2.8rem;"><%= data['last'] %></div></li>
+                        <li><div>(<%= data['lasttoprevprice'] %> %)</div><div><%= data['currencyid'] %></div></li>
+                        <li><div>Размер лота: <%= data['lotsize'] %></div></li>
+                        <li><div>Предложение:  <%= data['offer'] %></div><div>Спрос:  <%= data['bid'] %></div></li>
+                        <li><div>Максимум: <%= data['high'] %></div><div>Минимум: <%= data['low'] %></div></li>
+                        <li><div>Сделок сегодня: <%= data['numtrades'] %></div><div>Капитализация: <%= data['issuecapitalization'] %></div></li>
                     </ul>
+
+                    <a href="https://www.moex.com/ru/issue.aspx?code=<%= data['secid'] %>" target="_blank">Профиль эмитента</a>
+
                 </div>
 
                 <div id="highcharts" style="height: 400px; min-width: 310px">
+                </div>
 
+                <div class="info-board">
+                    <h3>Дивиденды</h3>
+                    <table id="dividends">
+                        <thead>
+                            <tr>
+                                <th width="150px">Дата</th>
+                                <th width="300px">Размер дивидендов</th>
+                            </tr>
+                        </thead>
+                        <tfoot></tfoot>
+                        <tbody>
+                            <% for (var i = 0; i < data['dividends'].length; i++) { %> 
+                                <tr>
+                                    <td><%= data['dividends'][i][0] %></td>
+                                    <td><%= data['dividends'][i][1] %></td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 

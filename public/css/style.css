@@ -72,7 +72,7 @@ table tr td:first-child{
 }
 
 .info-security-box {
-
+  width: 100%;
 }
 
 ul.security-diggest {
@@ -81,4 +81,9 @@ ul.security-diggest {
 
 ul.security-diggest li {
   display: inline-block;
+  padding: 12px;
+}
+
+ul.security-diggest li.last {
+  font-size: 16px;
 }

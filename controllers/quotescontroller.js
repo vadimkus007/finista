@@ -120,8 +120,12 @@ exports.list = (req, res, next) => {
 
 exports.info = (req, res, next) => {
 
-    let secid = req.params.secid;
-    let user = 0;
+    const secid = req.params.secid;
+    var markets = '';
+    var engines = '';
+    var boards = '';
+
+    var user = 0;
     if (req.isAuthenticated()) {
         user = req.session.passport.user;
     };
@@ -133,14 +137,15 @@ exports.info = (req, res, next) => {
             return next(err);
         };
 
-        var markets = response['boards']['data'][0][5];
-        var boards = response['boards']['data'][0][1];
+        engines = response['boards']['data'][0][7];
+        markets = response['boards']['data'][0][5];
+        boards = response['boards']['data'][0][1];
 
         var request = {
-            'engines': response['boards']['data'][0][7],
-            'markets': response['boards']['data'][0][5],
-            'boards': response['boards']['data'][0][1],
-            'secid': response['boards']['data'][0][0],
+            'engines': engines,
+            'markets': markets,
+            'boards': boards,
+            'secid': secid,
             'params': 'iss.meta=off&iss.only=securities,marketdata&securities.columns=SECID,SHORTNAME,SECNAME,LOTSIZE,CURRENCYID&marketdata.columns=LAST,HIGH,LOW,LASTTOPREVPRICE,NUMTRADES,ISSUECAPITALIZATION,UPDATETIME,BID,OFFER'
         }
 
@@ -182,11 +187,18 @@ exports.info = (req, res, next) => {
 
                 data['candles'] = candles;
 
-                res.render('quote', {
-                    title: 'Информация об инструменте', 
-                    user: user,
-                    data: data
-                }); 
+                // Dividends
+                Moex.getCustom('https://iss.moex.com/iss/securities/'+data['secid']+'/dividends.json?iss.meta=off&dividends.columns=registryclosedate,value', (err, result) => {
+                    
+                    data['dividends'] = result['dividends']['data'];
+
+                    res.render('quote', {
+                        title: 'Информация об инструменте', 
+                        user: user,
+                        data: data
+                    }); 
+
+                }); // Dividends
             }); // History
         }); // Security Info
     });  // Boards
