@@ -1,6 +1,6 @@
 const Moex = require('../lib/moex');
 
-var Highcharts = require('highcharts/highstock');
+// var Highcharts = require('highcharts/highstock');
 
 var exports = module.exports = {}
 
@@ -153,7 +153,7 @@ exports.info = (req, res, next) => {
             if (err) return next(err);
 
 // Combine needed array for view
-            let data = {
+            var data = {
                 'secid': result['securities']['data'][0][0],
                 'shortname': result['securities']['data'][0][1],
                 'secname': result['securities']['data'][0][2],
@@ -172,7 +172,7 @@ exports.info = (req, res, next) => {
 
             // get History data
 
-            Moex.getHistory(secid, boards, markets,  (err, result) => {
+            Moex.getHistory(secid, boards, markets, engines,  (err, result) => {
                 
                 var candles = [];
                 result.forEach(items => {
@@ -192,11 +192,35 @@ exports.info = (req, res, next) => {
                     
                     data['dividends'] = result['dividends']['data'];
 
-                    res.render('quote', {
-                        title: 'Информация об инструменте', 
-                        user: user,
-                        data: data
-                    }); 
+                    // get prices to given dates
+                    let urls = [];
+                    let baseURL = `http://iss.moex.com/iss/history/engines/${engines}/markets/${markets}/boards/${boards}/securities/${secid}.json?iss.meta=off&history.columns=TRADEDATE,CLOSE`;
+                    
+                    data['dividends'].forEach(item => {
+                        urls.push(baseURL + '&from=' + item[0] + '&till=' + item[0]);
+                    });
+
+                    let promises = urls.map(url => Moex.fetchJSON(url));
+
+                    Promise.all(promises).then(responses => {
+                        for (var i = 0; i < responses.length; i++) {
+                            data['dividends'][i].push(responses[i]['history']['data'][0][1]);
+                            let div = data['dividends'][i][1];
+                            let price = data['dividends'][i][2];
+                            let dy = 100 * div / price;
+
+                            data['dividends'][i].push(dy.toFixed(1));
+                        };
+
+                        res.render('quote', {
+                            title: 'Информация об инструменте', 
+                            user: user,
+                            data: data
+                        });  // render
+
+                    }); // Promise
+
+                    
 
                 }); // Dividends
             }); // History

@@ -26,7 +26,14 @@
                 <div class="info-security-box">
                     <ul class="security-diggest">
                         <li><div style="font-size:2.8rem;"><%= data['last'] %></div></li>
-                        <li><div>(<%= data['lasttoprevprice'] %> %)</div><div><%= data['currencyid'] %></div></li>
+                        <li><div>(<span style="
+                            <% if(data['lasttoprevprice']<0){ %>
+                                color:red;
+                            <% } %>
+                            <% if(data['lasttoprevprice']>0){ %>
+                                color:green;
+                            <% } %>">
+                            <%= data['lasttoprevprice'] %> %</span>)</div><div><%= data['currencyid'] %></div></li>
                         <li><div>Размер лота: <%= data['lotsize'] %></div></li>
                         <li><div>Предложение:  <%= data['offer'] %></div><div>Спрос:  <%= data['bid'] %></div></li>
                         <li><div>Максимум: <%= data['high'] %></div><div>Минимум: <%= data['low'] %></div></li>
@@ -46,7 +53,9 @@
                         <thead>
                             <tr>
                                 <th width="150px">Дата</th>
-                                <th width="300px">Размер дивидендов</th>
+                                <th>Размер дивидендов</th>
+                                <th>Стоимость акции</th>
+                                <th>Дивидендная доходность</th>
                             </tr>
                         </thead>
                         <tfoot></tfoot>
@@ -55,6 +64,8 @@
                                 <tr>
                                     <td><%= data['dividends'][i][0] %></td>
                                     <td><%= data['dividends'][i][1] %></td>
+                                    <td><%= data['dividends'][i][2] %></td>
+                                    <td><%= data['dividends'][i][3] %> %</td>
                                 </tr>
                             <% } %>
                         </tbody>
