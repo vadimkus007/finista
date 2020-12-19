@@ -1,5 +1,6 @@
 var authController = require('../controllers/authcontroller.js');
 var quotesController = require('../controllers/quotescontroller.js');
+var favoritesController = require('../controllers/favoritescontroller.js');
  
 module.exports = function(app, passport) {
  
@@ -12,15 +13,18 @@ module.exports = function(app, passport) {
     app.get('/quotes/:secid', quotesController.info);
 
     app.post('/signup', passport.authenticate('local-signup', {
-        successRedirect: '/dashboard',
+        successRedirect: '/quotes',
         failureRedirect: '/signup'
     }));
 
     app.post('/signin', passport.authenticate('local-signin', {
-        successRedirect: '/dashboard',
+        successReturnToOrRedirect: '/favorites',
         failureRedirect: '/signin',
         failureFlash : true
     }));
+
+    app.get('/favorites', isLoggedIn, favoritesController.list);
+    app.post('/favorites', isLoggedIn, favoritesController.action);
 
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated())

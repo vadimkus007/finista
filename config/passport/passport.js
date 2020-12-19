@@ -61,9 +61,9 @@ module.exports = function(passport, user) {
  
                             password: userPassword,
  
-                            firstname: req.body.firstname,
+                            first_name: req.body.first_name,
  
-                            lastname: req.body.lastname
+                            last_name: req.body.last_name
  
                         };
  

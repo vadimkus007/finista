@@ -120,7 +120,11 @@ exports.list = (req, res, next) => {
 
 exports.info = (req, res, next) => {
 
-    const secid = req.params.secid;
+    var data = {};
+    data.secid = req.params.secid;
+
+
+    var secid = req.params.secid;
     var markets = '';
     var engines = '';
     var boards = '';
@@ -130,49 +134,37 @@ exports.info = (req, res, next) => {
         user = req.session.passport.user;
     };
 
-    Moex.getBoardsInfo(secid, (err, response) => {
-        if (err) return next(err);
-        if (response['boards']['data'].length == 0) {
-            throw new Error(404, `Data not found`);
-            return next(err);
-        };
+    // Get boards info e.g. engines, markets, boards 
+    let urls = [];
+    let url = `http://iss.moex.com/iss/securities/${data.secid}.json?iss.meta=off&iss.only=boards&boards.columns=secid,boardid,market,engine`;
+    urls.push(url);
 
-        engines = response['boards']['data'][0][7];
-        markets = response['boards']['data'][0][5];
-        boards = response['boards']['data'][0][1];
-
-        var request = {
-            'engines': engines,
-            'markets': markets,
-            'boards': boards,
-            'secid': secid,
-            'params': 'iss.meta=off&iss.only=securities,marketdata&securities.columns=SECID,SHORTNAME,SECNAME,LOTSIZE,CURRENCYID&marketdata.columns=LAST,HIGH,LOW,LASTTOPREVPRICE,NUMTRADES,ISSUECAPITALIZATION,UPDATETIME,BID,OFFER'
+    let promises = urls.map(index => Moex.fetchJSON(index));
+    Promise.all(promises)
+    .then(result => {
+        for (key in result[0].boards.columns) {
+            data[result[0].boards.columns[key]] = result[0].boards.data[0][key];
         }
 
-        Moex.getSecurityInfo(request, (err, result) => {
-            if (err) return next(err);
+        // get security info
+        let urls = [];
+        let url = `http://iss.moex.com/iss/engines/${data.engine}/markets/${data.market}/boards/${data.boardid}/securities/${data.secid}.json?iss.meta=off&iss.only=securities,marketdata`;
+        urls.push(url);
 
-// Combine needed array for view
-            var data = {
-                'secid': result['securities']['data'][0][0],
-                'shortname': result['securities']['data'][0][1],
-                'secname': result['securities']['data'][0][2],
-                'lotsize': result['securities']['data'][0][3],
-                'currencyid': result['securities']['data'][0][4],
-                'last': result['marketdata']['data'][0][0],
-                'high': result['marketdata']['data'][0][1],
-                'low': result['marketdata']['data'][0][2],
-                'lasttoprevprice': result['marketdata']['data'][0][3],
-                'numtrades': result['marketdata']['data'][0][4],
-                'issuecapitalization': result['marketdata']['data'][0][5],
-                'updatetime': result['marketdata']['data'][0][6],
-                'bid': result['marketdata']['data'][0][7],
-                'offer': result['marketdata']['data'][0][8]
-            };
+        let promises = urls.map(index => Moex.fetchJSON(index));
+        Promise.all(promises)
+        .then(row => {
+
+            // parse obtained data
+            for (key in row[0].securities.columns) {
+                data[row[0].securities.columns[key]] = row[0].securities.data[0][key];
+            }
+            for (key in row[0].marketdata.columns) {
+                data[row[0].marketdata.columns[key]] = row[0].marketdata.data[0][key];
+            }
 
             // get History data
-
-            Moex.getHistory(secid, boards, markets, engines,  (err, result) => {
+            Moex.getHistory(data.secid, data.boardid, data.market, data.engine,  (err, result) => {
                 
                 var candles = [];
                 result.forEach(items => {
@@ -182,9 +174,6 @@ exports.info = (req, res, next) => {
                     });
                 });
                 
-
-//                console.log(candles);
-
                 data['candles'] = candles;
 
                 // Dividends
@@ -194,7 +183,7 @@ exports.info = (req, res, next) => {
 
                     // get prices to given dates
                     let urls = [];
-                    let baseURL = `http://iss.moex.com/iss/history/engines/${engines}/markets/${markets}/boards/${boards}/securities/${secid}.json?iss.meta=off&history.columns=TRADEDATE,CLOSE`;
+                    let baseURL = `http://iss.moex.com/iss/history/engines/${data.engine}/markets/${data.market}/boards/${data.boardid}/securities/${data.secid}.json?iss.meta=off&history.columns=TRADEDATE,CLOSE`;
                     
                     data['dividends'].forEach(item => {
                         urls.push(baseURL + '&from=' + item[0] + '&till=' + item[0]);
@@ -212,18 +201,19 @@ exports.info = (req, res, next) => {
                             data['dividends'][i].push(dy.toFixed(1));
                         };
 
+
+console.log(data);
+
                         res.render('quote', {
                             title: 'Информация об инструменте', 
                             user: user,
                             data: data
                         });  // render
 
-                    }); // Promise
-
-                    
+                    }).catch(err => console.log('Error getting request from MOEX: ', err));
 
                 }); // Dividends
             }); // History
-        }); // Security Info
-    });  // Boards
+        }).catch(err => console.log('Error getting request from MOEX: ', err)); // Security info
+    }).catch(error => console.log('Error getting request from MOEX: ', error)); // Board info
 }

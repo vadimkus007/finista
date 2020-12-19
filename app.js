@@ -39,20 +39,18 @@ app.use('/highcharts', express.static(path.join(__dirname, '/node_modules/highch
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const quotesRouter = require('./routes/quotes');
+// const quotesRouter = require('./routes/quotes');
 const authRoute = require('./routes/auth')(app,passport);
 
 // Routing
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-//app.get('/quotes', quotesRouter.list);
-//app.get('/quotes/:secid', quotesRouter.info);
 
 //Models
 var models = require("./models");
 
 //load passport strategies
-require('./config/passport/passport.js')(passport, models.user);
+require('./config/passport/passport.js')(passport, models.User);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

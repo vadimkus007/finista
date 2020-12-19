@@ -7,11 +7,34 @@ a {
   color: #00B7FF;
 }
 
+table {
+    border-collapse: collapse; /* Collapse borders */
+    width: 100%; /* Full-width */
+    border: 1px solid #ddd; /* Add a grey border */
+}
+
 table tr td{
   text-align: left;
 }
 table tr td:first-child{
   text-align: left;
+}
+
+table th, table td {
+  padding: 0.5rem;
+}
+
+table th {
+  background-color: #f1f1f1;
+}
+
+table tr:hover {
+  background-color: #f1f1f1;
+}
+
+table tr {
+    /* Add a bottom border to all table rows */
+    border-bottom: 1px solid #ddd;
 }
 
 /* Custom global styles */
@@ -50,7 +73,7 @@ table tr td:first-child{
 }
 
 .filterTable th, .filterTable td {
-    padding: 12px; /* Add padding */
+    padding: 0.5rem; /* Add padding */
 }
 
 .filterTable th {
@@ -66,7 +89,7 @@ table tr td:first-child{
     border-bottom: 1px solid #ddd;
 }
 
-.filterTable thead tr, ,filterTable thead tr:hover {
+.filterTable thead tr, .filterTable thead tr:hover {
     /* Add a grey background color to the table header and on hover */
     background-color: #f1f1f1;
 }
@@ -86,4 +109,10 @@ ul.security-diggest li {
 
 ul.security-diggest li.last {
   font-size: 16px;
+}
+
+/* Toolbars */
+#toolbar {
+  margin-top: 0.1rem;
+  margin-bottom: 0.5rem;
 }

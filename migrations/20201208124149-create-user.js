@@ -14,17 +14,22 @@ module.exports = {
       last_name: {
         type: Sequelize.STRING
       },
+      username: {
+            type: Sequelize.TEXT
+        },
       email: {
-        type: Sequelize.STRING
-      },
+            type: Sequelize.STRING,
+            validate: {
+                isEmail: true
+            }
+        },
       role: {
-        type: Sequelize.ENUM('admin', 'user')
-      },
-      salt: {
-        type: Sequelize.STRING
+        type: Sequelize.ENUM('admin', 'user'),
+        defaultValue: 'user'
       },
       password: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       last_login: {
         type: Sequelize.DATE
