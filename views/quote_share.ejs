@@ -1,0 +1,24 @@
+<div class="info-security-name text-center">
+    <h3><%= data['SECNAME'] %> (<%= data['SECID'] %>)</h3>
+</div>
+                
+<div class="info-security-box">
+    <ul class="security-diggest">
+        <li><div style="font-size:2.8rem;"><%= data['LAST'] %></div></li>
+        <li><div>(<span style="
+            <% if(data['LASTTOPREVPRICE']<0){ %>
+                color:red;
+            <% } %>
+            <% if(data['LASTTOPREVPRICE']>0){ %>
+                color:green;
+            <% } %>">
+            <%= data['LASTTOPREVPRICE'] %> %</span>)</div><div><%= data['CURRENCYID'] %></div></li>
+        <li><div>Размер лота: <%= data['LOTSIZE'] %></div></li>
+        <li><div>Предложение:  <%= data['OFFER'] %></div><div>Спрос:  <%= data['BID'] %></div></li>
+        <li><div>Максимум: <%= data['HIGH'] %></div><div>Минимум: <%= data['LOW'] %></div></li>
+        <li><div>Сделок сегодня: <%= data['NUMTRADES'] %></div><div>Капитализация: <%= data['ISSUECAPITALIZATION'] %></div></li>
+    </ul>
+
+    <a href="https://www.moex.com/ru/issue.aspx?code=<%= data['SECID'] %>" target="_blank">Профиль эмитента</a>
+
+</div>

@@ -1,3 +1,4 @@
+
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -116,3 +117,43 @@ ul.security-diggest li.last {
   margin-top: 0.1rem;
   margin-bottom: 0.5rem;
 }
+
+.info-header {
+  min-height: 2rem;
+}
+
+
+/*   Star checkbox  */
+input.star {
+  display: none;
+}
+
+label.star:before {
+  background-image: url("/img/icon_star.png") no-repeat;
+  height: 25px;
+  width: 25px;
+  background-size: 10%;
+}
+
+input[type="checkbox"][name="favorite"] {
+  position: absolute;
+  clip: rect(0,0,0,0);
+  clip: rect(0 0 0 0);
+}
+
+input[type="checkbox"][name="favorite"] + label::before {
+  content: url("/img/icon_star_32.png");
+  font-size: 1rem;
+  background-image: url("") no-repeat;
+  background-size: cover;
+}
+
+input[type="checkbox"][name="favorite"]:checked + label::before {
+  content: url("/img/icon_star_solid_32.png");
+  font-size: 1rem;
+  width: 25px;
+  height: 25px;
+  background-image: url("") no-repeat;
+  background-size: cover;
+}
+

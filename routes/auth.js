@@ -11,6 +11,7 @@ module.exports = function(app, passport) {
 
     app.get('/quotes', quotesController.list);
     app.get('/quotes/:secid', quotesController.info);
+    app.post('/quotes/:secid', quotesController.favorite);
 
     app.post('/signup', passport.authenticate('local-signup', {
         successRedirect: '/quotes',

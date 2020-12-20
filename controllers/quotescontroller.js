@@ -1,4 +1,6 @@
 const Moex = require('../lib/moex');
+const models = require('../models');
+const Favorite = models.Favorite;
 
 // var Highcharts = require('highcharts/highstock');
 
@@ -8,115 +10,57 @@ exports.list = (req, res, next) => {
     
     var result = {};
 
-    // request stocks data
-    let request = {
-            'engine': 'stock', 
-            'market': 'shares', 
-            'board': 'TQBR',
-            'params': 'iss.meta=off&iss.only=securities,marketdata&securities.columns=SECID,SHORTNAME&marketdata.columns=LAST,OPEN,LOW,HIGH,WAPRICE,VALTODAY,TIME,LASTTOPREVPRICE'
-        };
+    // get shares (TQBR)
+    let urls = [];
+    let url = 'http://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities.json?iss.meta=off&iss.only=securities,marketdata';
+    urls.push(url);
+    url = 'http://iss.moex.com/iss/engines/stock/markets/shares/boards/TQTF/securities.json?iss.meta=off&iss.only=securities,marketdata';
+    urls.push(url);
+    url = 'http://iss.moex.com/iss/engines/stock/markets/index/securities.json?iss.meta=off&iss.only=securities,marketdata'
+    urls.push(url);
 
-    Moex.getSequrities(request, (err, dataStocks) => {
-        if (dataStocks['securities']['data'].length == 0) {
-            throw new Error(404, `Data not found`);
-            return next(err);
-        };
+    let promises = urls.map(index => Moex.fetchJSON(index));
+    Promise.all(promises)
+    .then(data => {
 
-        let data = [];
-        let sdata = dataStocks['securities']['data'];
-        let mdata = dataStocks['marketdata']['data'];
+        let result = {};
+        let section_keys = ['stock', 'etf', 'index'];
 
-        for (var i = 0; i < dataStocks['securities']['data'].length; i++) {
-            data.push({
-                'secid': sdata[i][0],
-                'shortname': sdata[i][1],
-                'last': mdata[i][0],
-                'open': mdata[i][1],
-                'low': mdata[i][2],
-                'high': mdata[i][3],
-                'waprice': mdata[i][4],
-                'valtoday': mdata[i][5],
-                'time': mdata[i][6],
-                'lasttoprevprice': mdata[i][7]
-            });
-        };
+        // parse obtained data
+        for (var index = 0; index<data.length; index++) {
 
-        result.stock = data;
-
-        // request etf data
-
-        let request1 = {
-            'engine': 'stock', 
-            'market': 'shares', 
-            'board': 'TQTF',
-            'params': 'iss.meta=off&iss.only=securities,marketdata&securities.columns=SECID,SHORTNAME&marketdata.columns=LAST,OPEN,LOW,HIGH,WAPRICE,VALTODAY,TIME,LASTTOPREVPRICE'
-        };
-        Moex.getSequrities(request1, (err, dataETF) =>{ 
-            data = [];
-            for (var i = 0; i < dataETF['securities']['data'].length; i++) {
-                data.push({
-                    'secid': dataETF['securities']['data'][i][0],
-                    'shortname': dataETF['securities']['data'][i][1],
-                    'last': dataETF['marketdata']['data'][i][0],
-                    'open': dataETF['marketdata']['data'][i][1],
-                    'low': dataETF['marketdata']['data'][i][2],
-                    'high': dataETF['marketdata']['data'][i][3],
-                    'waprice': dataETF['marketdata']['data'][i][4],
-                    'valtoday': dataETF['marketdata']['data'][i][5],
-                    'time': dataETF['marketdata']['data'][i][6],
-                    'lasttoprevprice': dataETF['marketdata']['data'][i][7]
-                });
-            }
-            
-            result.etf = data;
-
-            // request index data
-
-            let request2 = 'http://iss.moex.com/iss/engines/stock/markets/index/securities.json?iss.meta=off';
-            Moex.getCustom(request2, (err, dataIndex) => { 
-
-                data = [];
-                for (var i = 0; i < dataIndex['securities']['data'].length; i++) {
-                    data.push({
-                        'secid': dataIndex['securities']['data'][i][0],
-                        'shortname': dataIndex['securities']['data'][i][4],
-                        'annualhigh': dataIndex['securities']['data'][i][5],
-                        'annuallow': dataIndex['securities']['data'][i][6],
-                        'currency': dataIndex['securities']['data'][i][7],
-                        'boardid': dataIndex['securities']['data'][i][1],
-                        'lastvalue': dataIndex['marketdata']['data'][i][2],
-                        'openvalue': dataIndex['marketdata']['data'][i][3],
-                        'currentvalue': dataIndex['marketdata']['data'][i][4],
-                        'lastchange': dataIndex['marketdata']['data'][i][5],
-                        'lastchangetoopenprc': dataIndex['marketdata']['data'][i][6],
-                        'lastchangetoopen': dataIndex['marketdata']['data'][i][7],
-                        'updatetime': dataIndex['marketdata']['data'][i][8],
-                        'lastchangeprc': dataIndex['marketdata']['data'][i][9],
-                        'valtoday': dataIndex['marketdata']['data'][i][10],
-                        'monthchangeprc': dataIndex['marketdata']['data'][i][11],
-                        'yearchangeprc': dataIndex['marketdata']['data'][i][12]
-                    });
+            let data_array = [];
+            for (var i = 0; i<data[index].securities.data.length; i++) {
+                let newData = {};
+                for (key in data[index].marketdata.columns) {
+                    newData[data[index].marketdata.columns[key]] = data[index].marketdata.data[i][key];
                 }
-
-                result.index = data;
-
-                // get User from request
-                let user = 0;
-                if (req.isAuthenticated()) {
-                    user = req.session.passport.user;
+                for (key in data[index].securities.columns) {
+                    newData[data[index].securities.columns[key]] = data[index].securities.data[i][key];
                 }
+                data_array.push(newData);    
+            } // data arrays of securities index
+
+            result[section_keys[index]] = data_array;
+
+        } // section
+
+        // get User from request
+        let user = 0;
+        if (req.isAuthenticated()) {
+            user = req.session.passport.user;
+        }
                     
-                // Render view
-                res.render('quotes', {
-                    title: 'Котировки',
-                    user: user,
-                    data: result
-                });
+        // Render view
+        res.render('quotes', {
+            title: 'Котировки',
+            user: user,
+            data: result
+        });
 
-            }); // index
-        }); // etf
-    }); // stock
-}
+    }).catch(err => console.log(err)); // promises
+} // list 
+
 
 exports.info = (req, res, next) => {
 
@@ -177,7 +121,7 @@ exports.info = (req, res, next) => {
                 data['candles'] = candles;
 
                 // Dividends
-                Moex.getCustom('https://iss.moex.com/iss/securities/'+data['secid']+'/dividends.json?iss.meta=off&dividends.columns=registryclosedate,value', (err, result) => {
+                Moex.getCustom(`https://iss.moex.com/iss/securities/${data['SECID']}/dividends.json?iss.meta=off&dividends.columns=registryclosedate,value`, (err, result) => {
                     
                     data['dividends'] = result['dividends']['data'];
 
@@ -193,7 +137,11 @@ exports.info = (req, res, next) => {
 
                     Promise.all(promises).then(responses => {
                         for (var i = 0; i < responses.length; i++) {
-                            data['dividends'][i].push(responses[i]['history']['data'][0][1]);
+                            if (responses[i]['history']['data'][0][1]) {
+                                data['dividends'][i].push(responses[i]['history']['data'][0][1]);
+                            } else {
+                                data['dividends'][i].push('');
+                            }
                             let div = data['dividends'][i][1];
                             let price = data['dividends'][i][2];
                             let dy = 100 * div / price;
@@ -201,14 +149,30 @@ exports.info = (req, res, next) => {
                             data['dividends'][i].push(dy.toFixed(1));
                         };
 
+                        // get Favorite info
 
-console.log(data);
+                        Favorite.findOne({
+                            where: {userId: user, secid: data['SECID']},
+                            raw: true
+                        }).then((rows) => {
 
-                        res.render('quote', {
-                            title: 'Информация об инструменте', 
-                            user: user,
-                            data: data
-                        });  // render
+                            let favorite = false;
+
+                            if (rows) {
+                                if (rows['secid'] === data['SECID']) {favorite = true};
+                            }
+
+                            res.render('quote', {
+                                title: 'Информация об инструменте', 
+                                user: user,
+                                favorite: favorite,
+                                data: data
+                            });  // render
+
+
+                        }).catch(err => console.log('Error getting request from MOEX: ', err));
+
+                        
 
                     }).catch(err => console.log('Error getting request from MOEX: ', err));
 
@@ -216,4 +180,43 @@ console.log(data);
             }); // History
         }).catch(err => console.log('Error getting request from MOEX: ', err)); // Security info
     }).catch(error => console.log('Error getting request from MOEX: ', error)); // Board info
+}
+
+exports.favorite = (req, res, next) => {
+    var secid = req.params.secid;
+    var user = 0;
+    if (req.isAuthenticated()) {user = req.session.passport.user};
+
+    if (user && secid) {
+        
+        Favorite.findOne({
+            where: {userId: user, secid: secid},
+            raw: true
+        })
+        .then(row => {
+            if (row) {
+                // delete record from favorites
+                Favorite.destroy({
+                    where: {
+                        id: row['id']
+                    }
+                }).then(count => {console.log('Record successfully deleted.')})
+                .catch(err => console.log('Error: ', err));
+            } else {
+                // Add new favorite
+                Favorite.create({
+                    secid: secid,
+                    userId: user
+                })
+                .then((newFavorite) => {console.log(`newFavorite['secid']) added to favorites.`)})
+                .catch(err => console.log('Error while creation new favorite'));
+                
+            }
+        }).catch(err => console.log('Error getting request from db: ', err))
+
+    }
+
+    
+
+    res.redirect(`/quotes/${req.params.secid}`);
 }
