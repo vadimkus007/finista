@@ -14,9 +14,13 @@ exports.list = (req, res, next) => {
     let urls = [];
     let url = 'http://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities.json?iss.meta=off&iss.only=securities,marketdata';
     urls.push(url);
+    url = 'http://iss.moex.com/iss/engines/stock/markets/foreignshares/boards/FQBR/securities.json?iss.meta=off&iss.only=securities,marketdata';
+    urls.push(url);
     url = 'http://iss.moex.com/iss/engines/stock/markets/shares/boards/TQTF/securities.json?iss.meta=off&iss.only=securities,marketdata';
     urls.push(url);
-    url = 'http://iss.moex.com/iss/engines/stock/markets/index/securities.json?iss.meta=off&iss.only=securities,marketdata'
+    url = 'http://iss.moex.com/iss/engines/stock/markets/index/boards/rtsi/securities.json?iss.meta=off&iss.only=securities,marketdata'
+    urls.push(url);
+    url = 'http://iss.moex.com/iss/engines/stock/markets/index/boards/sndx/securities.json?iss.meta=off&iss.only=securities,marketdata'
     urls.push(url);
 
     let promises = urls.map(index => Moex.fetchJSON(index));
@@ -24,7 +28,7 @@ exports.list = (req, res, next) => {
     .then(data => {
 
         let result = {};
-        let section_keys = ['stock', 'etf', 'index'];
+        let section_keys = ['stock', 'stock', 'etf', 'index', 'index'];
 
         // parse obtained data
         for (var index = 0; index<data.length; index++) {
@@ -41,7 +45,12 @@ exports.list = (req, res, next) => {
                 data_array.push(newData);    
             } // data arrays of securities index
 
-            result[section_keys[index]] = data_array;
+            if (result[section_keys[index]]) {
+                result[section_keys[index]] = result[section_keys[index]].concat(data_array);
+            } else {
+                result[section_keys[index]] = data_array;
+            }
+
 
         } // section
 
@@ -137,7 +146,7 @@ exports.info = (req, res, next) => {
 
                     Promise.all(promises).then(responses => {
                         for (var i = 0; i < responses.length; i++) {
-                            if (responses[i]['history']['data'][0][1]) {
+                            if (responses[i]['history']['data'].length > 0) {
                                 data['dividends'][i].push(responses[i]['history']['data'][0][1]);
                             } else {
                                 data['dividends'][i].push('');
