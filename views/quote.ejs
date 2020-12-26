@@ -5,6 +5,13 @@
     <link rel='stylesheet' href='/css/style.css' />
     <!-- Bootstrap core CSS -->
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Подключаем jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Подключаем плагин Popper (необходим для работы компонента Dropdown и др.) -->
+    <script src="/popper/popper.min.js"></script>
+    <!-- Подключаем Bootstrap -->
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
   </head>
 
   <body>
@@ -14,8 +21,18 @@
     
     <main role="main">
         <div class="container-fluid">
-            <div class="info-header">
-                <div class="favorite">
+
+            <section class="info-security-header d-inline-flex justify-content-center">
+                
+                <div class="info-security-name text-center mr-sm-2">
+                    <% if (data['market'] == 'index') { %>
+                        <h3><%= data['NAME'] %> (<%= data['SECID'] %>)</h3>
+                    <% } else { %>
+                        <h3><%= data['SECNAME'] %> (<%= data['SECID'] %>)</h3>        
+                    <% } %>
+                </div>
+
+                <div class="info-security-favorite mr-sm-2">
                     <form method="POST" action="/quotes/<%= data['SECID'] %>" class="">
                         <input type="checkbox" name="favorite" 
                             <% if (favorite) { %>
@@ -25,9 +42,10 @@
                         <label class="" for="favorite"></label> 
                     </form>
                 </div>
-            </div>
+                
+            </section>
 
-            <div class="info-security-page">
+            <section class="info-security-page">
                 
                 <% if (data['market'] == 'index') { %>
                     <% include quote_index %>
@@ -35,35 +53,33 @@
                     <% include quote_share %>         
                 <% } %>
 
-                <div id="highcharts" style="height: 400px; min-width: 310px">
-                </div>
+                <div id="highcharts" style="height: 400px; min-width: 310px"></div>
+            </section>
 
-                <div class="info-board">
-                    <h3>Дивиденды</h3>
-                    <table id="dividends">
-                        <thead>
+            <section class="info-board">
+                <h3>Дивиденды</h3>
+                <table id="dividends">
+                    <thead>
+                        <tr>
+                            <th width="150px">Дата</th>
+                            <th>Размер дивидендов</th>
+                            <th>Стоимость акции</th>
+                            <th>Дивидендная доходность</th>
+                        </tr>
+                    </thead>
+                    <tfoot></tfoot>
+                    <tbody>
+                        <% for (var i = 0; i < data['dividends'].length; i++) { %> 
                             <tr>
-                                <th width="150px">Дата</th>
-                                <th>Размер дивидендов</th>
-                                <th>Стоимость акции</th>
-                                <th>Дивидендная доходность</th>
-                            </tr>
-                        </thead>
-                        <tfoot></tfoot>
-                        <tbody>
-                            <% for (var i = 0; i < data['dividends'].length; i++) { %> 
-                                <tr>
-                                    <td><%= data['dividends'][i][0] %></td>
-                                    <td><%= data['dividends'][i][1] %></td>
+                                <td><%= data['dividends'][i][0] %></td>
+                                <td><%= data['dividends'][i][1] %></td>
                                     <td><%= data['dividends'][i][2] %></td>
-                                    <td><%= data['dividends'][i][3] %> %</td>
-                                </tr>
-                            <% } %>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
+                                <td><%= data['dividends'][i][3] %> %</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </section>
         </div>
     </main>
 
@@ -71,12 +87,7 @@
     </footer>
 
     </body>
-    <!-- Подключаем jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Подключаем плагин Popper (необходим для работы компонента Dropdown и др.) -->
-    <script src="/popper/popper.min.js"></script>
-    <!-- Подключаем Bootstrap -->
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    
     <!-- Highcharts -->
     <script src="https://code.highcharts.com/stock/highstock.js"></script>
     <script src="https://code.highcharts.com/stock/modules/data.js"></script>

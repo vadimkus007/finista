@@ -138,3 +138,31 @@ exports.edit = (req, res, next) => {
     });
 
 }
+
+exports.info = (req, res, next) => {
+
+    var data = {};
+
+    // get portfolio info
+    Portfolio.findOne({
+        id: req.params.id,
+        raw: true
+    })
+    .then(portfolio => {
+        if (portfolio === null) {
+          console.log('Not found!');
+        } 
+
+        data.portfolio = portfolio;
+        
+        // render view
+        res.render('portfolio', {
+            data: data
+        });
+
+    })
+    .catch(err => {
+        console.log('Error reading portfolio: ', err)
+    });
+
+}

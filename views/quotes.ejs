@@ -10,6 +10,13 @@
     <link href="/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
     -->
 
+    <!-- Подключаем jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Подключаем плагин Popper (необходим для работы компонента Dropdown и др.) -->
+    <script src="/popper/popper.min.js"></script>
+    <!-- Подключаем Bootstrap -->
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+
     <script src="/js/main.js"></script>
   </head>
 
@@ -17,11 +24,14 @@
     <header>
       <% include menu %>
     </header>
+    
     <main role="main">
 
-      <div class="container-fluid">
-        <div class="info-header">
-            <h2>Котировки</h2> 
+      <section class="container-fluid">
+        
+        <div class="section-title">
+              Котировки
+          </div>
         </div>
         
         <div class="main-content">
@@ -183,37 +193,15 @@
 
         </div>
 
-      </div>
+      </section>
 
     </main>
 
 
   </body>
-  <!-- Подключаем jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Подключаем плагин Popper (необходим для работы компонента Dropdown и др.) -->
-    <script src="/popper/popper.min.js"></script>
-    <!-- Подключаем Bootstrap -->
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
+  
     <!-- Tsort. Сортировка таблиц плагин -->
     <script src="/js/tsort.js"></script>
     <script>$( document ).ready(function() {$('.tsort').tsort();});</script>
-    <!-- Table pagination -->
-    <!--<script src = "/js/jquery.simplePagination.js"></script>
-    <script>
-      $("#filterTable1").simplePagination({
-        perPage: 20,
-        // CSS classes to custom the pagination
-        containerClass: 'paginator',
-        previousButtonClass: 'btn btn-md btn-primary',
-        nextButtonClass: 'btn btn-md btn-primary',
-        // text for next and prev buttons
-        previousButtonText: 'Назад',
-        nextButtonText: 'Вперед',
-        // initial page
-        currentPage: 1
-      });
-    </script>
-  -->
 
 </html>

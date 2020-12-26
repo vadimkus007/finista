@@ -21,6 +21,7 @@ app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
 // view engine setup
+app.engine('ejs', require('ejs-locals'));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 

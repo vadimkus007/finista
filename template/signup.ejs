@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+ 
+<head>
+    <title>Регистрация</title>
+    <link rel='stylesheet' href='/css/style.css' />
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+ 
+<body>
+    <div class="container h-100">
+      <div class="row align-items-center h-100">
+        <div class="signin_box">
+            <div class="text-center login-title">
+                  <h3>Регистрация</h3>
+            </div>
+            <div class="account-wall">
+              <form id="signup" name="signup" method="post" action="/signup">
+                <div class="form-group row">
+                    <label for="email">Email Address</label>
+                    <input class="form-control" id="email" name="email" type="email" />
+                    <label for="password">Password</label>
+                    <input class="form-control" name="password" type="password" />
+                </div>
+                <div class="form-group row">
+                    <label for="first_name">Firstname</label>
+                    <input class="form-control" name="first_name" id="first_name" type="text" />
+                    <label for="last_name">Lastname</label>
+                    <input class="form-control" name="last_name" id="last_name" type="text" />
+                </div>
+                <div class="form-group row justify-center align-items-center">
+                    <input class="btn btn-primary btn-sm" type="submit" value="Sign Up" />
+                </div>
+            </form>
+            </div>
+      </div>
+    </div>
+ 
+</body>
+<!-- Подключаем jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Подключаем плагин Popper (необходим для работы компонента Dropdown и др.) -->
+    <script src="/popper/popper.min.js"></script>
+    <!-- Подключаем Bootstrap -->
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+</html>

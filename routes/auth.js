@@ -2,6 +2,7 @@ var authController = require('../controllers/authcontroller.js');
 var quotesController = require('../controllers/quotescontroller.js');
 var favoritesController = require('../controllers/favoritescontroller.js');
 var portfolioController = require('../controllers/portfoliocontroller.js');
+var operationController = require('../controllers/operationcontroller.js');
  
 module.exports = function(app, passport) {
  
@@ -32,6 +33,13 @@ module.exports = function(app, passport) {
     app.post('/portfolio', isLoggedIn, portfolioController.action);
     app.get('/portfolio/new', isLoggedIn, portfolioController.new);
     app.get('/portfolio/edit/:id', isLoggedIn, portfolioController.edit);
+
+    app.get('/operations', operationController.list);
+    app.post('/operations', operationController.action);
+    app.get('/operations/new', operationController.new);
+    app.get('/operations/edit/:id', operationController.edit);
+
+    app.get('/portfolio/:id', isLoggedIn, portfolioController.info);
 
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated())

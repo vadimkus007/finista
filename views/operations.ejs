@@ -16,7 +16,7 @@
 
   <body>
     <header>
-        <% include menu %>
+        
     </header>
     
     <main role="main">
@@ -25,13 +25,13 @@
                 <div id="toolbar" class="d-flex justify-content-between">
 
                         <div class="section-title">
-                            Портфели
+                            Операции
                         </div>
                         <div class="">
-                            <form method="POST" action="/portfolio" class="">
+                            <form method="POST" action="/operations" class="">
                             <button type="submit" class="btn-primary btn btn-sm" name="action" value="new">
                                 <div class="btn-content">
-                                    Добавить портфель
+                                    Добавить операцию
                                 </div>
                             </button>
                             </form>
@@ -41,15 +41,13 @@
 
                 <div class="d-flex">
                     <div class="datatable">
-                        <form method="POST" action="/portfolio">
-                            <input type="hidden" id="portfolioId" name="id" value="" />
+                        <form method="POST" action="/operations">
+                            <input type="hidden" id="operationId" name="id" value="" />
                         <table class="portfolios-table">
                             <thead>
                                 <tr>
-                                    <th class="text-xs-left" role="columnheader">Название</th>
-                                    <th class="text-xs-right" role="columnheader">Фикс. комиссия</th>
-                                    <th class="text-xs-center" role="columnheader">Валюта</th>
-                                    <th class="text-xs-right" role="columnheader">Дата открытия</th>
+                                    <th class="text-xs-left" role="columngeader">Id</th>
+                                    <th class="text-xs-left" role="columnheader">Операция</th>
                                     <th class="text-xs-right" role="columnheader" width="50"></th>
                                 </tr>
                             </thead>
@@ -57,15 +55,13 @@
                             </tfoot>
                             <tbody>
                                 <% data.forEach(row => { %>
-                                    <tr class="pointer" onClick="window.location='/portfolio/<%= row.id %>'">
+                                    <tr class="pointer" onClick="window.location='/operations/<%= row.id %>'">
+                                        <td><%= row.id %></td>
                                         <td><%= row.title %></td>
-                                        <td><%= row.comission %></td>
-                                        <td><%= row.currency %></td>
-                                        <td><%= row.dateopen.toISOString().slice(0,10) %></td>
                                         <td>
                                             <div class="flex" style="width: 75px;">
-                                            <button type="submit" class="btn btn-sm flex-child" style="display:inline-block;" name="action" value="edit" placeholder="Редактировать" onClick="setPortfolioId(<%= row.id %>);"><img src="/img/edit-16.png" /></button>
-                                            <button type="submit" class="btn btn-sm flex-child" style="display:inline-block;" name="action" value="delete" placeholder="Удалить" onClick="if (confirm('Дествительно удалить портфель и все его содержимое?')) {setPortfolioId(<%= row.id %>)};"><img src="/img/delete-16.png" /></button>
+                                            <button type="submit" class="btn btn-sm flex-child" style="display:inline-block;" name="action" value="edit" placeholder="Редактировать" onClick="setOperationId(<%= row.id %>);"><img src="/img/edit-16.png" /></button>
+                                            <button type="submit" class="btn btn-sm flex-child" style="display:inline-block;" name="action" value="delete" placeholder="Удалить" onClick="if (confirm('Дествительно удалить портфель и все его содержимое?')) {setOperationId(<%= row.id %>)};"><img src="/img/delete-16.png" /></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -80,8 +76,8 @@
 
         <!--  script for submitting portfolio id -->
     <script>
-        function setPortfolioId(id) {
-            document.getElementById('portfolioId').value = id;
+        function setOperationId(id) {
+            document.getElementById('operationId').value = id;
         }
     </script>
 
