@@ -7,7 +7,7 @@ exports.list = (req, res, next) => {
         raw: true
     })
     .then(rows => {
-        res.render('operations', {
+        res.render('operations/index', {
             title: 'Операции',
             data: rows
         });
@@ -88,7 +88,7 @@ exports.action = (req, res, next) => {
 }
 
 exports.new = (req, res, next) => {
-    res.render('operation-new', {
+    res.render('operations/new', {
         title: 'Создать операцию',
         data: req.body
     });
@@ -104,7 +104,7 @@ exports.edit = (req, res, next) => {
     .then(rows => {
 
         // render view
-        res.render('operation-edit', {
+        res.render('operations/edit', {
             title: 'Изменить операцию',
             data: rows
         });

@@ -11,7 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Portfolio.belongsTo(models.User, {foreingKey: 'userId', as: 'user'})
+      Portfolio.belongsTo(models.User, {foreingKey: 'userId', as: 'user'}),
+      Portfolio.hasMany(models.Trade, {as: 'trade'})
     }
   };
   Portfolio.init({

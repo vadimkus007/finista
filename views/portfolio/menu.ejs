@@ -1,10 +1,13 @@
 <nav class="navbar navbar-expand-sm bg-light">
   <ul class="navbar-nav" role="menu">
     <li class="nav-item">
-      <a class="nav-link" href="#">Активы</a>
+      <a class="nav-link" href="/portfolios">Назад</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="#">Сделки</a>
+      <a class="nav-link" href="/portfolio/<%= data.portfolio.id %>">Активы</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="/portfolio/<%= data.portfolio.id %>/trades">Сделки</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="#">Доходность</a>

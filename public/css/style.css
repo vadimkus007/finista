@@ -8,6 +8,10 @@ a {
   color: #00B7FF;
 }
 
+.br-light .nav-item.active {
+  background: red;
+}
+
 table {
     border-collapse: collapse; /* Collapse borders */
     width: 100%; /* Full-width */
@@ -133,6 +137,15 @@ ul.security-diggest li.last {
   margin-bottom: 0.5rem;
 }
 
+.toolbar {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.wrap {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
 
 /*   Star checkbox  */
 input.star {
