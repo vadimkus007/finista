@@ -22,9 +22,11 @@
           </form>
         </div>
         <a class="text-center new-account" href="/signup">Create an account</a>
+        <% if (typeof message !== 'undefined') { %>
         <div class="alert">
           <div class="alert-message"><%= message %></div>
         </div>
+        <% } %>
     </div>
   </div>
 </div>

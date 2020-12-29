@@ -24,7 +24,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title">Стоимость</div>
-                            <div class="card-text">1000</div>
+                            <div class="card-text"><%= Number(data.portfolio.cost).toFixed(2) %></div>
                         </div>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title">Прибыль</div>
-                            <div class="card-text">1000</div>
+                            <div class="card-text"><%= Number(data.portfolio.profit).toFixed(2) %></div>
                         </div>
                     </div>
                 </div>
@@ -41,8 +41,8 @@
                 <div class="col-sm-3">
                     <div class="card">
                         <div class="card-body">
-                            <div class="card-title">Доходность</div>
-                            <div class="card-text">100 %</div>
+                            <div class="card-title">Годовая доходность</div>
+                            <div class="card-text"><%= Number(data.portfolio.annualyield).toFixed(2) %></div>
                         </div>
                     </div>
                 </div>
@@ -51,7 +51,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title">Изменение за день</div>
-                            <div class="card-text">+100</div>
+                            <div class="card-text"><%= Number(data.portfolio.change).toFixed(2) %></div>
                         </div>
                     </div>
                 </div>
@@ -75,24 +75,24 @@
                         <tbody>
                             <tr>
                                 <td>Акции</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><%= data.portfolio.shares.cost.toFixed(2) %></td>
+                                <td><%= data.portfolio.shares.profit.toFixed(2) %></td>
+                                <td><%= data.portfolio.shares.change.toFixed(2) %></td>
+                                <td><%= (100 * Number(data.portfolio.shares.cost) / (Number(data.portfolio.shares.cost) + Number(data.portfolio.etf.cost) + Number(data.portfolio.cashe))).toFixed(2) %></td>
                             </tr>
                             <tr>
                                 <td>ETF/ПИФ</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><%= data.portfolio.etf.cost.toFixed(2) %></td>
+                                <td><%= data.portfolio.etf.profit.toFixed(2) %></td>
+                                <td><%= data.portfolio.etf.change.toFixed(2) %></td>
+                                <td><%= (100 * Number(data.portfolio.etf.cost) / (Number(data.portfolio.shares.cost) + Number(data.portfolio.etf.cost) + Number(data.portfolio.cashe))).toFixed(2) %></td>
                             </tr>
                             <tr>
                                 <td>Рубли</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><%= Number(data.portfolio.cashe).toFixed(2) %></td>
+                                <td>0.00</td>
+                                <td>0.00</td>
+                                <td><%= (100 * Number(data.portfolio.cashe) / (Number(data.portfolio.shares.cost) + Number(data.portfolio.etf.cost) + Number(data.portfolio.cashe))).toFixed(2) %></td>
                             </tr>
                         </tbody>
                     </table>
@@ -113,14 +113,27 @@
                                 <th>Средняя цена</th>
                                 <th>Текущая цена</th>
                                 <th>Стоимость</th>
-                                <th>Курсовая прибыль</th>
+                                <th>Курсовая прибыль, %</th>
                                 <th>Прибыль</th>
-                                <th>Изиенение за день</th>
+                                <th>Изменение за день, %</th>
                                 <th>Доля</th>
                             </tr>
                         </thead>
                         <tbody>
-                            
+                            <% data.shares.forEach(share => { %>
+                                <tr>
+                                    <td><%= share.secid %></td>
+                                    <td><%= share.shortname %></td>
+                                    <td><%= share.amount %></td>
+                                    <td><%= share.meanprice.toFixed(2) %></td>
+                                    <td><%= share.last.toFixed(2) %></td>
+                                    <td><%= share.cost.toFixed(2) %></td>
+                                    <td><%= share.exchangeprofitprcnt.toFixed(2) %></td>
+                                    <td><%= share.profit.toFixed(2) %></td>
+                                    <td><%= share.lasttoprevprice %></td>
+                                    <td><%= share.percentage.toFixed(2) %></td>
+                                </tr>
+                            <% }) %>
                         </tbody>
                     </table>
                 </div>
@@ -140,14 +153,27 @@
                                 <th>Средняя цена</th>
                                 <th>Текущая цена</th>
                                 <th>Стоимость</th>
-                                <th>Курсовая прибыль</th>
+                                <th>Курсовая прибыль, %</th>
                                 <th>Прибыль</th>
-                                <th>Изиенение за день</th>
+                                <th>Изменение за день, %</th>
                                 <th>Доля</th>
                             </tr>
                         </thead>
                         <tbody>
-                            
+                            <% data.etf.forEach(etf => { %>
+                                <tr>
+                                    <td><%= etf.secid %></td>
+                                    <td><%= etf.shortname %></td>
+                                    <td><%= etf.amount %></td>
+                                    <td><%= etf.meanprice.toFixed(2) %></td>
+                                    <td><%= etf.last.toFixed(2) %></td>
+                                    <td><%= etf.cost.toFixed(2) %></td>
+                                    <td><%= etf.exchangeprofitprcnt.toFixed(2) %></td>
+                                    <td><%= etf.profit.toFixed(2) %></td>
+                                    <td><%= etf.lasttoprevprice %></td>
+                                    <td><%= etf.percentage.toFixed(2) %></td>
+                                </tr>
+                            <% }) %>
                         </tbody>
                     </table>
                 </div>

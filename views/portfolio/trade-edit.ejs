@@ -31,7 +31,7 @@
                 <input type="hidden" name="portfolioId" value="<%= data.portfolio.id %>" />
                 <div class="form-inline">
                     <!-- <label for="secid" class="">Тикер компании*</label> -->
-                    <input type="text" id="secid" class="form-control mr-sm-2" name="secid" value="<%= (data.isNew) ? '' : data.trade.secid %>" placeholder="Тикер компании"/>
+                    <input type="text" id="secid" class="form-control mr-sm-2" name="secid" value="<%= (!data.isNew) ? data.trade.secid : '' %>" placeholder="Тикер компании"/>
                     <!-- <label for="type" class="">Тип операции*</label> -->
                     <select name="type" id="type" class="form-control mr-sm-2" onChange="updateForm();">
                         <option value="1" 
@@ -106,7 +106,7 @@
 
                 switch(type) {
                     case '1':
-                        $("#secid").val('');
+                        
                         $("#secid").show();
 
                         $("#operationId option[value=1]").text('Покупка');
