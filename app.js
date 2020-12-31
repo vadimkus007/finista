@@ -15,6 +15,8 @@ var flash = require('connect-flash');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.use(flash());
+
 // For Passport
 app.use(session({ secret: 'keyboard cat',resave: true, saveUninitialized:true})); // session secret
 app.use(passport.initialize());
@@ -30,13 +32,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use(flash());
-
 app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/bootstrap', express.static(path.join(__dirname, '/node_modules/bootstrap/dist/')));
 app.use('/popper', express.static(path.join(__dirname, '/node_modules/popper.js/dist/')));
 app.use('/highcharts', express.static(path.join(__dirname, '/node_modules/highcharts/')));
+app.use('/fontawesome', express.static(path.join(__dirname, '/node_modules/@fortawesome/fontawesome-free/')));
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');

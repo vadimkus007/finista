@@ -22,28 +22,32 @@
     <main role="main">
         <section class="container-fluid">
             <div class="layout raw wrap">
+                
+                <form method="POST" action="/portfolios" class="">
+                     <input type="hidden" id="portfolioId" name="id" value="" />
+
                 <div id="toolbar" class="d-flex justify-content-between">
 
                         <div class="section-title">
                             Портфели
                         </div>
                         <div class="">
-                            <form method="POST" action="/portfolios" class="">
-                            <button type="submit" class="btn-primary btn btn-sm" name="action" value="new">
+                            
+                            <button type="submit" class="btn-primary btn btn-sm" name="action" value="edit">
                                 <div class="btn-content">
                                     Добавить портфель
                                 </div>
                             </button>
-                            </form>
+
                         </div>
 
                 </div>
 
                 <div class="d-flex">
                     <div class="datatable">
-                        <form method="POST" action="/portfolios">
-                            <input type="hidden" id="portfolioId" name="id" value="" />
-                        <table class="portfolios-table">
+
+                           
+                        <table class="">
                             <thead>
                                 <tr>
                                     <th class="text-xs-left" role="columnheader">Название</th>
@@ -72,9 +76,12 @@
                                 <% }) %>
                             </tbody>
                         </table>
-                        </form>
+
                     </div>
                 </div>
+
+            </form>
+
             </div>
         </section>
 

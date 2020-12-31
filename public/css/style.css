@@ -75,34 +75,6 @@ table tr {
     margin-top: 12px;
 }
 
-.filterTable {
-    border-collapse: collapse; /* Collapse borders */
-    width: 100%; /* Full-width */
-    border: 1px solid #ddd; /* Add a grey border */
-}
-
-.filterTable th, .filterTable td {
-    padding: 0.5rem; /* Add padding */
-}
-
-.filterTable th {
-    background-color: #f1f1f1; /* Add a grey background color to the table header */
-}
-
-.filterTable tr:hover {
-    background-color: #f1f1f1;
-}
-
-.filterTable tr {
-    /* Add a bottom border to all table rows */
-    border-bottom: 1px solid #ddd;
-}
-
-.filterTable thead tr, .filterTable thead tr:hover {
-    /* Add a grey background color to the table header and on hover */
-    background-color: #f1f1f1;
-}
-
 .info-security-header {
   min-height: 2rem;
   width: 100%;
@@ -186,11 +158,33 @@ input[type="checkbox"][name="favorite"]:checked + label::before {
   width: 100%;
 }
 
-.portfolios-table {
-  width: 100%;
-}
-
 .section-title {
   font-size: 1.5rem;
+}
+
+.big-num {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+/****** custom styles for currency and percent *****/
+.rub:after {
+  content: ' <i class="fa fa-ruble-sing"></i>';
+}
+
+.percent:after {
+  content: ' %';
+}
+
+.usd:after {
+  content: ' $';
+}
+
+.red {
+  color: red;
+}
+
+.green {
+  color: green;
 }
 

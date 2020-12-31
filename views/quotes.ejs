@@ -59,7 +59,7 @@
 
               </div>
               
-              <table class = "filterTable tsort" id = "filterTable1">
+              <table class = "tsort" id = "filterTable1">
                 <thead>
                   <tr>
                     <th>Тикер</th>
@@ -82,14 +82,18 @@
                       <td><a href = "/quotes/<%= data['stock'][i]['SECID'] %>" ><%= data['stock'][i]['SECID'] %></a></td>
                       <td><%= data['stock'][i]['SHORTNAME'] %></td>
                       <td><%= data['stock'][i]['LAST'] %></td>
-                      <td><span style="
+                      <td>
+                        <span style="
                         <% if(data['stock'][i]['LASTTOPREVPRICE']<0){ %>
                           color:red;
                         <% } %>
                         <% if(data['stock'][i]['LASTTOPREVPRICE']>0){ %>
                           color:green;
                         <% } %>
-                      "> <%= data['stock'][i]['LASTTOPREVPRICE'] %> %</span></td>
+                        "> 
+                        <%= data['stock'][i]['LASTTOPREVPRICE'] %> 
+                        %</span>
+                      </td>
                       <td><%= data['stock'][i]['OPEN'] %></td>
                       <td><%= data['stock'][i]['LOW'] %></td>
                       <td><%= data['stock'][i]['HIGH'] %></td>
@@ -132,14 +136,18 @@
                       <td><a href = "/quotes/<%= data['etf'][i]['SECID'] %>" ><%= data['etf'][i]['SECID'] %></a></td>
                       <td><%= data['etf'][i]['SHORTNAME'] %></td>
                       <td><%= data['etf'][i]['LAST'] %></td>
-                      <td><span style="
+                      <td>
+                        <span style="
                         <% if(data['etf'][i]['LASTTOPREVPRICE']<0){ %>
                           color:red;
                         <% } %>
                         <% if(data['etf'][i]['LASTTOPREVPRICE']>0){ %>
                           color:green;
                         <% } %>
-                      "> <%= data['stock'][i]['LASTTOPREVPRICE'] %> %</span></td>
+                        "> 
+                        <%= data['stock'][i]['LASTTOPREVPRICE'] %> 
+                        %</span>
+                      </td>
                       <td><%= data['etf'][i]['OPEN'] %></td>
                       <td><%= data['etf'][i]['LOW'] %></td>
                       <td><%= data['etf'][i]['HIGH'] %></td>

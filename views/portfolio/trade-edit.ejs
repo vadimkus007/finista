@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Портфель "<%= data.portfolio.title %>": Добавить сделку</title>
+    <title>Портфель: Добавить сделку</title>
     <link href="/css/style.css" rel="stylesheet" />
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 
@@ -59,13 +59,7 @@
                         <% }) %>
                     </select>
                     <label for="date" class="">Дата:*</label>
-                    <input type="date" id="date" class="form-control sm-2" name="date" value="
-                    <% if (!data.isNew) { %>
-                    <%= data.trade.date.toISOString().slice(0,10) %>
-                    <% } else { %>
-                    <%= new Date(Date.now()).toISOString().substring(0,10) %>    
-                    <% } %>
-                    " />
+                    <input type="date" id="date" class="form-control sm-2" name="date" value="<% if (typeof data.date !== 'undefined') { %><% if (typeof data.date == 'object') {%><%=data.date.toISOString().slice(0,10)%><%} else {%><%=data.date%><%}%><%}else{%>2020-01-01<%}%>" />
                     <label for="price" class="" id="labelPrice">Цена:*</label>
                     <input type="text" id="price" class="form-control sm-2" name="price" value="<%= (typeof data.trade !== 'undefined') ? data.trade.price : '' %>" placeholder="Цена" />
                     <label for="amount" class="" id="labelAmount">Количество:*</label>
@@ -83,13 +77,7 @@
                 </div>
 
                 <div class="form-group justify-center">
-                    <button type="submit" class="btn btn-primary btn-sm mr-sm-2" name="action" value="save">
-                        <% if (!data.isNew) { %>
-                        Сохранить
-                        <% } else { %>
-                        Добавить
-                        <% } %>
-                    </button>
+                    <button type="submit" class="btn btn-primary btn-sm mr-sm-2" name="action" value="save">Сохранить</button>
                     <button type="submit" class="btn btn-primary btn-sm" name="action" value="cancel">Отменить</button>
                 </div>
             </form>
@@ -146,6 +134,37 @@
         $(document).ready(function() {
                 updateForm();
         });
+
+        $(document).ready(function(e) {
+
+            function insertAfter(referenceNode, newNode) {
+                referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+            }
+
+            var err = <%if (typeof error !== 'undefined') {%><%- JSON.stringify(error) %><%} else {%><%=null%><%}%>;
+            
+            if (err) {
+
+                for (var i = 0; i<err.errors.length; i++) {
+                    var el_id = err.errors[i].path;
+
+                    var el = document.getElementById(el_id);
+                    el.classList.add("is-invalid");
+                    
+                    var div = document.createElement("div");
+                    div.classList.add("invalid-feedback");
+                    div.innerHTML = err.errors[i].message;
+
+                    insertAfter(el, div);
+
+                    el.addEventListener('change', function (event) {
+                        event.target.classList.remove("is-invalid");
+                        event.target.nextElementSibling.remove();
+                    });
+                }
+
+            }
+        })
     </script>
 
     </body>

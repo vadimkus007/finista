@@ -26,7 +26,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
-        notEmpty: true
+        notEmpty: {
+          msg: 'The field can not be empty'
+        }
       } 
     },
     currency: {
@@ -47,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: '2020-01-01',
-        valudate: {
+        validate: {
           isDate: true
         }
       },

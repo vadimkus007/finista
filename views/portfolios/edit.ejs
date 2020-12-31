@@ -21,14 +21,15 @@
     <main role="main">
         <section class="container-fluid">
             <div class="section-title">
-                <h3>Параметры портфеля</h3>
+                <h3><%= title %></h3>
             </div>
 
             <div class="">
-            <form id="new-portfolio" name="newPortfolio" method="POST" action="/portfolios">
+            <form id="new-portfolio" class="" name="newPortfolio" method="POST" action="/portfolios">
+                <input type="hidden" name="id" value="<%= !isNew ? data.id : '' %>" />
                 <div class="form-group">
                     <label for="title">Название портфеля:</label>
-                    <input class="form-control" id="title" name="title" type="text" value="<%= data.title %>" placeholder="Введите название портфеля"/>
+                    <input class="form-control" id="title" name="title" type="text" value="<%= !isNew ? data.title : '' %>" placeholder="Введите название портфеля" />
                 </div>
                 <div class="form-group row">
                     <label for="currency" class="ml-sm-3 mr-sm-2">Валюта:</label>
@@ -59,13 +60,14 @@
                             </option>
                         </select>
                     <label for="comission" class="mr-sm-2">Комиссия по умолчанию, %:</label>
-                    <input class="mr-sm-2" id="comission" type="text" name="comission" value="<%= data.comission %>" />
+                    <input class="mr-sm-2" id="comission" type="text" name="comission" value="<%= isNew ? '0' : data.comission %>" />
                     <label for="dateopen" class="mr-sm-2">Дата открытия:</label>
-                    <input type="date" id="dateopen" name="dateopen" class="mr-sm-2" value="<%= data.dateopen.toISOString().slice(0,10) %>" />
+                    <input type="date" id="dateopen" name="dateopen" class="mr-sm-2" 
+                        value="<% if (typeof data.dateopen !== 'undefined') { %><% if (typeof data.dateopen == 'object') {%><%=data.dateopen.toISOString().slice(0,10)%><%} else {%><%=data.dateopen%><%}%><%}else{%>2020-01-01<%}%>" />
                 </div>
                 <div class="form-group">
                     <label for="memo">Описание:</label>
-                    <textarea name="memo" class="form-control" placeholder="Описание"></textarea>
+                    <textarea name="memo" class="form-control" placeholder="Описание"><%= !isNew ? data.memo : '' %></textarea>
                 </div>
 
                 <div class="form-group row justify-center">
@@ -79,6 +81,41 @@
 
     <footer>
     </footer>
+
+    <script>
+
+        $(document).ready(function(e) {
+
+            function insertAfter(referenceNode, newNode) {
+                referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+            }
+
+            var err = <%if (typeof error !== 'undefined') {%><%- JSON.stringify(error) %><%} else {%><%=null%><%}%>;
+            
+            if (err) {
+
+                for (var i = 0; i<err.errors.length; i++) {
+                    var el_id = err.errors[i].path;
+
+                    var el = document.getElementById(el_id);
+                    el.classList.add("is-invalid");
+                    
+                    var div = document.createElement("div");
+                    div.classList.add("invalid-feedback");
+                    div.innerHTML = err.errors[i].message;
+
+                    insertAfter(el, div);
+
+                    el.addEventListener('change', function (event) {
+                        event.target.classList.remove("is-invalid");
+                        event.target.nextElementSibling.remove();
+                    });
+                }
+
+            }
+        })
+        
+    </script>
 
     </body>
     

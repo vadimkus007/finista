@@ -12,6 +12,122 @@ exports.action = (req, res, next) => {
         case 'save':
 
             if (req.body.id === '') {
+
+                Trade.findOne({
+                    where: {id: parseInt(req.params.id)},
+                    raw: true
+                })
+                .then(foundOne => {
+
+                    if(!foundOne) {
+                        // Trade create
+                        Trade.create({
+                            portfolioId: parseInt(req.body.portfolioId),
+                            operationId: parseInt(req.body.operationId),
+                            secid: req.body.secid,
+                            price: req.body.price,
+                            amount: parseInt(req.body.amount),
+                            date: req.body.date,
+                            comment: req.body.comment,
+                            comission: (req.body.comission === '') ? 0 : req.body.comission
+                        })
+                        .then(() => {
+                            console.log('New Trade created!');
+                            res.redirect(`/portfolio/${req.params.id}/trades`);
+                        })
+                        .catch(err => {
+
+                            console.log('Error creating Trade: ', err);
+
+                            var data = {};
+                            data.trade = req.body;
+                            data.isNew = false;
+
+                            // find Portfolio
+                            Portfolio.findOne({
+                                where: {
+                                    id: req.params.id
+                                },
+                                raw: true
+                            })
+                            .then(portfolio => {
+                                data.portfolio = portfolio;
+
+                                Operation.findAll({
+                                    raw: true
+                                })
+                                .then(operations => {
+                                    data.operations = operations;
+
+                                    res.render('portfolio/trade-edit', {
+                                        data: data,
+                                        error: err
+                                    });
+
+                                }).catch(err=>console.log('Error reading operations'));
+                            }).catch(err=>console.log('Error reading portfolio'));
+
+                        });
+
+                    } else {
+                        // Trade update
+                        Trade.update({
+                            portfolioId: parseInt(req.body.portfolioId),
+                            operationId: parseInt(req.body.operationId),
+                            secid: req.body.secid,
+                            price: req.body.price,
+                            amount: parseInt(req.body.amount),
+                            date: req.body.date,
+                            comment: req.body.comment,
+                            comission: (req.body.comission === '') ? 0 : req.body.comission
+                        }, {
+                            where: {
+                                id: parseInt(req.body.id)
+                            }
+                        })
+                        .then((rowsUpdated) => {
+                            console.log(`${rowsUpdated} rows updated in Trades`);
+                            res.redirect(`/portfolio/${req.params.id}/trades`);
+                        })
+                        .catch(err => {
+                            console.log('Error updating Trades table: ', err);
+                            
+                            var data = {};
+                            data.trade = req.body;
+                            data.isNew = false;
+
+                            // find Portfolio
+                            Portfolio.findOne({
+                                where: {
+                                    id: req.params.id
+                                },
+                                raw: true
+                            })
+                            .then(portfolio => {
+                                data.portfolio = portfolio;
+
+                                Operation.findAll({
+                                    raw: true
+                                })
+                                .then(operations => {
+                                    data.operations = operations;
+
+                                    res.render('portfolio/trade-edit', {
+                                        data: data,
+                                        error: err
+                                    });
+
+                                }).catch(err=>console.log('Error reading operations'));
+                            }).catch(err=>console.log('Error reading portfolio'));
+
+                        });
+                    }
+
+                })
+
+                
+            } else {
+
                 Trade.create({
                     portfolioId: parseInt(req.body.portfolioId),
                     operationId: parseInt(req.body.operationId),
@@ -23,42 +139,50 @@ exports.action = (req, res, next) => {
                     comission: (req.body.comission === '') ? 0 : req.body.comission
                 })
                 .then(() => {
-                    console.log('VALIDATION success!');
+                    console.log('New Trade created!');
+                    res.redirect(`/portfolio/${req.params.id}/trades`);
                 })
                 .catch(err => {
 
                     console.log('Error creating Trade: ', err);
+                    
 
-                });
-            } else {
-                Trade.update({
-                    portfolioId: parseInt(req.body.portfolioId),
-                    operationId: parseInt(req.body.operationId),
-                    secid: req.body.secid,
-                    price: req.body.price,
-                    amount: parseInt(req.body.amount),
-                    date: req.body.date,
-                    comment: req.body.comment,
-                    comission: (req.body.comission === '') ? 0 : req.body.comission
-                }, {
-                    where: {
-                        id: parseInt(req.body.id)
-                    }
-                })
-                .then((rowsUpdated) => {
-                    console.log(`${rowsUpdated} rows updated in Trades`);
-                })
-                .catch(err => {
-                    console.log('Error updating Trades table: ', err);
+                    var data = {};
+                    data.trade = req.body;
+                    data.isNew = false;
+
+                            // find Portfolio
+                            Portfolio.findOne({
+                                where: {
+                                    id: req.params.id
+                                },
+                                raw: true
+                            })
+                            .then(portfolio => {
+                                data.portfolio = portfolio;
+
+                                Operation.findAll({
+                                    raw: true
+                                })
+                                .then(operations => {
+                                    data.operations = operations;
+
+                                    res.render('portfolio/trade-edit', {
+                                        data: data,
+                                        error: err
+                                    });
+
+                                }).catch(err=>console.log('Error reading operations'));
+                            }).catch(err=>console.log('Error reading portfolio'));
+
                 });
 
             }
 
-            res.redirect(`/portfolio/${req.params.id}/trades`);
             break;
 
         case 'edit':
-
+console.log('REQ.BODY on EDIT: ', req.body);
             var data = {};
 
             if (req.body.id) {
@@ -78,6 +202,7 @@ exports.action = (req, res, next) => {
                     }
 
                     data.portfolio = portfolio;
+                    data.portfolioId = req.params.id;
 
                     // get Trade info
                     Trade.findOne({
@@ -99,7 +224,6 @@ exports.action = (req, res, next) => {
                             res.render('portfolio/trade-edit', {
                                 data: data
                             });
-
                         })
                         .catch(err => {
                             console.log('Error getting Operations: ', err);
@@ -234,45 +358,6 @@ exports.list = (req, res, next) => {
     .catch(err => {
         console.log('Error reading portfolio: ', err)
     });
-
-}
-
-exports.new = (req, res, next) => {
-    
-    var data = {};
-
-    // get portfolio info
-    Portfolio.findOne({
-        where: {id: parseInt(req.params.id)},
-        raw: true
-    })
-    .then(portfolio => {
-        if (portfolio === null) {
-          console.log('Not found!');
-        } 
-
-        data.portfolio = portfolio;
-
-        // Prepare form data
-
-        Operation.findAll({
-            raw: true
-        })
-        .then(operations => {
-            data.operations = operations;
-            //console.log(data);
-            //console.log('params: ', req.params);
-            //console.log('body: ', req.body);
-
-            // render view
-            res.render('portfolio/trade-edit', {
-                data: data
-            }); // render
-        })
-        .catch(err => console.log('Error reading operations: ', err)) // operations
-
-    })
-    .catch(err => {console.log('Error reading portfolio: ', err)}); // portfolio
 
 }
 

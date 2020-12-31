@@ -33,8 +33,6 @@ module.exports = function(app, passport) {
 
     app.get('/portfolios', isLoggedIn, portfoliosController.list);
     app.post('/portfolios', isLoggedIn, portfoliosController.action);
-    app.get('/portfolios/new', isLoggedIn, portfoliosController.new);
-    app.get('/portfolios/edit/:id', isLoggedIn, portfoliosController.edit);
 
     app.get('/operations', operationController.list);
     app.post('/operations', operationController.action);
