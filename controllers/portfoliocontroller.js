@@ -4,7 +4,7 @@ const Trade = models.Trade;
 
 const Moex = require('../lib/moex');
 
-var exports = module.exports = {}
+var exports = module.exports = {};
 
 exports.info = (req, res, next) => {
 

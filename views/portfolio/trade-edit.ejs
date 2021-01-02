@@ -5,9 +5,29 @@
     <link href="/css/style.css" rel="stylesheet" />
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 
+    <!-- MDBootstrap -->
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- MDB -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.0.0/mdb.min.css"
+      rel="stylesheet"
+    />
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="/popper/popper.min.js"></script>
     <script src="/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- MDBootstrap -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.0.0/mdb.min.js"></script>
   </head>
 
   <body>
@@ -26,13 +46,11 @@
             </div>
 
             <div class="">
-            <form id="new-trade" name="newTrade" method="POST" action="/portfolio/<%= data.portfolio.id %>/trades" class="form">
+            <form id="new-trade" name="newTrade" method="POST" action="/portfolio/<%= data.portfolio.id %>/trades" class="form needs-validation">
                 <input type="hidden" id="id" name="id" value="<%= (!data.isNew) ? data.trade.id : '' %>" />
                 <input type="hidden" name="portfolioId" value="<%= data.portfolio.id %>" />
-                <div class="form-inline">
-                    <!-- <label for="secid" class="">Тикер компании*</label> -->
-                    <input type="text" id="secid" class="form-control mr-sm-2" name="secid" value="<%= (!data.isNew) ? data.trade.secid : '' %>" placeholder="Тикер компании"/>
-                    <!-- <label for="type" class="">Тип операции*</label> -->
+                <div class="form-group">
+                    <label for="type">Тип сделки:</label>
                     <select name="type" id="type" class="form-control mr-sm-2" onChange="updateForm();">
                         <option value="1" 
                             <% if (typeof data.trade !== 'undefined' && data.trade.secid !== data.portfolio.currency) { %>
@@ -44,6 +62,11 @@
                             selected="selected"
                             <% } %>
                         >Деньги</option>
+                    </select>
+                    <!-- <label for="secid" class="">Тикер компании*</label> -->
+                    <label for="secid">Тикер:</label>
+                    <select name="secid" class="form-control mr-sm-2" id="secid" searchable="Search here..">
+                        <option value="" disabled selected>Выберите бумагу</option>
                     </select>
                 </div>
                 
@@ -80,6 +103,7 @@
                     <button type="submit" class="btn btn-primary btn-sm mr-sm-2" name="action" value="save">Сохранить</button>
                     <button type="submit" class="btn btn-primary btn-sm" name="action" value="cancel">Отменить</button>
                 </div>
+
             </form>
             </div>
         </section>
@@ -89,6 +113,7 @@
     </footer>
 
     <script>
+
         function updateForm() {
             var type = $("#type :selected").val();
 
@@ -96,6 +121,8 @@
                     case '1':
                         
                         $("#secid").show();
+                        $("secid").empty();
+                        buildSelect();
 
                         $("#operationId option[value=1]").text('Покупка');
                         $("#operationId option[value=2]").text('Продажа');
@@ -112,8 +139,9 @@
 
                         break;
                     case '2':
-                        $("#secid").val('RUB');
-                        $("#secid").hide();
+                        $("#secid").empty();
+                        $("#secid").append('<option value="RUB" selected="selected">Деньги</option>');
+                        // $("#secid").hide();
 
                         $("#operationId option[value=1]").text('Внести');
                         $("#operationId option[value=2]").text('Вывести');
@@ -130,16 +158,38 @@
                 }
         }
 
+        function buildSelect() {
+
+            const securities = <%- JSON.stringify(data.securities) %>
+
+            $("#secid").empty();
+            $("#secid").append('<option value="" disabled selected>Выберите бумагу</option>');
+             // construct options for secid select
+            securities.forEach(function(security) {
+                $("#secid").append('<option value="'+security.secid+'">'+security.secid+' ('+security.name+') ('+security.group+')</option>')
+            })
+
+            var secid = <%if (typeof data.trade !== 'undefined') {%><%- JSON.stringify(data.trade.secid) %><%} else {%><%=null%><%}%>
+
+            $("#secid option[value='"+secid+"']").attr("selected","selected");
+        }
 
         $(document).ready(function() {
+
+                
+                buildSelect();
                 updateForm();
         });
 
+    </script>
+
+    <script>
         $(document).ready(function(e) {
 
             function insertAfter(referenceNode, newNode) {
                 referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
             }
+
 
             var err = <%if (typeof error !== 'undefined') {%><%- JSON.stringify(error) %><%} else {%><%=null%><%}%>;
             
@@ -166,6 +216,8 @@
             }
         })
     </script>
+    
+    
 
     </body>
     

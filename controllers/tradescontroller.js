@@ -2,8 +2,39 @@ const models = require('../models');
 const Portfolio = models.Portfolio;
 const Trade = models.Trade;
 const Operation = models.Operation;
+const Moex = require('../lib/moex');
 
 var exports = module.exports = {}
+
+var getSecurities = function(cb) {
+
+    const urls = [
+        'http://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities.json?iss.meta=off&iss.only=securities&securities.columns=SECID,SHORTNAME',
+        'http://iss.moex.com/iss/engines/stock/markets/foreignshares/boards/FQBR/securities.json?iss.meta=off&iss.only=securities&securities.columns=SECID,SHORTNAME',
+        'http://iss.moex.com/iss/engines/stock/markets/shares/boards/TQTF/securities.json?iss.meta=off&iss.only=securities&securities.columns=SECID,SHORTNAME'
+    ];
+
+    let promises = urls.map(index => Moex.fetchJSON(index));
+    Promise.all(promises)
+    .then(results => {
+        let data = [];
+        for (var i = 0; i<results.length; i++) {
+            results[i].securities.data.forEach(record => {
+                let newRecord = {};
+                newRecord['secid'] = record[0];
+                newRecord['name'] = record[1];
+                if (i === 2) {
+                    newRecord['group'] = 'ETF/ПИФ';
+                } else {
+                    newRecord['group'] = 'Акции';
+                }
+                data.push(newRecord);
+            });
+        }
+        cb(null, data);
+    })
+    .catch(err => console.log(err));
+}
 
 exports.action = (req, res, next) => {
     
@@ -11,16 +42,17 @@ exports.action = (req, res, next) => {
 
         case 'save':
 
-            if (req.body.id === '') {
+            if (req.body.id !== '') {
 
                 Trade.findOne({
-                    where: {id: parseInt(req.params.id)},
+                    where: {id: parseInt(req.body.id)},
                     raw: true
                 })
                 .then(foundOne => {
 
                     if(!foundOne) {
                         // Trade create
+
                         Trade.create({
                             portfolioId: parseInt(req.body.portfolioId),
                             operationId: parseInt(req.body.operationId),
@@ -59,9 +91,15 @@ exports.action = (req, res, next) => {
                                 .then(operations => {
                                     data.operations = operations;
 
-                                    res.render('portfolio/trade-edit', {
-                                        data: data,
-                                        error: err
+                                    // get securities for list
+                                    getSecurities((err_secid, securities) => {
+                                        data.securities = securities;
+                                        // render view
+
+                                        res.render('portfolio/trade-edit', {
+                                            data: data,
+                                            error: err
+                                        });                           
                                     });
 
                                 }).catch(err=>console.log('Error reading operations'));
@@ -70,6 +108,7 @@ exports.action = (req, res, next) => {
                         });
 
                     } else {
+
                         // Trade update
                         Trade.update({
                             portfolioId: parseInt(req.body.portfolioId),
@@ -112,9 +151,15 @@ exports.action = (req, res, next) => {
                                 .then(operations => {
                                     data.operations = operations;
 
-                                    res.render('portfolio/trade-edit', {
-                                        data: data,
-                                        error: err
+                                    // get securities for list
+                                    getSecurities((err_secid, securities) => {
+                                        data.securities = securities;
+                                        // render view
+
+                                        res.render('portfolio/trade-edit', {
+                                            data: data,
+                                            error: err
+                                        });                           
                                     });
 
                                 }).catch(err=>console.log('Error reading operations'));
@@ -167,9 +212,15 @@ exports.action = (req, res, next) => {
                                 .then(operations => {
                                     data.operations = operations;
 
-                                    res.render('portfolio/trade-edit', {
-                                        data: data,
-                                        error: err
+                                    // get securities for list
+                                    getSecurities((err_secid, securities) => {
+                                        data.securities = securities;
+                                        // render view
+
+                                        res.render('portfolio/trade-edit', {
+                                            data: data,
+                                            error: err
+                                        });                           
                                     });
 
                                 }).catch(err=>console.log('Error reading operations'));
@@ -182,101 +233,88 @@ exports.action = (req, res, next) => {
             break;
 
         case 'edit':
-console.log('REQ.BODY on EDIT: ', req.body);
-            var data = {};
 
+            var data = {};
+            var promises = [];
+            var func = [];
+            
             if (req.body.id) {
 
                 // EDIT form
 
-                data.isNew = false;
-
-                // get portfolio info
-                Portfolio.findOne({
+                func = Portfolio.findOne({
                     where: {id: parseInt(req.params.id)},
                     raw: true
-                })
-                .then(portfolio => {
-                    if (portfolio === null) {
-//                        console.log('Portfolio not found!');
-                    }
+                });
+                promises.push(func); // portfolio -> [0]
 
-                    data.portfolio = portfolio;
-                    data.portfolioId = req.params.id;
+                func = Trade.findOne({
+                    where: {id: parseInt(req.body.id)},
+                    raw: true
+                });
+                promises.push(func); // trade -> [1]
 
-                    // get Trade info
-                    Trade.findOne({
-                        where: {id: parseInt(req.body.id)},
-                        raw: true
-                    })
-                    .then(trade => {
+                func = Operation.findAll({
+                    raw: true
+                });
+                promises.push(func); // operations -> [2]
 
-                        data.trade = trade;
+                // perform database search
+                Promise.all(promises)
+                .then(result => {
+                    data.portfolio = result[0];
+                    data.trade = result[1];
+                    data.operations = result[2];
+                    data.isNew = false;
 
-                        // get Operations for form construction
-                        Operation.findAll({
-                            raw: true
-                        })
-                        .then(operations => {
-                            data.operations = operations;
-
-                            // render view
-                            res.render('portfolio/trade-edit', {
-                                data: data
-                            });
-                        })
-                        .catch(err => {
-                            console.log('Error getting Operations: ', err);
-                        }); // operations
-                    })
-                    .catch(err => {
-                        console.log('Error getting Trade: ', err)
-                    }); // trade
+                    // get securities for list
+                    getSecurities((err, securities) => {
+                        data.securities = securities;
+                        // render view
+                        res.render('portfolio/trade-edit', {
+                            data: data
+                        });                           
+                    });
                 })
                 .catch(err => {
-                    console.log('Error getting Portfolio: ', err);
-                }); // portfolio
+                    console.log('Error reading database: ', err);
+                });
 
             } else {
 
                 // CREATE form
 
-                data.isNew = true;
-
-                // get portfolio info
-                Portfolio.findOne({
+                func = Portfolio.findOne({
                     where: {id: parseInt(req.params.id)},
                     raw: true
-                })
-                .then(portfolio => {
-                    if (portfolio === null) {
-                        console.log('Portfolio not found!');
-                    }
+                });
+                promises.push(func); // portfolio [0]
+                func = Operation.findAll({
+                    raw: true
+                });
+                promises.push(func); // operations [1]
 
-                    data.portfolio = portfolio;
 
-                    // get Operations for form construction
-                    Operation.findAll({
-                        raw: true
-                    })
-                    .then(operations => {
-                        data.operations = operations;
+                Promise.all(promises)
+                .then(result => {
+                    data.portfolio = result[0];
+                    data.operations = result[1];
+                    data.isNew = true;
 
-// console.log(data);
-
+                    // get securities for list
+                    getSecurities((err, securities) => {
+                        data.securities = securities;
                         // render view
                         res.render('portfolio/trade-edit', {
                             data: data
-                        });
-
-                    })
-                    .catch(err => {
-                        console.log('Error getting Operations: ', err);
-                    }); // operations
+                        });                           
+                    });
+                    
+                    
                 })
                 .catch(err => {
-                    console.log('Error getting Portfolio: ', err);
-                }); // portfolio
+                    console.log('Error reading database: ', err);
+                })
             }
 
             break;
@@ -310,20 +348,13 @@ exports.list = (req, res, next) => {
 
     var data = {};
 
-    // get portfolio info
-    Portfolio.findOne({
+    var promises = [];
+    let func = Portfolio.findOne({
         where: {id: parseInt(req.params.id)},
         raw: true
-    })
-    .then(portfolio => {
-        if (portfolio === null) {
-          console.log('Not found!');
-        } 
-
-        data.portfolio = portfolio;
-        
-        // get Trades
-        Trade.findAll({
+    });
+    promises.push(func); // portfolio
+    func = Trade.findAll({
             where: {
                 portfolioId: req.params.id
             },
@@ -331,33 +362,30 @@ exports.list = (req, res, next) => {
                 {
                     model: Operation,
                     as: 'operation',
-                    required: false 
+                    required: false   // LEFT JOIN
                 }
             ],
             order: [
                 ['date', 'DESC']
             ],
             raw: true
-        })
-        .then(rows => {
+        });
+    promises.push(func); // trades
 
-            data.trades = rows;
+    Promise.all(promises)
+    .then(results => {
+        data.portfolio = results[0];
+        data.trades = results[1];
 
-            // render view
-            res.render('portfolio/trades', {
-                data: data
-            });
-
-
-        })
-        .catch(err => {
-            console.log('Error reading trades: ', err)
+        // render view
+        res.render('portfolio/trades', {
+            data: data
         });
 
     })
     .catch(err => {
-        console.log('Error reading portfolio: ', err)
-    });
+        console.log('Error reading database: ', err);
+    })
 
 }
 
