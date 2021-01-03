@@ -270,6 +270,87 @@ exports.info = (req, res, next) => {
 
                         data.portfolio.annualyield = 100 * (365/days) * data.portfolio.profit / total_cashe_in;
 
+// ***** HISTORY data on portfolio price
+/*
+// console.log('total_shares', total_shares);
+//console.log('data', data);
+
+                        let promises = [];
+                        let sharesKeys = [];
+                        for (key in total_shares) {
+                            promises.push(Moex.getHistoryFromDate(
+                                total_shares[key].secid,
+                                total_shares[key].boardid,
+                                total_shares[key].market,
+                                total_shares[key].engine,
+                                data.portfolio.dateopen.toISOString().slice(0,10)
+                            ));
+                            sharesKeys.push(total_shares[key].secid);
+                        }
+
+                        Promise.all(promises)
+                        .then(results => {
+                            // process results
+                            
+                            for (var i=0;i<results.length;i++) {
+                                results[i].forEach(row => {
+                                    let obj = {};
+                                    obj[row[0]] = row[1];
+                                    row.push(obj);
+                                    row.splice(0,2);
+                                });
+                            };
+
+                            let max = 0;
+                            for (var i=0;i<results.length;i++) {
+                                if (results.length > max) {max = results.length};
+                            }
+                            // set max column to first
+
+                            // get trades for portfolio
+
+                            Trade.findAll({
+                                where: {
+                                    portfolioId: parseInt(data.portfolio.id)
+                                },
+                                raw: true,
+                                order: [
+                                    ['date', 'ASC']
+                                ]
+                            })
+                            .then(trades => {
+                                // console.log(trades);
+
+                                // process portfolio cost
+
+                                // initial settings
+                                var history = [];
+                                console.log('results[0]', results[0]);
+                                console.log('trades', trades);
+
+                                for (var i = 0; i<results[0].length; i++) {
+
+                                }
+
+
+                                // render view
+                                res.render('portfolio/index', {
+                                    data: data
+                                });
+
+                            })
+                            .catch(err => console.log(err));
+
+                            
+
+                        })
+                        .catch(err => console.log(err));
+
+
+                        
+*/
+// ***** HISTORY data on portfolio price
+
                         // render view
                         res.render('portfolio/index', {
                             data: data

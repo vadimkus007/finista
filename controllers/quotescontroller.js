@@ -118,16 +118,16 @@ exports.info = (req, res, next) => {
 
             // get History data
             Moex.getHistory(data.secid, data.boardid, data.market, data.engine,  (err, result) => {
-                
+
                 var candles = [];
                 result.forEach(items => {
                     items.forEach(item => {
-                        item[0] = Date.parse(item[0]);
+                        item[0] = Date.parse(item[0]); // Date in milliseconds format
                         candles.push(item);
                     });
                 });
                 
-                data['candles'] = candles;
+                data['candles'] = candles; // [ date, price ] format
 
                 // Dividends
                 Moex.getCustom(`https://iss.moex.com/iss/securities/${data['SECID']}/dividends.json?iss.meta=off&dividends.columns=registryclosedate,value`, (err, result) => {
@@ -170,6 +170,12 @@ exports.info = (req, res, next) => {
                             if (rows) {
                                 if (rows['secid'] === data['SECID']) {favorite = true};
                             }
+
+/*
+Moex.getHistoryFromDate('AFLT', 'TQBR', 'shares', 'stock', '2020-07-13', (err, result) => {
+    console.log(result);
+});
+*/
 
                             res.render('quote', {
                                 title: 'Информация об инструменте', 
