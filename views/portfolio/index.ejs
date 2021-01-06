@@ -5,14 +5,6 @@
     <link rel='stylesheet' href='/css/style.css' />
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/fontawesome/css/all.css">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="/popper/popper.min.js"></script>
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
-
-    <script defer src="/fontawesome/js/brands.js"></script>
-    <script defer src="/fontawesome/js/solid.js"></script>
-    <script defer src="/fontawesome/js/fontawesome.js"></script>
   </head>
 
   <body>
@@ -48,10 +40,10 @@
                 <div class="col-sm-3">
                     <div class="card">
                         <div class="card-body">
-                            <div class="card-title">Годовая доходность</div>
+                            <div id="xirr" class="card-title" data-toggle="tooltip" title="Внутренняя ставка доходности (XIRR) портфеля">Годовая доходность</div>
                             <div class="card-text big-num percent 
-                            <% if (Number(data.portfolio.annualyield) > 0) { %> green<%} else {%> red <%}%>
-                            "><%= Number(data.portfolio.annualyield).toFixed(2) %></div>
+                            <% if (Number(data.portfolio.xirr) > 0) { %> green<%} else {%> red <%}%>
+                            "><%= Number(data.portfolio.xirr).toFixed(2) %></div>
                         </div>
                     </div>
                 </div>
@@ -214,6 +206,18 @@
 
     <footer>
     </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="/popper/popper.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script defer src="/fontawesome/js/brands.js"></script>
+    <script defer src="/fontawesome/js/solid.js"></script>
+    <script defer src="/fontawesome/js/fontawesome.js"></script>
+
+    <script>
+        $('[data-toggle="tooltip"]').tooltip();
+    </script>
 
     </body>
     

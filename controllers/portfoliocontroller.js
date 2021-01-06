@@ -7,6 +7,8 @@ const Moex = require('../lib/moex');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 
+var xirr = require('xirr');
+
 var exports = module.exports = {};
 
 exports.info = (req, res, next) => {
@@ -110,6 +112,17 @@ exports.info = (req, res, next) => {
         return Promise.all(promises)
     }
 
+    /* get price of portfolio on date
+
+    */
+    const getPortfolioPrice = function(id, date) {
+
+        return new Promise((resolve, reject) => {
+            var secids = [];
+            getSecids()
+        })
+    }
+
     
 
     //***********************************************************************************************
@@ -119,6 +132,8 @@ exports.info = (req, res, next) => {
     var total_cashe_out = 0;
     var now = new Date().toISOString().slice(0,10);
     var date = now;
+
+    var renderdata = {};
 
     getPortfolio(parseInt(req.params.id))
     .then(portfolio => {
@@ -145,7 +160,7 @@ exports.info = (req, res, next) => {
         data.marketdata = marketdata;
 
         // calculate data and prepare for render
-        var renderdata = {};
+        
         
         renderdata.portfolio = data.portfolio;
 
@@ -162,8 +177,6 @@ exports.info = (req, res, next) => {
             securities[trade.secid]['amount'] = 0;
             securities[trade.secid]['dividends'] = 0;
         });
-
-console.log('TRADES: ',data.trades);
 
         // calculate securities data
         data.trades.forEach(trade => {
@@ -185,7 +198,6 @@ console.log('TRADES: ',data.trades);
 
         //calculate cashe
         for (key in securities) {
-            console.log(key);
             if (key == 'RUB') {
                 cashe = cashe + securities[key].buy - securities[key].sell;
             } else {
@@ -315,6 +327,57 @@ console.log('TRADES: ',data.trades);
                         days = Math.ceil(days/(1000*60*60*24));
 
                         renderdata.portfolio.annualyield = 100 * (365/days) * renderdata.portfolio.profit / data.portfolio.casheIn;
+
+// calculation of xirr
+
+        return Trade.findAll({
+            attributes: [
+                'date',
+                'operationId',
+                'price',
+                'amount',
+                'comission' 
+            ],
+            where: {
+                portfolioId: data.portfolio.id,
+                secid: 'RUB'
+            },
+            order: [
+                ['date', 'ASC']
+            ],
+            raw: true
+        })
+    })
+    .then(rubs => {
+        
+        var args = [];
+        rubs.forEach(rub => {
+            if (rub.operationId == 1) {
+                let row = {
+                    amount: Number(rub.comission) - (Number(rub.price) * Number(rub.amount)),
+                    when: rub.date
+                }
+                args.push(row);
+            } else if (rub.operationId == 2) {
+                let row = {
+                    amount: (Number(rub.price) * Number(rub.amount)) - Number(rub.comission),
+                    when: rub.date
+                }
+                args.push(row);
+            }
+        });
+        let row = {
+            amount: Number(data.portfolio.cost), 
+            when: new Date()
+        };
+        args.push(row);
+
+        var rate = xirr(args);
+
+        data.portfolio['xirr'] = rate * 100;
+        renderdata.portfolio.xirr = data.portfolio.xirr.toFixed(2);
+
+
 
                         // render
                         res.render('portfolio/index', {
