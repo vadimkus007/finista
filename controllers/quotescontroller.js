@@ -6,6 +6,60 @@ const Favorite = models.Favorite;
 
 var exports = module.exports = {}
 
+
+// get Board Info e.g. engine, market, board, secid
+const getBoardInfo = function(secid) {
+    let urls = [];
+    let url = `http://iss.moex.com/iss/securities/${secid}.json?iss.meta=off&iss.only=boards&boards.columns=secid,boardid,market,engine`;
+    urls.push(url);
+
+    let promises = urls.map(index => Moex.fetchJSON(index));
+   return Promise.all(promises)
+}
+
+// get security info
+const getSecurityInfo = function(boards) {
+    let urls = [];
+        let url = `http://iss.moex.com/iss/engines/${boards.engine}/markets/${boards.market}/boards/${boards.boardid}/securities/${boards.secid}.json?iss.meta=off&iss.only=securities,marketdata`;
+        urls.push(url);
+
+        let promises = urls.map(index => Moex.fetchJSON(index));
+        return Promise.all(promises)
+}
+
+//get history
+const getHistory = function(boards, from, till, start) {
+    let baseURL = `http://iss.moex.com/iss/history/engines/${boards.engine}/markets/${boards.market}/boards/${boards.boardid}/securities/${boards.secid}.json?iss.meta=off&history.columns=TRADEDATE,CLOSE`;
+
+    // get dates from 3 year before to today
+    var today = new Date();
+    var start = new Date();
+    start= start.setMonth(start.getMonth() - 36); // -3 years from
+
+    baseURL = baseURL + '&from=' + formatDate(start) + '&till=' + formatDate(today);
+        
+    let total = 1080;
+    let pagesize = 100;
+
+    let urls = [];
+    for (var i = 0; i < total; i = i+pagesize) {
+        urls.push(baseURL + '&start=' + String(i));
+    }
+
+    let promises = urls.map(url => Moex.fetchJSON(url));
+
+    var data = [];
+    let histories = {};
+            
+    return Promise.all(promises)
+}
+
+// get dividends
+const getDividends = function(secid) {
+    let urls = [`https://iss.moex.com/iss/securities/${secid}/dividends.json?iss.meta=off&dividends.columns=registryclosedate,value`];
+    let promises = urls.map(url => Moex.fetchJSON(url));
+}
+
 exports.list = (req, res, next) => {
     
     var result = {};
@@ -76,125 +130,118 @@ exports.info = (req, res, next) => {
     var data = {};
     data.secid = req.params.secid;
 
-
-    var secid = req.params.secid;
-    var markets = '';
-    var engines = '';
-    var boards = '';
-
     var user = 0;
     if (req.isAuthenticated()) {
         user = req.session.passport.user;
     };
 
     // Get boards info e.g. engines, markets, boards 
-    let urls = [];
     let url = `http://iss.moex.com/iss/securities/${data.secid}.json?iss.meta=off&iss.only=boards&boards.columns=secid,boardid,market,engine`;
-    urls.push(url);
 
-    let promises = urls.map(index => Moex.fetchJSON(index));
-    Promise.all(promises)
+    Moex.fetchJSON(url)
     .then(result => {
-        for (key in result[0].boards.columns) {
-            data[result[0].boards.columns[key]] = result[0].boards.data[0][key];
+        for (key in result.boards.columns) {
+            data[result.boards.columns[key]] = result.boards.data[0][key];
         }
 
         // get security info
-        let urls = [];
         let url = `http://iss.moex.com/iss/engines/${data.engine}/markets/${data.market}/boards/${data.boardid}/securities/${data.secid}.json?iss.meta=off&iss.only=securities,marketdata`;
-        urls.push(url);
+        return Moex.fetchJSON(url)
+    })
+    .then(row => {
 
-        let promises = urls.map(index => Moex.fetchJSON(index));
-        Promise.all(promises)
-        .then(row => {
+        // parse obtained data
+        for (key in row.securities.columns) {
+            data[row.securities.columns[key]] = row.securities.data[0][key];
+        }
+        for (key in row.marketdata.columns) {
+            data[row.marketdata.columns[key]] = row.marketdata.data[0][key];
+        }
 
-            // parse obtained data
-            for (key in row[0].securities.columns) {
-                data[row[0].securities.columns[key]] = row[0].securities.data[0][key];
-            }
-            for (key in row[0].marketdata.columns) {
-                data[row[0].marketdata.columns[key]] = row[0].marketdata.data[0][key];
-            }
+        // get History data
+        return Moex.getHistory(data.secid, data.boardid, data.market, data.engine)
+    })
 
-            // get History data
-            Moex.getHistory(data.secid, data.boardid, data.market, data.engine,  (err, result) => {
+    .then(result => {
 
-                var candles = [];
-                result.forEach(items => {
-                    items.forEach(item => {
-                        item[0] = Date.parse(item[0]); // Date in milliseconds format
-                        candles.push(item);
-                    });
-                });
+        var candles = [];
+        result.forEach(items => {
+            items.forEach(item => {
+                item[0] = Date.parse(item[0]); // Date in milliseconds format
+                candles.push(item);
+            });
+        });
                 
-                data['candles'] = candles; // [ date, price ] format
+        data['candles'] = candles; // [ date, price ] format
+
 
                 // Dividends
-                Moex.getCustom(`https://iss.moex.com/iss/securities/${data['SECID']}/dividends.json?iss.meta=off&dividends.columns=registryclosedate,value`, (err, result) => {
+                // Moex.getCustom(`https://iss.moex.com/iss/securities/${data['SECID']}/dividends.json?iss.meta=off&dividends.columns=registryclosedate,value`, (err, result) => {
+
+        return Moex.fetchJSON(`https://iss.moex.com/iss/securities/${data['SECID']}/dividends.json?iss.meta=off&dividends.columns=registryclosedate,value`)
+    })
+    .then(result => {
                     
-                    data['dividends'] = result['dividends']['data'];
+        data['dividends'] = result['dividends']['data'];
 
-                    // get prices to given dates
-                    let urls = [];
-                    let baseURL = `http://iss.moex.com/iss/history/engines/${data.engine}/markets/${data.market}/boards/${data.boardid}/securities/${data.secid}.json?iss.meta=off&history.columns=TRADEDATE,CLOSE`;
+        // get prices to given dates
+        let urls = [];
+        let baseURL = `http://iss.moex.com/iss/history/engines/${data.engine}/markets/${data.market}/boards/${data.boardid}/securities/${data.secid}.json?iss.meta=off&history.columns=TRADEDATE,CLOSE`;
                     
-                    data['dividends'].forEach(item => {
-                        urls.push(baseURL + '&from=' + item[0] + '&till=' + item[0]);
-                    });
+        data['dividends'].forEach(item => {
+            urls.push(baseURL + '&from=' + item[0] + '&till=' + item[0]);
+        });
 
-                    let promises = urls.map(url => Moex.fetchJSON(url));
+        let promises = urls.map(url => Moex.fetchJSON(url));
 
-                    Promise.all(promises).then(responses => {
-                        for (var i = 0; i < responses.length; i++) {
-                            if (responses[i]['history']['data'].length > 0) {
-                                data['dividends'][i].push(responses[i]['history']['data'][0][1]);
-                            } else {
-                                data['dividends'][i].push('');
-                            }
-                            let div = data['dividends'][i][1];
-                            let price = data['dividends'][i][2];
-                            let dy = 100 * div / price;
+        return Promise.all(promises)
+    })
+    .then(responses => {
+        for (var i = 0; i < responses.length; i++) {
+            if (responses[i]['history']['data'].length > 0) {
+                data['dividends'][i].push(responses[i]['history']['data'][0][1]);
+            } else {
+                data['dividends'][i].push('');
+            }
+            let div = data['dividends'][i][1];
+            let price = data['dividends'][i][2];
+            let dy = 100 * div / price;
 
-                            data['dividends'][i].push(dy.toFixed(1));
-                        };
+            data['dividends'][i].push(dy.toFixed(1));
+        };
 
                         // get Favorite info
 
-                        Favorite.findOne({
+        return Favorite.findOne({
                             where: {userId: user, secid: data['SECID']},
                             raw: true
-                        }).then((rows) => {
+                        })
+    })
+    .then((rows) => {
 
-                            let favorite = false;
+        let favorite = false;
 
-                            if (rows) {
-                                if (rows['secid'] === data['SECID']) {favorite = true};
-                            }
+        if (rows) {
+            if (rows['secid'] === data['SECID']) {favorite = true};
+        }
 
 /*
 Moex.getHistoryFromDate('AFLT', 'TQBR', 'shares', 'stock', '2020-07-13', (err, result) => {
     console.log(result);
 });
 */
+//console.log('DATA', data);
+        res.render('quote', {
+            title: 'Информация об инструменте', 
+            user: user,
+            favorite: favorite,
+            data: data
+        });  // render
 
-                            res.render('quote', {
-                                title: 'Информация об инструменте', 
-                                user: user,
-                                favorite: favorite,
-                                data: data
-                            });  // render
 
+    })
+    .catch(err => console.log('Error getting request from MOEX: ', err));
 
-                        }).catch(err => console.log('Error getting request from MOEX: ', err));
-
-                        
-
-                    }).catch(err => console.log('Error getting request from MOEX: ', err));
-
-                }); // Dividends
-            }); // History
-        }).catch(err => console.log('Error getting request from MOEX: ', err)); // Security info
-    }).catch(error => console.log('Error getting request from MOEX: ', error)); // Board info
 }
 
 exports.favorite = (req, res, next) => {
@@ -215,7 +262,8 @@ exports.favorite = (req, res, next) => {
                     where: {
                         id: row['id']
                     }
-                }).then(count => {console.log('Record successfully deleted.')})
+                })
+                .then(count => {console.log('Record successfully deleted.')})
                 .catch(err => console.log('Error: ', err));
             } else {
                 // Add new favorite
