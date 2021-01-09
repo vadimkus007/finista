@@ -199,6 +199,13 @@
                     </table>
                 </div>
             </section>
+
+            <section class="row flex-column wrap">
+                <div class="section-title">
+                    Стоимость портфеля
+                </div>
+                <div id="highcharts" style="height: 400px; min-width: 310px"></div>
+            </section>
         
         </div>
 
@@ -217,6 +224,38 @@
 
     <script>
         $('[data-toggle="tooltip"]').tooltip();
+    </script>
+
+    <!-- Highcharts -->
+    <script src="https://code.highcharts.com/stock/highstock.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/data.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/stock/modules/export-data.js"></script>
+    <script>
+        Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function (chart_data) {
+            var history = <%- JSON.stringify(data.history) %>;
+
+            alert(history);
+
+        // Create the chart
+            Highcharts.stockChart('highcharts', {
+                rangeSelector: {
+                    selected: 5
+                },
+
+                title: {
+                    text: 'Стоимость портфеля'
+                },
+
+                series: [{
+                    name: 'history',
+                    data: history,
+                    tooltip: {
+                        valueDecimals: 2
+                    }
+                }]
+            });
+        });
     </script>
 
     </body>

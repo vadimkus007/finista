@@ -86,7 +86,7 @@
                         <% }) %>
                     </select>
                     <label for="date" class="">Дата:*</label>
-                    <input type="date" id="date" class="form-control sm-2" name="date" value="<% if (typeof data.date !== 'undefined') { %><% if (typeof data.date == 'object') {%><%=data.date.toISOString().slice(0,10)%><%} else {%><%=data.date%><%}%><%}else{%>2020-01-01<%}%>" />
+                    <input type="date" id="date" class="form-control sm-2" name="date" value="<% if (typeof data.date !== 'undefined') { %><% if (typeof data.date == 'object') {%><%=data.date.toISOString().slice(0,10)%><%} else {%><%=data.date%><%}%><%}else{var now = new Date().toISOString().slice(0,10)%><%=now%><%}%>" />
                     <label for="price" class="" id="labelPrice">Цена:*</label>
                     <input type="text" id="price" class="form-control sm-2" name="price" value="<%= (typeof data.trade !== 'undefined') ? data.trade.price : '' %>" placeholder="Цена" />
                     <label for="amount" class="" id="labelAmount">Количество:*</label>
