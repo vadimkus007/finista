@@ -1,97 +1,62 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/css/style.css' />
-    <!-- Bootstrap core CSS -->
-    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/tsort.css" rel="stylesheet"> 
-    <!-- <link href="/bootstrap-table/bootstrap-table.min.css" rel="stylesheet"> -->
 
-    <!-- Подключаем jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Подключаем плагин Popper (необходим для работы компонента Dropdown и др.) -->
-    <script src="/popper/popper.min.js"></script>
-    <!-- Подключаем Bootstrap -->
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
+<% layout('layout/page') %>
+<% stylesheet('vendor/datatables/dataTables.bootstrap4.min.css') -%>
+<% script('vendor/datatables/jquery.dataTables.min.js') %>
+<% script('vendor/datatables/dataTables.bootstrap4.min.js') %>
+<% script('js/favoritesTable.js') %>
+<% block('title', 'Избранное') %>
+<% block('menu', 'favorites') %>
 
-    <script src="/js/main.js"></script>
-  </head>
-
-  <body>
-    <header>
-      <% include menu %>
-    </header>
-    <main role="main">
-
-      <div class="container-fluid">
-
-      <form method="POST" action="/favorites" class="">
+<form method="POST" action="/favorites" class="">
         
-        <div id="toolbar" role="toolbar" class="toolbar d-flex justify-content-between">
-
-                        <div class="section-title">
-                            Избранное
+  
+          
+                  
+                  <div id="toolbar" class="toolbar row" role="toolbar">
+                      <div class="">
+                                <button type="submit" class="btn-primary btn btn-sm" name="action" value="delete" onClick="confirm('Удалить выбранные инструменты?');">
+                                    <div class="btn-content">
+                                        Удалить
+                                    </div>
+                                </button>
                         </div>
-                        <div class="">
-                            <form method="POST" action="/portfolio" class="">
-                            <button type="submit" class="btn-primary btn btn-sm" name="action" value="delete" onClick="confirm('Удалить выбранные инструменты?');">
-                                <div class="btn-content">
-                                    Удалить
-                                </div>
-                            </button>
-                            </form>
-                        </div>
+                  </div>
 
-        </div>
-      
-        
-        <div class="main-content">
-
-          <table class="tsort">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Тикер</th>
-                <th>Компания</th>
-                <th>Последняя</th>
-                <th>Изменение, %</th>
-              </tr>
-            </thead>
-            <tfoot>
-            </tfoot>
-            <tbody>
-              <% for (var i = 0; i < data.length; i++) { %>   
-              <tr>
-                <td><input type="checkbox" name="cids[]" value="<%= data[i]['id'] %>" title="" onclick="" /</td>
-                <td><a href = "/quotes/<%= data[i]['secid'] %>" ><%= data[i]['secid'] %></a></td>
-                <td><%= data[i]['SHORTNAME'] %></td>
-                <td><%= data[i]['LAST'] %></td>
-                <td><span style="
-                  <% if(data[i]['LASTTOPREVPRICE']<0){ %>
-                    color:red;
-                  <% } %>
-                  <% if(data[i]['LASTTOPREVPRICE']>0){ %>
-                    color:green;
-                  <% } %>
-                "><%= data[i]['LASTTOPREVPRICE'] %> %</span></td>
-              </tr>
-              <% } %>
-            </tbody>
-          </table>
-
-        </div>
-
-      </form>
-
-      </div>
-
-    </main>
+                  <div class="table-responsive row">
+                      <table class="table table-striped table-bordered table-hover" id="favoritesTable">
+                          <thead>
+                              <tr>
+                                  <th></th>
+                                  <th>Тикер</th>
+                                  <th>Компания</th>
+                                  <th>Последняя</th>
+                                  <th>Изменение, %</th>
+                              </tr>
+                          </thead>
+                          <tfoot>
+                          </tfoot>
+                          <tbody>
+                              <% for (var i = 0; i < data.length; i++) { %>   
+                              <tr>
+                                  <td><input type="checkbox" name="cids[]" value="<%= data[i]['id'] %>" title="" onclick="" /></td>
+                                  <td><a href = "/quotes/<%= data[i]['secid'] %>" ><%= data[i]['secid'] %></a></td>
+                                  <td><%= data[i]['SHORTNAME'] %></td>
+                                  <td><%= data[i]['LAST'] %></td>
+                                  <td><span style="
+                                      <% if(data[i]['LASTTOPREVPRICE']<0){ %>
+                                        color:red;
+                                      <% } %>
+                                      <% if(data[i]['LASTTOPREVPRICE']>0){ %>
+                                        color:green;
+                                      <% } %>
+                                  "><%= data[i]['LASTTOPREVPRICE'] %> %</span></td>
+                              </tr>
+                              <% } %>
+                          </tbody>
+                      </table>
+                  </div>
 
 
-  </body>
-  <!-- Tsort. Сортировка таблиц плагин -->
-    <script src="/js/tsort.js"></script>
-    <script>$( document ).ready(function() {$('.tsort').tsort();});</script>
 
-</html>
+</form>
+

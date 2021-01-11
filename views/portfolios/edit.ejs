@@ -1,31 +1,11 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/css/style.css' />
-    <!-- Bootstrap core CSS -->
-    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Подключаем jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Подключаем плагин Popper (необходим для работы компонента Dropdown и др.) -->
-    <script src="/popper/popper.min.js"></script>
-    <!-- Подключаем Bootstrap -->
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
-  </head>
+<% layout('../layout/page') %>
+<% block('title', 'Свойства портфеля') %>
+<% block('menu', 'portfolios') %>
 
-  <body>
-    <header>
-        <% include menu %>
-    </header>
-    
-    <main role="main">
-        <section class="container-fluid">
-            <div class="section-title">
-                <h3><%= title %></h3>
-            </div>
+        <div class="row">
 
             <div class="">
-            <form id="new-portfolio" class="" name="newPortfolio" method="POST" action="/portfolios">
+            <form id="new-portfolio" class="" name="newPortfolio" method="POST" action="/portfolios" role="form">
                 <input type="hidden" name="id" value="<%= !isNew ? data.id : '' %>" />
                 <div class="form-group">
                     <label for="title">Название портфеля:</label>
@@ -70,17 +50,13 @@
                     <textarea name="memo" class="form-control" placeholder="Описание"><%= !isNew ? data.memo : '' %></textarea>
                 </div>
 
-                <div class="form-group row justify-center">
+                <div class="form-group row d-flex justify-center ml-2">
                     <button type="submit" class="btn btn-primary btn-sm mr-sm-2" name="action" value="save">Сохранить</button>
                     <button type="submit" class="btn btn-primary btn-sm" name="action" value="cancel">Отменить</button>
                 </div>
             </form>
             </div>
-        </section>
-    </main>
-
-    <footer>
-    </footer>
+        </div>
 
     <script>
 
@@ -116,7 +92,3 @@
         })
         
     </script>
-
-    </body>
-    
-</html>

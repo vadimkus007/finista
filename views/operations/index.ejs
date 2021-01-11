@@ -1,48 +1,24 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/css/style.css' />
-    <!-- Bootstrap core CSS -->
-    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<% layout('../layout/page') %>
+<% block('title', 'Операции') %>
 
-    <!-- Подключаем jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Подключаем плагин Popper (необходим для работы компонента Dropdown и др.) -->
-    <script src="/popper/popper.min.js"></script>
-    <!-- Подключаем Bootstrap -->
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
-  </head>
+<form method="POST" action="/operations">
+    <input type="hidden" id="operationId" name="id" value="" />
 
-  <body>
-    <header>
-        
-    </header>
-    
-    <main role="main">
-        <section class="container-fluid">
-            <div class="layout raw wrap">
-                <div id="toolbar" class="d-flex justify-content-between">
-
-                        <div class="section-title">
-                            Операции
-                        </div>
-                        <div class="">
-                            <form method="POST" action="/operations" class="">
+    <div id="toolbar" class="row mb-2 d-flex justify-content-between">
+        <div class="">
+                            
                             <button type="submit" class="btn-primary btn btn-sm" name="action" value="new">
                                 <div class="btn-content">
                                     Добавить операцию
                                 </div>
                             </button>
-                            </form>
-                        </div>
 
-                </div>
+        </div>
 
-                <div class="d-flex">
-                    <div class="datatable">
-                        <form method="POST" action="/operations">
-                            <input type="hidden" id="operationId" name="id" value="" />
+    </div>
+
+        <section class="row d-flex">
+                           
                         <table class="portfolios-table">
                             <thead>
                                 <tr>
@@ -68,11 +44,9 @@
                                 <% }) %>
                             </tbody>
                         </table>
-                        </form>
-                    </div>
-                </div>
-            </div>
+
         </section>
+</form>
 
         <!--  script for submitting portfolio id -->
     <script>
@@ -80,12 +54,3 @@
             document.getElementById('operationId').value = id;
         }
     </script>
-
-    </main>
-
-    <footer>
-    </footer>
-
-    </body>
-    
-</html>

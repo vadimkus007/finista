@@ -1,92 +1,253 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/css/style.css' />
-    <!-- Bootstrap core CSS -->
-    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<% layout('layout/page') %>
+<% block('title', 'Информация об инструменте') %>
+<% stylesheet('/css/custom.css') %>
+<% block('menu', 'quotes') %>
 
-    <!-- Подключаем jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Подключаем плагин Popper (необходим для работы компонента Dropdown и др.) -->
-    <script src="/popper/popper.min.js"></script>
-    <!-- Подключаем Bootstrap -->
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
-  </head>
-
-  <body>
-    <header>
-        <% include menu %>
-    </header>
-    
-    <main role="main">
-        <div class="container-fluid">
-
-            <section class="info-security-header d-inline-flex justify-content-center">
-                
-                <div class="info-security-name text-center mr-sm-2">
-                    <% if (data['market'] == 'index') { %>
-                        <h3><%= data['NAME'] %> (<%= data['SECID'] %>)</h3>
-                    <% } else { %>
-                        <h3><%= data['SECNAME'] %> (<%= data['SECID'] %>)</h3>        
-                    <% } %>
-                </div>
-
-                <div class="info-security-favorite mr-sm-2">
-                    <form method="POST" action="/quotes/<%= data['SECID'] %>" class="">
-                        <input type="checkbox" name="favorite" 
-                            <% if (favorite) { %>
-                                checked="checked" 
-                            <% } %>
-                        onChange="this.form.submit()" id="favorite" class="">
-                        <label class="" for="favorite"></label> 
-                    </form>
-                </div>
-                
-            </section>
-
-            <section class="info-security-page">
-                
-                <% if (data['market'] == 'index') { %>
-                    <% include quote_index %>
-                <% } else { %>
-                    <% include quote_share %>         
-                <% } %>
-
-                <div id="highcharts" style="height: 400px; min-width: 310px"></div>
-            </section>
-
-            <section class="info-board">
-                <h3>Дивиденды</h3>
-                <table id="dividends">
-                    <thead>
-                        <tr>
-                            <th width="150px">Дата</th>
-                            <th>Размер дивидендов</th>
-                            <th>Стоимость акции</th>
-                            <th>Дивидендная доходность</th>
-                        </tr>
-                    </thead>
-                    <tfoot></tfoot>
-                    <tbody>
-                        <% for (var i = 0; i < data['dividends'].length; i++) { %> 
-                            <tr>
-                                <td><%= data['dividends'][i][0] %></td>
-                                <td><%= data['dividends'][i][1] %></td>
-                                    <td><%= data['dividends'][i][2] %></td>
-                                <td><%= data['dividends'][i][3] %> %</td>
-                            </tr>
+<div class="row mb-4">
+    <div class="col-lg-6">
+                <div class="card shadow mb-6">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <% if (data['market'] == 'index') { %>
+                            <h6 class="m-0 text-primary font-weight-bold"><%= data['NAME'] %> (<%= data['SECID'] %>)</h6>
+                        <% } else { %>
+                            <h6 class="m-0 text-primary font-weight-bold"><%= data['SECNAME'] %> (<%= data['SECID'] %>)</h6>        
                         <% } %>
-                    </tbody>
-                </table>
-            </section>
-        </div>
-    </main>
+                        <div class="dropdown noarrow">
+                            <form method="POST" action="/quotes/<%= data['SECID'] %>" class="">
+                                 
+                                <input type="checkbox" name="favorite" 
+                                    <% if (favorite) { %>
+                                        checked="checked" 
+                                    <% } %>
+                                onChange="this.form.submit()" id="favorite" class="star-checkbox">
+                                <label class="star-checkbox-label" for="favorite"></label>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <% if (data['market'] == 'index') { %>
+                            <div class="row d-flex justify-content-center mb-2">
+                                <div class="d-flex align-items-end">
+                                    <div style="font-size:2.8rem;" class="d-flex font-weight-bold text-gray-800 mr-2">
+                                        <%= data['CURRENTVALUE'] %>
+                                    </div>
+                                
+                                
+                                    <div class="d-flex mb-4">
+                                        <div style="
+                                        <% if(data['LASTCHANGETOOPENPRC']<0){ %>
+                                            color:red;">
+                                            <i class="fas fa-fw fa-arrow-circle-down"></i>
+                                        <% } %>
+                                        <% if(data['LASTCHANGETOOPENPRC']>0){ %>
+                                            color:green;">
+                                            <i class="fas fa-fw fa-arrow-circle-up"></i>
+                                        <% } %>
+                                        
+                                        <%= data['LASTCHANGETOOPENPRC'] %> %
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div> <!-- row -->
 
-    <footer>
-    </footer>
+                            <div class="row mb-4 ml-2">
+                                <div class="col-lg-3">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Максимальное
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <%= data['HIGH'] %>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Минимальное
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <%= data['LOW'] %>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Макс. за год
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <%= data['ANNUALHIGH'] %>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Мин. за год
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <%= data['ANNUALLOW'] %>
+                                    </div>
+                                </div>
+                            </div> <!-- row -->
 
-    </body>
+                            <div class="row mb-4 ml-2 d-flex flex-row align-items-center">
+                                <div class="col-lg-6">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Объем торгов
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <%= data['VALTODAY'] %>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Капитализация
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <%= data['CAPITALIZATION'] %>
+                                    </div>
+                                </div>
+                            </div> <!-- row -->
+
+                            <div class="row ml-2">
+                                <a  class="font-weight-bold" href="https://www.moex.com/ru/index/<%= data['SECID'] %>" target="_blank" rel="nofollow">Профиль эмитента &rarr;</a>
+                            </div>
+
+
+                        <% } else { %>
+
+                            <div class="row d-flex justify-content-center mb-2">
+                                <div class="d-flex align-items-end">
+                                    <div style="font-size:2.8rem;" class="d-flex font-weight-bold text-gray-800 mr-2">
+                                        <%= data['LAST'] %>
+                                    </div>
+                                
+                                
+                                    <div class="d-flex mb-4">
+                                        <div style="
+                                        <% if(data['LASTTOPREVPRICE']<0){ %>
+                                            color:red;">
+                                            <i class="fas fa-fw fa-arrow-circle-down"></i>
+                                        <% } %>
+                                        <% if(data['LASTTOPREVPRICE']>0){ %>
+                                            color:green;">
+                                            <i class="fas fa-fw fa-arrow-circle-up"></i>
+                                        <% } %>
+                                        
+                                        <%= data['LASTTOPREVPRICE'] %> %
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div> <!-- row -->
+
+                            <div class="row mb-4 ml-2">
+                                <div class="col-lg-3">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Предложение
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <%= data['OFFER'] %>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Спрос
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <%= data['BID'] %>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Максимум
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <%= data['HIGH'] %>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Минимум
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <%= data['LOW'] %>
+                                    </div>
+                                </div>
+                            </div> <!-- row -->
+
+                            <div class="row mb-4 ml-2 d-flex flex-row align-items-center">
+                                <div class="col-lg-6">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Сделок сегодня
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <%= data['NUMTRADES'] %>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Капитализация
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        <%= data['ISSUECAPITALIZATION'] %>
+                                    </div>
+                                </div>
+                            </div> <!-- row -->
+
+                            <div class="row ml-2">
+                                <a  class="font-weight-bold" href="https://www.moex.com/ru/issue.aspx?code=<%= data['SECID'] %>" target="_blank" rel="nofollow">Профиль эмитента &rarr;</a>
+                            </div>
+    
+                        <% } %>
+                        
+                    </div> <!-- card body -->
+                </div> <!-- card --> 
+    </div> <!-- .col-lg-6 -->
+
+    <div class="col-lg-6">
+            <div class="card shadow mb-6">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary"><%= data.secid %> Stock Diagramm</h6>
+                </div>
+                <div class="card-body">
+                    <div id="highcharts" style="height: 400px; min-width: 310px"></div>
+                </div>
+            </div>
+    </div>
+
+</div>
+
+<div class="row">
+            <div class="card shadow mb-6">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Дивиденды</h6>
+                </div>
+                <div class="card-body">
+                    <table id="dividends" class="table">
+                        <thead>
+                            <tr>
+                                <th width="150px">Дата</th>
+                                <th>Размер дивидендов</th>
+                                <th>Стоимость акции</th>
+                                <th>Дивидендная доходность</th>
+                            </tr>
+                        </thead>
+                        <tfoot></tfoot>
+                        <tbody>
+                            <% for (var i = 0; i < data['dividends'].length; i++) { %> 
+                                <tr>
+                                    <td><%= data['dividends'][i][0] %></td>
+                                    <td><%= data['dividends'][i][1] %></td>
+                                        <td><%= data['dividends'][i][2] %></td>
+                                    <td><%= data['dividends'][i][3] %> %</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+</div>
+
+
+
+
     
     <!-- Highcharts -->
     <script src="https://code.highcharts.com/stock/highstock.js"></script>
@@ -100,11 +261,11 @@
         // Create the chart
             Highcharts.stockChart('highcharts', {
                 rangeSelector: {
-                    selected: 3
+                    selected: 4
                 },
 
                 title: {
-                    text: '<%- data['secid'] %> Stock Diagramm'
+                    text: ''
                 },
 
                 series: [{
@@ -117,4 +278,3 @@
             });
         });
     </script>
-</html>

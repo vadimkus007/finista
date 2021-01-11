@@ -1,55 +1,68 @@
+<% if (data.isNew) {var title = 'Добавить сделку'} else {var title = 'Изменить сделку'} %>
+<% block('title', title) %>
+<% block('menu', 'portfolios trades') %>
+
+
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Портфель: Добавить сделку</title>
-    <link href="/css/style.css" rel="stylesheet" />
-    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<html lang="en">
 
-    <!-- MDBootstrap -->
-    <!-- Font Awesome -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>FINISTA - <%= blocks.title %></title>
+
+    <!-- Custom fonts for this template-->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
-      rel="stylesheet"
-    />
-    <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-      rel="stylesheet"
-    />
-    <!-- MDB -->
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.0.0/mdb.min.css"
-      rel="stylesheet"
-    />
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="/popper/popper.min.js"></script>
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Custom styles for this template-->
+    <link href="/css/sb-admin-2.css" rel="stylesheet">
 
-    <!-- MDBootstrap -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.0.0/mdb.min.js"></script>
+    <!-- Select2 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet">
 
-    <!-- slect2 for dropdown select -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <!-- Bootstrap core JavaScript-->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
-  </head>
 
-  <body>
-    <header>
-        <% include menu %>
-    </header>
-    
-    <main role="main">
-        <section class="container-fluid">
-            <div class="section-title wrap">
-                <% if (!data.isNew) { %>
-                Изменить сделку
-                <% } else { %>
-                Добавить сделку
-                <% } %>
-            </div>
 
-            <div class="">
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <%- partial('../partials/sideMenuPortfolio') %>
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            
+            <!-- Main Content -->
+            <div id="content">
+
+                  <%- partial('../partials/topNavigatorPortfolio') %>
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-4 text-gray-800"><%= blocks.title %></h1>
+
+                    <div class="">
             <form id="new-trade" name="newTrade" method="POST" action="/portfolio/<%= data.portfolio.id %>/trades" class="form needs-validation">
                 <input type="hidden" id="id" name="id" value="<%= (!data.isNew) ? data.trade.id : '' %>" />
                 <input type="hidden" name="portfolioId" value="<%= data.portfolio.id %>" />
@@ -110,15 +123,68 @@
 
             </form>
             </div>
-        </section>
-    </main>
 
-    <footer>
-    </footer>
+                </div>
+                <!-- /.container-fluid -->
 
-    <script>
+            </div>
+            <!-- End of Main Content -->
 
-        function updateForm() {
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Your Website 2020</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="/signin">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<% if (typeof error !== 'undefined') { %>
+<script> var err = <%- JSON.stringify(error) %> </script>
+<% } else { %>
+<script>var err = null</script>
+<% } %>
+<script>
+    var data = <%- JSON.stringify(data) %>;
+
+    function insertAfter(referenceNode, newNode) {
+                referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+    }
+
+// Edit trade scripts
+function updateForm() {
             var type = $("#type :selected").val();
 
                 switch(type) {
@@ -164,7 +230,7 @@
 
         function buildSelect() {
 
-            const securities = <%- JSON.stringify(data.securities) %>
+            const securities = data.securities;
 
             $("#secid").empty();
             $("#secid").append('<option value="" disabled selected>Выберите бумагу</option>');
@@ -173,32 +239,26 @@
                 $("#secid").append('<option value="'+security.secid+'">'+security.secid+' ('+security.name+') ('+security.group+')</option>')
             })
 
-            var secid = <%if (typeof data.trade !== 'undefined') {%><%- JSON.stringify(data.trade.secid) %><%} else {%><%=null%><%}%>
+            if (typeof data.trade !== 'undefined') {
+                var secid = JSON.stringify(data.trade.secid); 
+            } else {
+                var secid = null;
+            }
 
             $("#secid option[value='"+secid+"']").attr("selected","selected");
         }
 
-        $(document).ready(function() {
+// build select
+$(document).ready(function() {                
+    buildSelect();
+    updateForm();
+    $(".select2").select2();
+});
 
-                
-                buildSelect();
-                updateForm();
-
-                $(".select2").select2();
-        });
-
-    </script>
-
-    <script>
-        $(document).ready(function(e) {
-
-            function insertAfter(referenceNode, newNode) {
-                referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-            }
+// validation form
+$(document).ready(function() {
 
 
-            var err = <%if (typeof error !== 'undefined') {%><%- JSON.stringify(error) %><%} else {%><%=null%><%}%>;
-            
             if (err) {
 
                 for (var i = 0; i<err.errors.length; i++) {
@@ -220,11 +280,12 @@
                 }
 
             }
-        })
-    </script>
-    
-    
 
-    </body>
-    
+});
+
+</script>
+
+</body>
+
 </html>
+    

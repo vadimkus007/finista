@@ -1,36 +1,13 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/css/style.css' />
-    <!-- Bootstrap core CSS -->
-    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<% layout('../layout/page') %>
+<% block('title', 'Портфели') %>
+<% block('menu', 'portfolios') %>
 
-    <!-- Подключаем jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Подключаем плагин Popper (необходим для работы компонента Dropdown и др.) -->
-    <script src="/popper/popper.min.js"></script>
-    <!-- Подключаем Bootstrap -->
-    <script src="/bootstrap/js/bootstrap.min.js"></script>
-  </head>
 
-  <body>
-    <header>
-        <% include menu %>
-    </header>
-    
-    <main role="main">
-        <section class="container-fluid">
-            <div class="layout raw wrap">
                 
                 <form method="POST" action="/portfolios" class="">
                      <input type="hidden" id="portfolioId" name="id" value="" />
 
-                <div id="toolbar" class="d-flex justify-content-between">
-
-                        <div class="section-title">
-                            Портфели
-                        </div>
+                <div id="toolbar" class="row mb-2 d-flex justify-content-between">
                         <div class="">
                             
                             <button type="submit" class="btn-primary btn btn-sm" name="action" value="edit">
@@ -43,11 +20,11 @@
 
                 </div>
 
-                <div class="d-flex">
-                    <div class="datatable">
+                <div class="row d-flex">
+
 
                            
-                        <table class="">
+                        <table class="table table-striped table-bordered table-hover">
                             <thead>
                                 <tr>
                                     <th class="text-xs-left" role="columnheader">Название</th>
@@ -77,13 +54,12 @@
                             </tbody>
                         </table>
 
-                    </div>
+
                 </div>
 
-            </form>
+</form>
 
-            </div>
-        </section>
+
 
         <!--  script for submitting portfolio id -->
     <script>
@@ -91,12 +67,3 @@
             document.getElementById('portfolioId').value = id;
         }
     </script>
-
-    </main>
-
-    <footer>
-    </footer>
-
-    </body>
-    
-</html>

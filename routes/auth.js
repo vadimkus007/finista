@@ -13,6 +13,9 @@ module.exports = function(app, passport) {
     app.get('/dashboard', isLoggedIn, authController.dashboard);
     app.get('/logout', authController.logout);
 
+    app.get('/favorites', isLoggedIn, favoritesController.list);
+    app.post('/favorites', isLoggedIn, favoritesController.action);
+
     app.get('/quotes', quotesController.list);
     app.get('/quotes/:secid', quotesController.info);
     app.post('/quotes/:secid', quotesController.favorite);
@@ -27,9 +30,6 @@ module.exports = function(app, passport) {
         failureRedirect: '/signin',
         failureFlash : true
     }));
-
-    app.get('/favorites', isLoggedIn, favoritesController.list);
-    app.post('/favorites', isLoggedIn, favoritesController.action);
 
     app.get('/portfolios', isLoggedIn, portfoliosController.list);
     app.post('/portfolios', isLoggedIn, portfoliosController.action);
