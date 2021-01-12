@@ -1,13 +1,13 @@
 <% layout('../layout/portfolio') %>
 <% var title = 'Сделки - ' + data.portfolio.title; %>
 <% block('title', title) %>
-<% block('menu', 'portfolios trades') %>
+<% block('menu', 'portfolio trades') %>
 <% stylesheet('/vendor/datatables/dataTables.bootstrap4.min.css') -%>
 <% script('/vendor/datatables/jquery.dataTables.min.js') %>
 <% script('/vendor/datatables/dataTables.bootstrap4.min.js') %>
 <% script('/js/tradesTable.js') %>
 
-<form method="POST" action="/portfolio/<%= data.portfolio.id %>/trades" class="" role="form">           
+<form method="POST" action="/portfolio/trades" class="" role="form">           
     <input type="hidden" id="tradeId" name="id" value="" />
     <input type="hidden" id="portfolioId" name="portfolioId" value="" />
     <input type="hidden" id="operationId" name="operationId" value="" />
@@ -36,7 +36,7 @@
                                         <th>Цена</th>
                                         <th>Комиссия</th>
                                         <th>Сумма</th>
-                                        <th class="text-xs-right" role="columnheader" width="50"></th>
+                                        <th class="text-xs-right no-sort" role="columnheader" width="20"></th>
                                     </tr>
                                 </thead>
 
@@ -57,10 +57,32 @@
                                         <td><%= row.comission %></td>
                                         <td><%= ((row.price * row.amount) + 1*row.comission).toFixed(2) %></td>
                                         <td>
-                                            <div class="flex" style="width: 75px;">
-                                            <button type="submit" class="btn btn-sm flex-child" style="display:inline-block;" name="action" value="edit" placeholder="Редактировать" onClick="setHiddenFields(<%= row.id %>,<%= row.portfolioId %>,<%= row.operationId %>);"><img src="/img/edit-16.png" /></button>
-                                            <button type="submit" class="btn btn-sm flex-child" style="display:inline-block;" name="action" value="delete" placeholder="Удалить" onClick="if (confirm('Дествительно удалить сделку?')) {setHiddenFields(<%= row.id %>,<%= row.portfolioId %>,<%= row.operationId %>)};"><img src="/img/delete-16.png" /></button>
-                                            </div>
+                                            
+                                            <!-- Dropdown menu in cells -->
+                                            <ul class="navbar-nav ml-auto">
+                                                <li class="nav-item dropdown no-arrow mx-1">
+                                                    <a class="nav-link dropdown-toggle" href="#" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fas fa-fw fa-ellipsis-h"></i>
+                                                    </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow"
+                                                    aria-labelledby="userDropdown">
+                                            
+                                            <button type="submit" class="btn btn-sm dropdown-item" style="display:inline-block;" name="action" value="edit" placeholder="Редактировать" onClick="setHiddenFields(<%= row.id %>,<%= row.portfolioId %>,<%= row.operationId %>);">
+                                                <i class="fas fa-edit fa-sm fa-fw mr-2 text-gray-400"></i>
+                                                Редактировать
+                                            </button>
+
+                                            <button type="submit" class="btn btn-sm dropdown-item" style="display:inline-block;" name="action" value="delete" placeholder="Удалить" onClick="if (confirm('Дествительно удалить сделку?')) {setHiddenFields(<%= row.id %>,<%= row.portfolioId %>,<%= row.operationId %>)};">
+                                                <i class="fas fa-times fa-sm fa-fw mr-2 text-gray-400"></i>
+                                                Удалить
+                                            </button>
+                                        </div>
+
+                                                </li>
+                                            </ul>
+                                            <!-- Dropdown menu in cells -->
+
                                         </td>
                                     </tr>
                                     <% }) %>

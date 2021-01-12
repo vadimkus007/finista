@@ -10,6 +10,11 @@ exports.list = (req, res, next) => {
 
     const user = req.session.passport.user;
 
+    // remove portfolio id from session
+    if (req.session && req.session.portfolio !== null) {
+        delete req.session.portfolio;
+    }
+
     Portfolio.findAll({
         where: {userId: user},
         raw: true
@@ -35,10 +40,10 @@ exports.action = (req, res, next) => {
 
         case 'delete':
 
-            if (req.body.id != '') {
+            if (req.body.portfolioId != '') {
                 Portfolio.destroy({
                     where: {
-                        id: parseInt(req.body.id)
+                        id: parseInt(req.body.portfolioId)
                     }
                 })
                 .then(rowDeleted => {
@@ -149,11 +154,11 @@ exports.action = (req, res, next) => {
             break;
 
         case 'edit':
-            if (req.body.id) {
+            if (req.body.portfolioId) {
 
                 Portfolio.findOne({
                     where: {
-                        id: req.body.id
+                        id: req.body.portfolioId
                     },
                     raw: true
                 })
@@ -191,6 +196,14 @@ exports.action = (req, res, next) => {
             break;
 
         default:
+            if (req.session) {
+                if (req.body.portfolioId && req.body.portfolioId !== '') {
+                    req.session.portfolio = {id: parseInt(req.body.portfolioId)};
+
+                    res.redirect(`/portfolio`);
+                }
+            } 
+
             res.redirect('portfolios');
     }
 }

@@ -37,6 +37,15 @@ var getSecurities = function(cb) {
 }
 
 exports.action = (req, res, next) => {
+
+    if (req.session.portfolio == null) {
+        req.flash('message', 'Portfolio is not defined');
+        
+        res.redirect('/portfolios');
+        return next();
+    }
+
+    const portfolioId = req.session.portfolio.id;
     
     switch (req.body.action) {
 
@@ -54,7 +63,7 @@ exports.action = (req, res, next) => {
                         // Trade create
 
                         Trade.create({
-                            portfolioId: parseInt(req.body.portfolioId),
+                            portfolioId: parseInt(portfolioId),
                             operationId: parseInt(req.body.operationId),
                             secid: req.body.secid,
                             price: req.body.price,
@@ -65,7 +74,7 @@ exports.action = (req, res, next) => {
                         })
                         .then(() => {
                             console.log('New Trade created!');
-                            res.redirect(`/portfolio/${req.params.id}/trades`);
+                            res.redirect(`/portfolio/trades`);
                         })
                         .catch(err => {
 
@@ -78,7 +87,7 @@ exports.action = (req, res, next) => {
                             // find Portfolio
                             Portfolio.findOne({
                                 where: {
-                                    id: req.params.id
+                                    id: portfolioId
                                 },
                                 raw: true
                             })
@@ -111,7 +120,7 @@ exports.action = (req, res, next) => {
 
                         // Trade update
                         Trade.update({
-                            portfolioId: parseInt(req.body.portfolioId),
+                            portfolioId: parseInt(portfolioId),
                             operationId: parseInt(req.body.operationId),
                             secid: req.body.secid,
                             price: req.body.price,
@@ -126,7 +135,7 @@ exports.action = (req, res, next) => {
                         })
                         .then((rowsUpdated) => {
                             console.log(`${rowsUpdated} rows updated in Trades`);
-                            res.redirect(`/portfolio/${req.params.id}/trades`);
+                            res.redirect(`/portfolio/trades`);
                         })
                         .catch(err => {
                             console.log('Error updating Trades table: ', err);
@@ -138,7 +147,7 @@ exports.action = (req, res, next) => {
                             // find Portfolio
                             Portfolio.findOne({
                                 where: {
-                                    id: req.params.id
+                                    id: portfolioId
                                 },
                                 raw: true
                             })
@@ -174,7 +183,7 @@ exports.action = (req, res, next) => {
             } else {
 
                 Trade.create({
-                    portfolioId: parseInt(req.body.portfolioId),
+                    portfolioId: parseInt(portfolioId),
                     operationId: parseInt(req.body.operationId),
                     secid: req.body.secid,
                     price: req.body.price,
@@ -185,7 +194,7 @@ exports.action = (req, res, next) => {
                 })
                 .then(() => {
                     console.log('New Trade created!');
-                    res.redirect(`/portfolio/${req.params.id}/trades`);
+                    res.redirect(`/portfolio/trades`);
                 })
                 .catch(err => {
 
@@ -199,7 +208,7 @@ exports.action = (req, res, next) => {
                             // find Portfolio
                             Portfolio.findOne({
                                 where: {
-                                    id: req.params.id
+                                    id: portfolioId
                                 },
                                 raw: true
                             })
@@ -243,7 +252,7 @@ exports.action = (req, res, next) => {
                 // EDIT form
 
                 func = Portfolio.findOne({
-                    where: {id: parseInt(req.params.id)},
+                    where: {id: parseInt(portfolioId)},
                     raw: true
                 });
                 promises.push(func); // portfolio -> [0]
@@ -264,6 +273,7 @@ exports.action = (req, res, next) => {
                 .then(result => {
                     data.portfolio = result[0];
                     data.trade = result[1];
+
                     data.operations = result[2];
                     data.isNew = false;
 
@@ -285,7 +295,7 @@ exports.action = (req, res, next) => {
                 // CREATE form
 
                 func = Portfolio.findOne({
-                    where: {id: parseInt(req.params.id)},
+                    where: {id: parseInt(portfolioId)},
                     raw: true
                 });
                 promises.push(func); // portfolio [0]
@@ -335,28 +345,37 @@ exports.action = (req, res, next) => {
 
             }
 
-            res.redirect(`/portfolio/${req.params.id}/trades`);
+            res.redirect(`/portfolio/trades`);
             break;
 
         default:
-            res.redirect(`/portfolio/${req.params.id}/trades`);
+            res.redirect(`/portfolio/trades`);
     }
 
 }
 
 exports.list = (req, res, next) => {
 
+    if (req.session.portfolio == null) {
+        req.flash('message', 'Portfolio is not defined');
+        
+        res.redirect('/portfolios');
+        return next();
+    }
+
+    const portfolioId = req.session.portfolio.id;
+
     var data = {};
 
     var promises = [];
     let func = Portfolio.findOne({
-        where: {id: parseInt(req.params.id)},
+        where: {id: parseInt(portfolioId)},
         raw: true
     });
     promises.push(func); // portfolio
     func = Trade.findAll({
             where: {
-                portfolioId: req.params.id
+                portfolioId: portfolioId
             },
             include: [
                 {

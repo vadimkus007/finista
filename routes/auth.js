@@ -39,10 +39,10 @@ module.exports = function(app, passport) {
     app.get('/operations/new', operationController.new);
     app.get('/operations/edit/:id', operationController.edit);
 
-    app.get('/portfolio/:id', isLoggedIn, portfolioController.info);
+    app.get('/portfolio', isLoggedIn, portfolioController.info);
     
-    app.get('/portfolio/:id/trades', isLoggedIn, tradesController.list);
-    app.post('/portfolio/:id/trades', isLoggedIn, tradesController.action);
+    app.get('/portfolio/trades', isLoggedIn, tradesController.list);
+    app.post('/portfolio/trades', isLoggedIn, tradesController.action);
     //app.get('/portfolio/:id/trades/new', isLoggedIn, tradesController.new);
 
     function isLoggedIn(req, res, next) {

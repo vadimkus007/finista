@@ -113,7 +113,7 @@ exports.list = (req, res, next) => {
         if (req.isAuthenticated()) {
             user = req.session.passport.user;
         }
-                    
+
         // Render view
         res.render('quotes', {
             title: 'Котировки',
@@ -126,6 +126,11 @@ exports.list = (req, res, next) => {
 
 
 exports.info = (req, res, next) => {
+
+    // remove portfolio id from session
+    if (req.session && req.session.portfolio !== null) {
+        delete req.session.portfolio;
+    }
 
     var data = {};
     data.secid = req.params.secid;

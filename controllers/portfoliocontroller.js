@@ -14,6 +14,15 @@ var exports = module.exports = {};
 
 exports.info = (req, res, next) => {
 
+    if (req.session.portfolio == null) {
+        req.flash('message', 'Portfolio is not defined');
+        
+        res.redirect('/portfolios');
+        return next();
+    }
+
+    const portfolioId = req.session.portfolio.id;
+
     const getDates = function(startDate, stopDate) {
         var dateArray = [];
         var currentDate = moment(startDate);
@@ -651,7 +660,7 @@ exports.info = (req, res, next) => {
     var dateStart = '2020-07-13';
     var dateEnd = now;
 
-    getPortfolioPrice(req.params.id, date)
+    getPortfolioPrice(portfolioId, date)
     .then(portfolio => {
 
         data = portfolio.data;
@@ -664,7 +673,7 @@ exports.info = (req, res, next) => {
             promises.push(getPortfolioPriceOnDate(req.params.id, date));
         });
 */
-        return getPortfolioPriceOnDate(req.params.id, dateStart, dateEnd)
+        return getPortfolioPriceOnDate(portfolioId, dateStart, dateEnd)
         // return Promise.all(promises);
     })
     .then(history => {

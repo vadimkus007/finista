@@ -1,4 +1,9 @@
 $(document).ready(function() {
-        $('#tradesTable').dataTable();
+        $('#tradesTable').dataTable({
+            "columnDefs": [ {
+                "targets": 'no-sort',
+                "orderable": false
+            }]
+        });
 });
 
