@@ -5,6 +5,7 @@ var portfoliosController = require('../controllers/portfolioscontroller.js');
 var portfolioController = require('../controllers/portfoliocontroller.js');
 var operationController = require('../controllers/operationcontroller.js');
 var tradesController = require('../controllers/tradescontroller.js');
+var analyticsController = require('../controllers/analyticscontroller.js');
  
 module.exports = function(app, passport) {
  
@@ -43,7 +44,8 @@ module.exports = function(app, passport) {
     
     app.get('/portfolio/trades', isLoggedIn, tradesController.list);
     app.post('/portfolio/trades', isLoggedIn, tradesController.action);
-    //app.get('/portfolio/:id/trades/new', isLoggedIn, tradesController.new);
+
+    app.get('/portfolio/analytics', isLoggedIn, analyticsController.info)
 
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated())

@@ -128,9 +128,9 @@ exports.list = (req, res, next) => {
 exports.info = (req, res, next) => {
 
     // remove portfolio id from session
-    if (req.session && req.session.portfolio !== null) {
-        delete req.session.portfolio;
-    }
+    //if (req.session && req.session.portfolio !== null) {
+    //    delete req.session.portfolio;
+    //}
 
     var data = {};
     data.secid = req.params.secid;

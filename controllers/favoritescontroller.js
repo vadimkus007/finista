@@ -7,9 +7,9 @@ var exports = module.exports = {}
 exports.list = (req, res, next) => {
 
     // remove portfolio id from session
-    if (req.session && req.session.portfolio !== null) {
-        delete req.session.portfolio;
-    }
+    //if (req.session && req.session.portfolio !== null) {
+    //    delete req.session.portfolio;
+    //}
 
     // get User from request
     var user = 0;

@@ -9,6 +9,8 @@ const Op = sequelize.Op;
 
 var moment = require('moment');
 var xirr = require('xirr');
+var Finance = require('financejs');
+var finance = new Finance;
 
 var exports = module.exports = {};
 
@@ -149,6 +151,7 @@ exports.info = (req, res, next) => {
         let promises = urls.map(index => Moex.fetchJSON(index));
         return Promise.all(promises)
     }
+
 
     const getBoardShareInfo = function(secids) {
         return Promise.all([getShareInfo(secids), getBoardInfo(secids)]);
@@ -632,9 +635,17 @@ exports.info = (req, res, next) => {
                 };
                 args.push(row);
 
-                var rate = xirr(args);
+                let sum = [];
+                let d = [];
+                args.forEach(arg => {
+                    sum.push(arg.amount);
+                    d.push(arg.when);
+                });
 
-                data.portfolio['xirr'] = rate * 100;
+                // var rate = xirr(args);
+                var rate = finance.XIRR(sum, d, 0);
+
+                data.portfolio['xirr'] = rate;
                 data.portfolio.xirr = data.portfolio.xirr.toFixed(2);
 
                 if (date == now) {

@@ -1,0 +1,102 @@
+<% layout('layout/portfolio') %>
+<% var title = 'Аналитика - ' + data.portfolio.title; %>
+<% block('title', title) %>
+<% block('menu', 'portfolio analytics') %>
+<!-- Highcharts plugin -->
+<% script('/highcharts/highcharts.js') %>
+<% script('/highcharts/modules/exporting.js') %>
+<% script('/highcharts/modules/export-data.js') %>
+<% script('/highcharts/modules/accessibility.js') %>
+<% script('/js/analytics/actives-pie-chart.js') %>
+<% script('/js/analytics/types-pie-chart.js') %>
+<% script('/js/analytics/shares-pie-chart.js') %>
+<% script('/js/analytics/etf-pie-chart.js') %>
+<% script('/js/analytics/sectors-pie-chart.js') %>
+
+
+<div class="row">
+
+    <div class="col-xl-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Распределение всех активов в портфеле</h6>
+            </div>
+            <div class="card-body">
+                <figure class="highcharts-figure pt-4">
+                        <div id="actives-pie-chart"></div>
+                </figure>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Состав портфеля по типу активов</h6>
+            </div>
+            <div class="card-body">
+                <figure class="highcharts-figure pt-4">
+                    <div id="types-pie-chart"></div>
+                </figure>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+
+    <div class="col-xl-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Распределение портфеля акций</h6>
+            </div>
+            <div class="card-body">
+                <figure class="highcharts-figure pt-4">
+                        <div id="shares-pie-chart"></div>
+                </figure>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Состав портфеля ПИФов/ETF</h6>
+            </div>
+            <div class="card-body">
+                <figure class="highcharts-figure pt-4">
+                    <div id="etf-pie-chart"></div>
+                </figure>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+
+    <div class="col-xl-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Распределение портфеля акций по секторам</h6>
+            </div>
+            <div class="card-body">
+                <figure class="highcharts-figure pt-4">
+                        <div id="sectors-pie-chart"></div>
+                </figure>
+            </div>
+        </div>
+    </div>
+
+    
+
+</div>
+
+<script>
+    var actives = <%- JSON.stringify(data.actives) %>;
+    var activeTypes = <%- JSON.stringify(data.activeTypes) %>;
+    var shares = <%- JSON.stringify(data.shares) %>;
+    var etf = <%- JSON.stringify(data.etf) %>;
+    var sectors = <%- JSON.stringify(data.sectors) %>;
+</script>
