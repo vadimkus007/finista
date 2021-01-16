@@ -14,7 +14,9 @@
                             Стоимость
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <% if(typeof data.portfolio.cost !== 'undefined') { %>
                             <%= Number(data.portfolio.cost).toFixed(2) %>
+                            <% } %>
                         </div>
                     </div>
                     <div class="col-auto">
@@ -34,11 +36,13 @@
                             Прибыль
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <% if(typeof data.portfolio.profit !== 'undefined') { %>
                             <span style="color: 
                             <% if (Number(data.portfolio.profit) > 0) { %> green<%} else {%> red <%}%>
                             ;">
                             <%= Number(data.portfolio.profit).toFixed(2) %>
                             </span>
+                            <%}%>
                         </div>
                     </div>
                     <div class="col-auto">
@@ -181,18 +185,18 @@
                                     <td><a href="/quotes/<%= share.secid %>"><%= share.secid %></a></td>
                                     <td><%= share.shortname %></td>
                                     <td><%= share.amount %></td>
-                                    <td><%= share.meanprice.toFixed(2) %></td>
-                                    <td><%= share.last.toFixed(2) %></td>
-                                    <td><%= share.cost.toFixed(2) %></td>
+                                    <td><%= Number(share.meanprice).toFixed(2) %></td>
+                                    <td><%= Number(share.last).toFixed(2) %></td>
+                                    <td><%= Number(share.cost).toFixed(2) %></td>
                                     <td style="color:<% if (Number(share.exchangeprofitprcnt) > 0) { %>green<%} else {%>red<%}%>;">
-                                        <%= share.exchangeprofitprcnt.toFixed(2) %>
+                                        <%= Number(share.exchangeprofitprcnt).toFixed(2) %>
                                     </td>
                                     <td style="color:<% if (Number(share.profit) > 0) { %>green<%} else {%>red<%}%>;">
-                                        <%= share.profit.toFixed(2) %>
+                                        <%= Number(share.profit).toFixed(2) %>
                                     </td>
                                     <td style="color:<% if (Number(share.lasttoprevprice) > 0) { %>green<%} else {%>red<%}%>;">
-                                        <%= share.lasttoprevprice %></td>
-                                    <td><%= share.percentage.toFixed(2) %></td>
+                                        <%= Number(share.lasttoprevprice).toFixed(2) %></td>
+                                    <td><%= Number(share.percentage).toFixed(2) %></td>
                                 </tr>
                             <% }) %>
                         </tbody>
@@ -230,18 +234,18 @@
                                     <td><a href="/quotes/<%= etf.secid %>"><%= etf.secid %></a></td>
                                     <td><%= etf.shortname %></td>
                                     <td><%= etf.amount %></td>
-                                    <td><%= etf.meanprice.toFixed(2) %></td>
-                                    <td><%= etf.last.toFixed(2) %></td>
-                                    <td><%= etf.cost.toFixed(2) %></td>
+                                    <td><%= Number(etf.meanprice).toFixed(2) %></td>
+                                    <td><%= Number(etf.last).toFixed(2) %></td>
+                                    <td><%= Number(etf.cost).toFixed(2) %></td>
                                     <td style="color:<% if (Number(etf.exchangeprofitprcnt) > 0) { %>green<%} else {%>red<%}%>;">
-                                        <%= etf.exchangeprofitprcnt.toFixed(2) %>
+                                        <%= Number(etf.exchangeprofitprcnt).toFixed(2) %>
                                     </td>
                                     <td style="color:<% if (Number(etf.profit) > 0) { %>green<%} else {%>red<%}%>;">
-                                        <%= etf.profit.toFixed(2) %>
+                                        <%= Number(etf.profit).toFixed(2) %>
                                     </td>
                                     <td style="color:<% if (Number(etf.lasttoprevprice) > 0) { %>green<%} else {%>red<%}%>;">
-                                        <%= etf.lasttoprevprice %></td>
-                                    <td><%= etf.percentage.toFixed(2) %></td>
+                                        <%= Number(etf.lasttoprevprice).toFixed(2) %></td>
+                                    <td><%= Number(etf.percentage).toFixed(2) %></td>
                                 </tr>
                             <% }) %>
                         </tbody>

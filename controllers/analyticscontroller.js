@@ -64,7 +64,7 @@ const getPrices = function(boards) {
     });
 }
 
-// get Sectors for shares only
+// get Sectors for shares only from Tinkoff API
 // shares = array from preparing renderview [{name: secid, y: value}]
 const getSectors = function(secids) {
     var url = 'https://api-invest.tinkoff.ru/trading/stocks/get?ticker=';
@@ -143,19 +143,27 @@ exports.info = (req, res, next) => {
             obj[secid.secid] = {};
             obj[secid.secid].secid = secid.secid;
             obj[secid.secid].amount = 0;
+            obj[secid.secid].buy = 0;
+            obj[secid.secid].sell = 0;
+            obj[secid.secid].dividends = 0;
         });
         data.secids = obj;
 
-        //calculate amount of securities
+        //calculate amount, buy and sell prices of securities
         data.trades.forEach(trade => {
             if (trade.secid !== 'RUB') {
 
                 switch(trade.operationId) {
                     case 1: 
                         data.secids[trade.secid].amount = Number(data.secids[trade.secid].amount) + Number(trade.amount);
+                        data.secids[trade.secid].buy = Number(data.secids[trade.secid].buy) + Number(trade.sum) + Number(trade.comission);
                         break;
                     case 2: 
                         data.secids[trade.secid].amount = Number(data.secids[trade.secid].amount) - Number(trade.amount);
+                        data.secids[trade.secid].sell = Number(data.secids[trade.secid].sell) + Number(trade.sum) - Number(trade.comission);
+                        break;
+                    case 3:
+                        data.secids[trade.secid].dividends = Number(data.secids[trade.secid].dividends) + Number(trade.sum) - Number(trade.comission);
                         break;
                 }
             }
@@ -270,7 +278,24 @@ exports.info = (req, res, next) => {
 
         renderdata.sectors = sectors;
 
-//console.log(data);
+        // Efficiency securities 
+        var efficiency = [];
+        for (key in data.secids) {
+            efficiency.push([key, data.secids[key].price + data.secids[key].sell + data.secids[key].dividends - data.secids[key].buy]);
+        }
+        // sort array
+        efficiency.sort((a, b) => {
+            return b[1] - a[1];
+        });
+        let out = {categories: [], data: []};
+        efficiency.forEach(item => {
+            out.categories.push(item[0]);
+            out.data.push(item[1]);
+        });
+
+        renderdata.efficiency = out;        
+
+//console.log('DATA', data);
 //console.log(sectors);
         // render view
         res.render('analytics', {

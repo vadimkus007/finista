@@ -1,0 +1,337 @@
+<% layout('layout/portfolio') %>
+<% var title = 'Доходность - ' + data.portfolio.title; %>
+<% block('title', title) %>
+<% block('menu', 'portfolio profit') %>
+<% script('/js/profit.js') %>
+
+<div class="row">
+    <div class="col-xl-12">
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#all">Весь период</a>
+            </li>
+            <% data.annual.forEach(period => { %>    
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" href="#year<%= period.year %>"><%= period.year %></a>
+                </li>
+            <% }) %>
+          </ul>
+
+          <div class="tab-content">
+
+            <div class="tab-pane fade show active" id="all">
+                
+                <div class="row">
+                    <div class="col-xl-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 text-primary font-weight-bold">Основные показатели</h6>
+                            </div>
+                            <div class="card-body">
+                                
+                                <div class="d-inline-flex flex-row justify-content-between col-12">
+                                    <div>
+                                        Годовая доходность (XIRR): 
+                                        <span> 
+                                            <i class="fas fa-info-circle" 
+                                            data-toggle="popover" 
+                                            title="" 
+                                            data-content="Внутренняя ставка доходности портфеля, расчитывается как функция XIRR() MS Excel. Учитывает все денежные поступления или списания за период."></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <%= Number(data.rate).toFixed(2) %>
+                                        <span> %</span>
+                                    </div>
+                                </div>
+
+                                <div class="d-inline-flex flex-row justify-content-between col-12">
+                                    <div>
+                                        Profit/Loss портфеля: 
+                                        <span> 
+                                            <i class="fas fa-info-circle" 
+                                            data-toggle="popover" 
+                                            title="" 
+                                            data-content="Доход/убыток портфеля расчитывается как разность между стоимостью портфеля на конец периода и количеством денежных средств, поступивших в портфель."></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <%= Number(data.portfolioPL).toFixed(2) %>
+                                        <span> <i class="fas fa-sm fa-ruble-sign"></i></span>
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <div class="d-inline-flex flex-row justify-content-between col-12">
+                                    <div>
+                                        Начальный баланс: 
+                                    </div>
+                                    <div>
+                                        0.00
+                                        <span> <i class="fas fa-sm fa-ruble-sign"></i></span>
+                                    </div>
+                                </div>
+
+                                <div class="d-inline-flex flex-row justify-content-between col-12">
+                                    <div>
+                                        Конечный баланс: 
+                                    </div>
+                                    <div>
+                                        <%= Number(data.portfolioPrice).toFixed(2) %>
+                                        <span> <i class="fas fa-sm fa-ruble-sign"></i></span>
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <div class="d-inline-flex flex-row justify-content-between col-12">
+                                    <div>
+                                        Комиссии и др. расходы: 
+                                        <span> 
+                                            <i class="fas fa-info-circle" 
+                                            data-toggle="popover" 
+                                            title="" 
+                                            data-content="Сумма всех комиссий, налогов и др. списаний за период"></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <%= Number(data.comission).toFixed(2) %>
+                                        <span> <i class="fas fa-sm fa-ruble-sign"></i></span>
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <div class="d-inline-flex flex-row justify-content-between col-12">
+                                    <div>
+                                        Пополнение: 
+                                    </div>
+                                    <div>
+                                        <%= Number(data.income).toFixed(2) %>
+                                        <span> <i class="fas fa-sm fa-ruble-sign"></i></span>
+                                    </div>
+                                </div>
+
+                                <div class="d-inline-flex flex-row justify-content-between col-12">
+                                    <div>
+                                        Вывод: 
+                                    </div>
+                                    <div>
+                                        <%= (data.outcome) ? Number(data.outcome).toFixed(2) : '0.00' %>
+                                        <span> <i class="fas fa-sm fa-ruble-sign"></i></span>
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <div class="d-inline-flex flex-row justify-content-between col-12">
+                                    <div>
+                                        Дивиденды: 
+                                        <span> 
+                                            <i class="fas fa-info-circle" 
+                                            data-toggle="popover" 
+                                            title="" 
+                                            data-content="Сумма дивидендов, полученных по всем инструментов за период."></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <%= (data.dividends) ? Number(data.dividends).toFixed(2) : '0.00' %>
+                                        <span> <i class="fas fa-sm fa-ruble-sign"></i></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 text-primary font-weight-bold">Годовые доходности активов (XIRR)</h6>
+                            </div>
+                            <div class="card-body">
+                                
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-xs-left" role="columnheader">Бумага</th>
+                                            <th class="text-xs-right" role="columnheader">Доходность (% годовых)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% data.secidsProfit.forEach(secid => { %>
+                                            <tr>
+                                                <td class="text-xs-left"><%= secid.secid %></td>
+                                                <td class="text-xs-left"><%= secid.rate %> </td>
+                                            </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+            <% data.annual.forEach(period => { %>
+                <div class="tab-pane fade" id="year<%= period.year %>">
+                    
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 text-primary font-weight-bold">Основные показатели</h6>
+                                </div>
+                                <div class="card-body">
+                                
+                                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                                        <div>
+                                            Годовая доходность (XIRR): 
+                                            <span> 
+                                                <i class="fas fa-info-circle" 
+                                                data-toggle="popover" 
+                                                title="" 
+                                                data-content="Внутренняя ставка доходности портфеля, расчитывается как функция XIRR() MS Excel. Учитывает все денежные поступления или списания за период."></i>
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <%= Number(period.rate).toFixed(2) %>
+                                            <span> %</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                                        <div>
+                                            Profit/Loss портфеля: 
+                                            <span> 
+                                                <i class="fas fa-info-circle" 
+                                                data-toggle="popover" 
+                                                title="" 
+                                                data-content="Доход/убыток портфеля расчитывается как разность между стоимостью портфеля на конец периода и количеством денежных средств, поступивших в портфель."></i>
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <%= Number(period.portfolioPL).toFixed(2) %>
+                                            <span> <i class="fas fa-sm fa-ruble-sign"></i></span>
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                                        <div>
+                                            Начальный баланс: 
+                                        </div>
+                                        <div>
+                                            <%= Number(period.prevPortfolioPrice).toFixed(2) %>
+                                            <span> <i class="fas fa-sm fa-ruble-sign"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                                        <div>
+                                            Конечный баланс: 
+                                        </div>
+                                        <div>
+                                            <%= Number(period.portfolioPrice).toFixed(2) %>
+                                            <span> <i class="fas fa-sm fa-ruble-sign"></i></span>
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                                        <div>
+                                            Комиссии и др. расходы: 
+                                            <span> 
+                                                <i class="fas fa-info-circle" 
+                                                data-toggle="popover" 
+                                                title="" 
+                                                data-content="Сумма всех комиссий, налогов и др. списаний за период"></i>
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <%= Number(period.comission).toFixed(2) %>
+                                            <span> <i class="fas fa-sm fa-ruble-sign"></i></span>
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                                        <div>
+                                            Пополнение: 
+                                        </div>
+                                        <div>
+                                            <%= Number(period.income).toFixed(2) %>
+                                            <span> <i class="fas fa-sm fa-ruble-sign"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                                        <div>
+                                            Вывод: 
+                                        </div>
+                                        <div>
+                                            <%= (period.outcome) ? Number(data.outcome).toFixed(2) : '0.00' %>
+                                            <span> <i class="fas fa-sm fa-ruble-sign"></i></span>
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                                        <div>
+                                            Дивиденды: 
+                                            <span> 
+                                                <i class="fas fa-info-circle" 
+                                                data-toggle="popover" 
+                                                title="" 
+                                                data-content="Сумма дивидендов, полученных по всем инструментов за период."></i>
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <%= (period.dividends) ? Number(data.dividends).toFixed(2) : '0.00' %>
+                                            <span> <i class="fas fa-sm fa-ruble-sign"></i></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 text-primary font-weight-bold">Годовые доходности активов (XIRR)</h6>
+                            </div>
+                            <div class="card-body">
+                                
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-xs-left" role="columnheader">Бумага</th>
+                                            <th class="text-xs-right" role="columnheader">Доходность (% годовых)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% for (key in period.securities) { %>
+                                            <tr>
+                                                <td class="text-xs-left"><%= key %></td>
+                                                <td class="text-xs-left"><%= period.securities[key].rate %> </td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            <% }) %>
+
+          </div>
+
+    </div>
+</div>

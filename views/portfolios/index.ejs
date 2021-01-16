@@ -27,9 +27,9 @@
                             <thead>
                                 <tr>
                                     <th class="text-xs-left" role="columnheader">Название</th>
-                                    <th class="text-xs-right" role="columnheader">Фикс. комиссия</th>
-                                    <th class="text-xs-center" role="columnheader">Валюта</th>
                                     <th class="text-xs-right" role="columnheader">Дата открытия</th>
+                                    <th class="text-xs-center" role="columnheader">Валюта</th>
+                                    <th class="text-xs-right" role="columnheader">Фикс. комиссия</th>
                                     <th class="text-xs-right" role="columnheader" width="20"></th>
                                 </tr>
                             </thead>
@@ -42,11 +42,14 @@
                                             <%= row.title %>
                                         </td>
                                         <td  class="pointer" onClick="setPortfolioId(<%= row.id %>);document.getElementById('portfoliosForm').submit();">
-                                            <%= row.comission %></td>
-                                        <td  class="pointer" onClick="setPortfolioId(<%= row.id %>);document.getElementById('portfoliosForm').submit();">
-                                            <%= row.currency %></td>
-                                        <td  class="pointer" onClick="setPortfolioId(<%= row.id %>);document.getElementById('portfoliosForm').submit();">
                                             <%= row.dateopen.toISOString().slice(0,10) %></td>
+                                        <td  class="pointer" onClick="setPortfolioId(<%= row.id %>);document.getElementById('portfoliosForm').submit();">
+                                            <%= row.currency %>
+                                        </td>
+                                        <td  class="pointer" onClick="setPortfolioId(<%= row.id %>);document.getElementById('portfoliosForm').submit();">
+                                            <%= row.comission %>
+                                        </td>
+                                        
                                         <td>
                 <!-- Dropdown menu in cells -->
                 <ul class="navbar-nav ml-auto">

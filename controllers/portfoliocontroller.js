@@ -689,7 +689,7 @@ exports.info = (req, res, next) => {
     })
     .then(history => {
 
-//        console.log('*** DATA ***', data);
+        console.log('*** DATA ***', data);
 //        console.log('*** RES.secids ***', res.data.secids);
 //        console.log('*** RES.trades ***', res.data.trades);
 //        console.log('*** HISTORY ***', history);

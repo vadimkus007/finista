@@ -63,7 +63,7 @@
                     <h1 class="h3 mb-4 text-gray-800"><%= blocks.title %></h1>
 
                     <div class="">
-            <form id="new-trade" name="newTrade" method="POST" action="/portfolio/<%= data.portfolio.id %>/trades" class="form needs-validation">
+            <form id="new-trade" name="newTrade" method="POST" action="/portfolio/trades" class="form needs-validation">
                 <input type="hidden" id="id" name="id" value="<%= (!data.isNew) ? data.trade.id : '' %>" />
                 <input type="hidden" name="portfolioId" value="<%= data.portfolio.id %>" />
                 <div class="form-group">
