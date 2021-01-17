@@ -31,6 +31,40 @@ const getPrices = function(boards, date) {
 
 } //getPrices
 
+// Annual Average Geometrical Rate
+const AAGR = function(amount, time) {
+    var weights = []; // wight
+    var periods = [];
+    // check arguments
+    if (time.length !== amount.length) {return 0};
+    if (amount.length < 2) {return 0};
+    var startIndex = 0;
+    var endIndex = amount.length - 1;
+    // calculate periods
+    for (var i = 0; i<amount.length; i++) {
+        let per = moment.duration(moment(time[endIndex]).diff(moment(time[i]))).asDays();
+        periods.push(per);
+    } // !!!
+    // calculate weights
+    for (var i = 0; i<amount.length; i++) {
+        weights[i] = periods[i]/periods[startIndex]; // just annual profit
+    }
+    // cashe flows 
+    var s = 0;
+    var avS = 0
+    for (i = 0; i<amount.length;i++) {
+        s = s + Number(amount[i]);
+        if (i>startIndex && i<endIndex) {
+            avS = Number(avS) + Number(weights[i]) * Number(amount[i]);
+        }
+    }
+
+    var profit = -s/(amount[startIndex] + avS);
+    profit = 100* profit * 365 / periods[startIndex];
+
+    return Number(profit).toFixed(2);
+} // AAGR
+
 
 exports.info = (req, res, next) => {
 
@@ -257,7 +291,12 @@ exports.info = (req, res, next) => {
         sum.push(data.portfolioPrice);
         time.push(new Date());
 
-        data.rate = finance.XIRR(sum, time, 0);
+        var rate = finance.XIRR(sum, time, 0);
+        if (isNaN(rate)) {
+            rate = AAGR(sum, time);
+        }
+
+        data.rate = rate;
 
         data.portfolioPL = Number(data.portfolioPrice) - Number(data.income) + Number(data.outcome);
 
@@ -291,7 +330,12 @@ exports.info = (req, res, next) => {
             time.push(new Date());
             //calculate XIRR
 
-            obj.rate = finance.XIRR(amount, time, 0);
+            var rate = finance.XIRR(amount, time, 0);
+            if (isNaN(rate)) {
+                rate = AAGR(amount, time);
+            }
+
+            obj.rate = rate;
             secidsProfit.push(obj);
         });
 
@@ -488,7 +532,7 @@ exports.info = (req, res, next) => {
                     if (typeof data.annual[prevIndex].securities[key] !== 'undefined') {
                         xirrData.amount.push(-data.annual[prevIndex].securities[key].price);
                         xirrData.time.push(new Date(data.annual[prevIndex].year + '-12-31'));
-                    }
+                    } 
                 }
                 if (period.year == moment().format('YYYY')) { // current year
                     xirrData.time.push(new Date());
@@ -548,8 +592,16 @@ exports.info = (req, res, next) => {
                     time.push(row[1]);
                 })
                 let rate = finance.XIRR(amount, time, 0)
+                
+                // if XIRR is imposible to calculate use geometrical average value
+                if (isNaN(rate)) {
+                    rate = AAGR(amount, time);
+                    //console.log(key, period.securities[key].rate, amount, time);
+                }
+
                 period.securities[key].rate = rate;
 
+//console.log(key, period.securities[key].rate, amount, time);
 
             }
 

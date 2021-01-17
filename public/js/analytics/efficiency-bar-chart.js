@@ -1,15 +1,21 @@
 
 function processData(data) {
   var arr = [];
-  for (var i = 0; i<data.length; i++) {
+  for (var i = 0; i<data.data.length; i++) {
     var el = {};
     el.x = i;
-    el.y = data[i];
-    el.name = "";
-    if (data[i] > 0) {
+    el.y = data.data[i];
+    el.name = String(data.categories[i]);
+    if (data.data[i] > 0) {
       el.color = "#44EEA8";
     } else {
       el.color = "#FF7474";
+    }
+    el.dataLabels = {
+      enabled: true,
+      format: el.name,
+      align: (data.data[i] > 0) ? 'left' : 'right',
+      inside: false
     }
     arr.push(el);
   }
@@ -70,7 +76,7 @@ Highcharts.chart('efficiency-bar-chart', {
   },
 
   series: [{
-    name: 'Security',
-    data: processData(efficiency.data)
+    name: 'Securities',
+    data: processData(efficiency)
   }]
 });

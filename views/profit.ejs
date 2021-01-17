@@ -2,6 +2,11 @@
 <% var title = 'Доходность - ' + data.portfolio.title; %>
 <% block('title', title) %>
 <% block('menu', 'portfolio profit') %>
+<!-- DataTables -->
+<% stylesheet('/vendor/datatables/dataTables.bootstrap4.min.css') -%>
+<% script('/vendor/datatables/jquery.dataTables.min.js') %>
+<% script('/vendor/datatables/dataTables.bootstrap4.min.js') %>
+<!-- Page Script -->
 <% script('/js/profit.js') %>
 
 <div class="row">
