@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Portfolio.belongsTo(models.User, {foreingKey: 'userId', as: 'user'}),
       Portfolio.hasMany(models.Trade, {as: 'trade'})
+      //Portfolio.hasMany(models.Goal, {as: 'goal'})
     }
   };
   Portfolio.init({

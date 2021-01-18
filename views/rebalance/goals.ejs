@@ -1,0 +1,106 @@
+<% layout('../layout/portfolio') %>
+<% var title = 'Редактирование целей' %>
+<% block('title', title) %>
+<% block('menu', 'portfolio rebalance') %>
+<% stylesheet('https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css') %>
+<% stylesheet('/css/table-input.css') %>
+<% script('https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js') %>
+<% script('/js/rebalance/goals.js') %>
+
+
+<div class="row">
+    <div class="col-xl-6 mb-4">
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <select name="secid[new]" class="form-control mr-sm-2 select2" id="secidNew" searchable="Search here..">
+                    <option value="" disabled selected>Выберите бумагу</option>
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <button type="button" class="btn btn-primary btn-sm ml-auto form-control" onClick="addRow('secidsTable')">Добавить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card shadow mb-4">
+
+            <form id="goals" name="goals" method="POST" action="/portfolio/rebalance" class="form needs-validation">
+<input type="hidden" name="portfolioId" value="<%= data.portfolio.id %>" />
+<input type="hidden" name="id" value="" id="goalId" />
+
+            <div class="card-header py-3">
+                <h6 class="m-0 text-primary font-weight-bold">Состав портфеля (цель)</h6>
+            </div>
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-12">
+
+                        <table class="table table-bordered table-sm input" id="secidsTable">
+                            <thead>
+                                <tr>
+                                    <th>Тикер</th>
+                                    <th>Состав</th>
+                                    <th class="text-xs-right" role="columnheader" width="20"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% data.goals.forEach(goal => { %>
+                                <tr>
+                                    <td><%= goal.secid %></td>
+                                    <td><input type="text" name="secid[<%=goal.secid%>]" value="<%=goal.amount%>" onChange="calculateSum(); " /></td>
+                                    <td>
+            <!-- Dropdown menu in cells -->
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item dropdown no-arrow mx-1">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-fw fa-ellipsis-h"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="userDropdown">
+                            <button type="button" class="btn btn-sm dropdown-item" placeholder="Удалить" onClick="$(this).closest('tr').remove();">
+                                <i class="fas fa-times fa-sm fa-fw mr-2 text-gray-400"></i>
+                                Удалить
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+                <!-- Dropdown menu in cells -->
+
+                                    </td>
+                                </tr>
+
+                                <% }) %>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div id="sum" class="mb-4">Сумма: </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group form-inline justify-content-center">
+                            <button type="submit" class="btn btn-primary btn-sm form-control mr-sm-2" name="action" value="save">Сохранить</button>
+                            <button type="submit" class="btn btn-primary btn-sm form-control" name="action" value="cancel">Отменить</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+</form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    const securities = <%- JSON.stringify(data.securities) %>
+</script>

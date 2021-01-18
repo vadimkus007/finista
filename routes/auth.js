@@ -7,6 +7,7 @@ var operationController = require('../controllers/operationcontroller.js');
 var tradesController = require('../controllers/tradescontroller.js');
 var analyticsController = require('../controllers/analyticscontroller.js');
 var profitController = require('../controllers/profitcontroller.js');
+var rebalanceController = require('../controllers/rebalancecontroller.js');
  
 module.exports = function(app, passport) {
  
@@ -49,6 +50,9 @@ module.exports = function(app, passport) {
     app.get('/portfolio/analytics', isLoggedIn, analyticsController.info);
 
     app.get('/portfolio/profit', isLoggedIn, profitController.info);
+
+    app.get('/portfolio/rebalance', isLoggedIn, rebalanceController.show);
+    app.post('/portfolio/rebalance', isLoggedIn, rebalanceController.action);
 
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated())

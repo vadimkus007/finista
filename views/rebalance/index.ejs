@@ -1,0 +1,208 @@
+<% layout('../layout/portfolio') %>
+<% var title = 'Ребалансировка портфеля - ' + data.portfolio.title; %>
+<% block('title', title) %>
+<% block('menu', 'portfolio rebalance') %>
+<% stylesheet('/css/table-input.css') %>
+<% script('/js/rebalance/rebalance.js') %>
+
+<form method="POST" action="/portfolio/rebalance" class="" id="rebalanceForm" role="form">
+<input type="hidden" id="portfolioId" name="portfolioId" value="" />
+
+
+    <div id="toolbar" class="row mb-2 d-flex justify-content-between">
+        
+        <div class="col-xl-12">
+                        
+            <button type="submit" class="btn-primary btn btn-sm" name="action" value="edit">
+                <div class="btn-content">
+                    Изменить список инструментов
+                </div>
+            </button>
+                            
+        </div>
+
+    </div>
+
+</form>
+
+<div class="row">
+    <div class="col-xl-6">
+        <table class="table table-bordered table-sm input">
+            <thead>
+                <tr>
+                    <th>Актив</th>
+                    <th>Состав</th>
+                    <th>Цель</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Акции</td>
+                    <td><%= Number(data.percentShare).toFixed(2) %></td>
+                    <td><%= Number(data.percentGoalShare).toFixed(2) %></td>
+                </tr>
+                <tr>
+                    <td>ETF/ПИФ</td>
+                    <td><%= Number(data.percentEtf).toFixed(2) %></td>
+                    <td><%= Number(data.percentGoalEtf).toFixed(2) %></td>
+                </tr>
+                <% if (typeof data.bond !== 'undefined') { %>
+                <tr>
+                    <td>Облигации</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <% } %>
+                <tr>
+                    <td>Рубли</td>
+                    <td><%= Number(100 * data.cashe / data.total).toFixed(2) %></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="row">
+            <div class="col-6">
+                Доп инвестиции:
+            </div>
+            <div class="col-6">
+                <input type="text" class="" id="income" value ="0.00" onChange="update();" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                Стоимость портфеля:
+            </div>
+            <div class="col-6" id="final">
+                <%= Number(data.total).toFixed(2) %>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                Доступно для покупки:
+            </div>
+            <div class="col-6" id="available">
+                0.00
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="row">
+    <div class="col-xl-12">
+
+        <table class="table table-bordered table-sm input">
+            <thead>
+                <tr>
+                    <th colspan="7" class="text-center">Текущий состав портфеля</th>
+                    <th colspan="3" class="text-center">Цель</th>
+                    <th colspan="5" class="text-center">После ребалансировки</th>
+                </tr>
+                <tr>
+                    <th>Тикер</th>
+                    <th>Цена</th>
+                    <th>Кол-во</th>
+                    <th>Сумма</th>
+                    <th>% категории</th>
+                    <th>% всего</th>
+                    <th>Лот</th>
+                    <th>% категории</th>
+                    <th>% всего</th>
+                    <th>Сумма</th>
+                    <th>Разница</th>
+                    <th>Покупка/продажа</th>
+                    <th>Сумма итог</th>
+                    <th>% категории</th>
+                    <th>% всего</th>
+                </tr>
+            </thead>
+            <% if (typeof data.share !== 'undefined') { %>
+            <tbody>
+                <tr>
+                    <td colspan="15" class="text-center">Акции</td>
+                </tr>
+                <% data.share.forEach(item => { %>
+                <tr>
+                    <td><%= item.secid %></td>
+                    <td><%= item.price %></td>
+                    <td><%= item.amount %></td>
+                    <td><%= Number(item.sum).toFixed(2) %></td>
+                    <td><%= Number(item.percent).toFixed(2) %></td>
+                    <td><%= Number(item.percentTotal).toFixed(2) %></td>
+                    <td><%= item.lotsize %></td>
+                    <td><%= Number(item.percentGoal).toFixed(2) %></td>
+                    <td><%= Number(item.percentGoalTotal).toFixed(2) %></td>
+                    <td><%= Number(item.sumGoal).toFixed(2) %></td>
+                    <td><%= Number(item.difference).toFixed(2) %></td>
+                    <td><input type="number" name="amount[<%= item.secid %>]" id="amount<%=item.secid%>" value="0" step="<%=item.lotsize%>" onChange="update();"/></td>
+                    <td id="sum<%= item.secid %>">000.00</td>
+                    <td id="percat<%= item.secid %>">00.00</td>
+                    <td id="per<%= item.secid %>">00.00</td>
+                </tr>
+                <% }) %>
+            </tbody>
+            <% } %>
+            <% if (typeof data.etf !== 'undefined') { %>
+            <tbody>
+                
+                <tr>
+                    <td colspan="15" class="text-center">ETF/ПИФ</td>
+                </tr>
+                <% data.etf.forEach(item => { %>
+                <tr>
+                    <td><%= item.secid %></td>
+                    <td><%= item.price %></td>
+                    <td><%= item.amount %></td>
+                    <td><%= Number(item.sum).toFixed(2) %></td>
+                    <td><%= Number(item.percent).toFixed(2) %></td>
+                    <td><%= Number(item.percentTotal).toFixed(2) %></td>
+                    <td><%= item.lotsize %></td>
+                    <td><%= Number(item.percentGoal).toFixed(2) %></td>
+                    <td><%= Number(item.percentGoalTotal).toFixed(2) %></td>
+                    <td><%= Number(item.sumGoal).toFixed(2) %></td>
+                    <td><%= Number(item.difference).toFixed(2) %></td>
+                    <td><input type="number" name="amount[<%= item.secid %>]" id="amount<%=item.secid%>" value="0" step="<%=item.lotsize%>" onChange="update();"/></td>
+                    <td id="sum<%= item.secid %>">000.00</td>
+                    <td id="percat<%= item.secid %>">00.00</td>
+                    <td id="per<%= item.secid %>">00.00</td>
+                </tr>
+                <% }) %>
+            </tbody>
+            <% } %>
+            <% if (typeof data.bond !== 'undefined') { %>
+            <tbody>
+                <tr>
+                    <td colspan="15" class="text-center">Облигации</td>
+                </tr>
+                <% data.bond.forEach(item => { %>
+                <tr>
+                    <td><%= item.secid %></td>
+                    <td><%= item.price %></td>
+                    <td><%= item.amount %></td>
+                    <td><%= Number(item.sum).toFixed(2) %></td>
+                    <td><%= Number(item.percent).toFixed(2) %></td>
+                    <td><%= Number(item.percentTotal).toFixed(2) %></td>
+                    <td><%= item.lotsize %></td>
+                    <td><%= Number(item.percentGoal).toFixed(2) %></td>
+                    <td><%= Number(item.percentGoalTotal).toFixed(2) %></td>
+                    <td><%= Number(item.sumGoal).toFixed(2) %></td>
+                    <td><%= Number(item.difference).toFixed(2) %></td>
+                    <td><input type="number" name="amount[<%= item.secid %>]" id="amount<%=item.secid%>" value="0" step="<%=item.lotsize%>" onChange="update();"/></td>
+                    <td id="sum<%= item.secid %>">000.00</td>
+                    <td id="percat<%= item.secid %>">00.00</td>
+                    <td id="per<%= item.secid %>">00.00</td>
+                </tr>
+                <% }) %>
+            </tbody>
+            <% } %>
+        </table>
+
+    </div>
+</section>
+
+<script>
+    var data = <%- JSON.stringify(data) %>
+</script>
+
