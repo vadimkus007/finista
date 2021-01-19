@@ -79,14 +79,6 @@ const getSecurities = function() {
     })
 } // getSecurities for options
 
-const deleteGoal = function(id) {
-    return Goal.destroy({
-        where: {
-            id: id
-        }
-    })
-}
-
 var exports = module.exports = {}
 
 exports.show = (req, res, next) => {
@@ -299,13 +291,7 @@ exports.show = (req, res, next) => {
             item.percentGoal = 100 * item.percentGoalTotal / data.percentGoalEtf;
         });
         
-        
-
-
-                    
-
-
-console.log('\n---------------------------------',data);
+//console.log(data);        
         // render
         res.render('rebalance/index', {
             user: user,
@@ -315,6 +301,7 @@ console.log('\n---------------------------------',data);
     })
     .catch(error => {
         console.log(error);
+        next(error);
     })
 } // show
 
@@ -354,6 +341,7 @@ exports.action = (req, res, next) => {
         })
         .catch(err => {
             console.log(err);
+            next(err);
         }); // show goals
     } // renderGoals
 
@@ -385,6 +373,7 @@ exports.action = (req, res, next) => {
             })
             .catch(error => {
                 console.log(error);
+                next(error);
             });
             
             break;
@@ -394,6 +383,7 @@ exports.action = (req, res, next) => {
 
             // clear database
             Goal.destroy({
+                where: {portfolioId : portfolioId},
                 truncate: true
             })
             .then(rowDeleted => {

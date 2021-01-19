@@ -6,114 +6,86 @@ const Favorite = models.Favorite;
 
 var exports = module.exports = {}
 
-
-// get Board Info e.g. engine, market, board, secid
-const getBoardInfo = function(secid) {
-    let urls = [];
-    let url = `http://iss.moex.com/iss/securities/${secid}.json?iss.meta=off&iss.only=boards&boards.columns=secid,boardid,market,engine`;
-    urls.push(url);
-
-    let promises = urls.map(index => Moex.fetchJSON(index));
-   return Promise.all(promises)
-}
-
-// get security info
-const getSecurityInfo = function(boards) {
-    let urls = [];
-        let url = `http://iss.moex.com/iss/engines/${boards.engine}/markets/${boards.market}/boards/${boards.boardid}/securities/${boards.secid}.json?iss.meta=off&iss.only=securities,marketdata`;
-        urls.push(url);
-
-        let promises = urls.map(index => Moex.fetchJSON(index));
-        return Promise.all(promises)
-}
-
-//get history
-const getHistory = function(boards, from, till, start) {
-    let baseURL = `http://iss.moex.com/iss/history/engines/${boards.engine}/markets/${boards.market}/boards/${boards.boardid}/securities/${boards.secid}.json?iss.meta=off&history.columns=TRADEDATE,CLOSE`;
-
-    // get dates from 3 year before to today
-    var today = new Date();
-    var start = new Date();
-    start= start.setMonth(start.getMonth() - 36); // -3 years from
-
-    baseURL = baseURL + '&from=' + formatDate(start) + '&till=' + formatDate(today);
-        
-    let total = 1080;
-    let pagesize = 100;
-
-    let urls = [];
-    for (var i = 0; i < total; i = i+pagesize) {
-        urls.push(baseURL + '&start=' + String(i));
-    }
-
-    let promises = urls.map(url => Moex.fetchJSON(url));
-
-    var data = [];
-    let histories = {};
-            
-    return Promise.all(promises)
-}
-
-// get dividends
-const getDividends = function(secid) {
-    let urls = [`https://iss.moex.com/iss/securities/${secid}/dividends.json?iss.meta=off&dividends.columns=registryclosedate,value`];
-    let promises = urls.map(url => Moex.fetchJSON(url));
-}
-
 exports.list = (req, res, next) => {
     
+    // get User from request
+    let user = 0;
+    if (req.isAuthenticated()) {
+        user = req.session.passport.user;
+    }
+
     var result = {};
 
-    // get shares (TQBR)
-    let urls = [];
-    let url = 'http://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities.json?iss.meta=off&iss.only=securities,marketdata';
-    urls.push(url);
-    url = 'http://iss.moex.com/iss/engines/stock/markets/foreignshares/boards/FQBR/securities.json?iss.meta=off&iss.only=securities,marketdata';
-    urls.push(url);
-    url = 'http://iss.moex.com/iss/engines/stock/markets/shares/boards/TQTF/securities.json?iss.meta=off&iss.only=securities,marketdata';
-    urls.push(url);
-    url = 'http://iss.moex.com/iss/engines/stock/markets/index/boards/rtsi/securities.json?iss.meta=off&iss.only=securities,marketdata'
-    urls.push(url);
-    url = 'http://iss.moex.com/iss/engines/stock/markets/index/boards/sndx/securities.json?iss.meta=off&iss.only=securities,marketdata'
-    urls.push(url);
+    let request = {
+        engines: 'stock',
+        markets: 'shares',
+        boards: 'TQBR',
+        securities: ''
+    };
+    let options = {
+        'iss.only': 'securities,marketdata'
+    }
 
-    let promises = urls.map(index => Moex.fetchJSON(index));
+    let promises = [];
+
+    promises.push(Moex.getRequest(request, options));
+
+    request.markets = 'foreignshares';
+    request.boards = 'FQBR';
+
+    promises.push(Moex.getRequest(request, options));
+
+    request.markets = 'shares';
+    request.boards = 'TQTF';
+
+    promises.push(Moex.getRequest(request, options));
+
+    request.markets = 'index';
+    request.boards = 'rtsi';
+
+    promises.push(Moex.getRequest(request, options));
+
+    request.boards = 'sndx';
+
+    promises.push(Moex.getRequest(request, options));
+
     Promise.all(promises)
     .then(data => {
 
-        let result = {};
         let section_keys = ['stock', 'stock', 'etf', 'index', 'index'];
 
-        // parse obtained data
-        for (var index = 0; index<data.length; index++) {
+        // append data obtained
+        let result = {};
 
-            let data_array = [];
-            for (var i = 0; i<data[index].securities.data.length; i++) {
-                let newData = {};
-                for (key in data[index].marketdata.columns) {
-                    newData[data[index].marketdata.columns[key]] = data[index].marketdata.data[i][key];
-                }
-                for (key in data[index].securities.columns) {
-                    newData[data[index].securities.columns[key]] = data[index].securities.data[i][key];
-                }
-                data_array.push(newData);    
-            } // data arrays of securities index
+        result.shares = data[0];
+        result.shares.securities = result.shares.securities.concat(data[1].securities);
+        result.shares.marketdata = result.shares.marketdata.concat(data[1].marketdata);
 
-            if (result[section_keys[index]]) {
-                result[section_keys[index]] = result[section_keys[index]].concat(data_array);
-            } else {
-                result[section_keys[index]] = data_array;
-            }
+        result.etf = data[2];
 
+        result.index = data[3];
+        result.index.securities = result.index.securities.concat(data[4].securities);
+        result.index.marketdata = result.index.marketdata.concat(data[4].marketdata);
 
-        } // section
-
-        // get User from request
-        let user = 0;
-        if (req.isAuthenticated()) {
-            user = req.session.passport.user;
+        let arr = [];
+        for (var i=0; i<result.shares.securities.length; i++) {
+            let obj = {};
+            arr.push(Object.assign(result.shares.securities[i], result.shares.marketdata[i]));
         }
-
+        result.shares = arr;
+        arr = [];
+        for (var i=0; i<result.etf.securities.length; i++) {
+            let obj = {};
+            arr.push(Object.assign(result.etf.securities[i], result.etf.marketdata[i]));
+        }
+        result.etf = arr;
+        arr = [];
+        for (var i=0; i<result.index.securities.length; i++) {
+            let obj = {};
+            arr.push(Object.assign(result.index.securities[i], result.index.marketdata[i]));
+        }
+        result.index = arr;
+        
         // Render view
         res.render('quotes', {
             title: 'Котировки',
@@ -121,7 +93,10 @@ exports.list = (req, res, next) => {
             data: result
         });
 
-    }).catch(err => console.log(err)); // promises
+    }).catch(err => {
+        console.log(err);
+        next(err);
+    }); // promises
 } // list 
 
 
@@ -245,7 +220,10 @@ Moex.getHistoryFromDate('AFLT', 'TQBR', 'shares', 'stock', '2020-07-13', (err, r
 
 
     })
-    .catch(err => console.log('Error getting request from MOEX: ', err));
+    .catch(err => {
+        console.log('Error getting request from MOEX: ', err);
+        next(err);
+    });
 
 }
 
@@ -269,7 +247,10 @@ exports.favorite = (req, res, next) => {
                     }
                 })
                 .then(count => {console.log('Record successfully deleted.')})
-                .catch(err => console.log('Error: ', err));
+                .catch(err => {
+                    console.log('Error: ', err);
+                    next(err);
+                });
             } else {
                 // Add new favorite
                 Favorite.create({
@@ -280,11 +261,12 @@ exports.favorite = (req, res, next) => {
                 .catch(err => console.log('Error while creation new favorite'));
                 
             }
-        }).catch(err => console.log('Error getting request from db: ', err))
+        }).catch(err => {
+            console.log('Error getting request from db: ', err);
+            next(err);
+        })
 
     }
-
-    
 
     res.redirect(`/quotes/${req.params.secid}`);
 }

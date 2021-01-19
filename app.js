@@ -61,13 +61,33 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    if (404 === err.status) {
+        res.format({
+            'text/plain': () => {
+                res.send({message: 'not found Data'});
+                },
+            'text/html': () => {
+                res.render('404');
+                },
+            'application/json': () => {
+                res.send({message: 'not found Data'});
+                },
+            'default': () => {
+                res.status(406).send('Not Acceptable');
+            }
+        })
+    }
+    // when status is 500, error handler
+    if(500 === err.status) {
+        return res.render('error');
+    }
+    
 });
 
 //Sync Database

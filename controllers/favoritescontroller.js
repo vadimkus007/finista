@@ -81,7 +81,10 @@ exports.list = (req, res, next) => {
             data: data
         }); // render view
     })
-    .catch(err => console.log('Error reading data: ', err));
+    .catch(err => {
+        console.log('Error reading data: ', err);
+        next(err);
+    });
 
 }
 
@@ -104,7 +107,10 @@ exports.action = (req, res, next) => {
                             console.log(`Deleted ${rowDeleted} items from Favorites`);
                         }
                     })
-                    .catch(err => console.log(err));
+                    .catch(err => {
+                        console.log(err);
+                        next(err);
+                    });
                 });
             }
             res.redirect('favorites');

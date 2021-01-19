@@ -45,7 +45,13 @@ exports.action = (req, res, next) => {
         return next();
     }
 
+    var user = 0;
+    if (req.isAuthenticated()) {
+        user = req.session.passport.user;
+    }
+
     const portfolioId = req.session.portfolio.id;
+
     
     switch (req.body.action) {
 
@@ -106,13 +112,20 @@ exports.action = (req, res, next) => {
                                         // render view
 
                                         res.render('portfolio/trade-edit', {
+                                            user: user,
                                             data: data,
                                             error: err
                                         });                           
                                     });
 
-                                }).catch(err=>console.log('Error reading operations'));
-                            }).catch(err=>console.log('Error reading portfolio'));
+                                }).catch(err=>{
+                                    console.log('Error reading operations');
+                                    next(err);
+                                });
+                            }).catch(err=>{
+                                console.log('Error reading portfolio');
+                                next(err);
+                            });
 
                         });
 
@@ -166,13 +179,20 @@ exports.action = (req, res, next) => {
                                         // render view
 
                                         res.render('portfolio/trade-edit', {
+                                            user: user,
                                             data: data,
                                             error: err
                                         });                           
                                     });
 
-                                }).catch(err=>console.log('Error reading operations'));
-                            }).catch(err=>console.log('Error reading portfolio'));
+                                }).catch(err=>{
+                                    console.log('Error reading operations');
+                                    next(err);
+                                });
+                            }).catch(err=>{
+                                console.log('Error reading portfolio');
+                                next(err);
+                            });
 
                         });
                     }
@@ -227,13 +247,20 @@ exports.action = (req, res, next) => {
                                         // render view
 
                                         res.render('portfolio/trade-edit', {
+                                            user: user,
                                             data: data,
                                             error: err
                                         });                           
                                     });
 
-                                }).catch(err=>console.log('Error reading operations'));
-                            }).catch(err=>console.log('Error reading portfolio'));
+                                }).catch(err=>{
+                                    console.log('Error reading operations');
+                                    next(err);
+                                });
+                            }).catch(err=>{
+                                console.log('Error reading portfolio');
+                                next(err);
+                            });
 
                 });
 
@@ -282,12 +309,14 @@ exports.action = (req, res, next) => {
                         data.securities = securities;
                         // render view
                         res.render('portfolio/trade-edit', {
+                            user: user,
                             data: data
                         });                           
                     });
                 })
                 .catch(err => {
                     console.log('Error reading database: ', err);
+                    next(err);
                 });
 
             } else {
@@ -316,6 +345,7 @@ exports.action = (req, res, next) => {
                         data.securities = securities;
                         // render view
                         res.render('portfolio/trade-edit', {
+                            user: user,
                             data: data
                         });                           
                     });
@@ -324,6 +354,7 @@ exports.action = (req, res, next) => {
                 })
                 .catch(err => {
                     console.log('Error reading database: ', err);
+                    next(err);
                 })
             }
 
@@ -341,7 +372,10 @@ exports.action = (req, res, next) => {
                             console.log(`Trade deleted successfully.`);
                         }
                 })
-                .catch(err => console.log('Error deleting record:', err));
+                .catch(err => {
+                    console.log('Error deleting record:', err);
+                    next(err);
+                });
 
             }
 
@@ -361,6 +395,11 @@ exports.list = (req, res, next) => {
         
         res.redirect('/portfolios');
         return next();
+    }
+
+    var user = 0;
+    if (req.isAuthenticated()) {
+        user = req.session.passport.user;
     }
 
     const portfolioId = req.session.portfolio.id;
@@ -398,12 +437,14 @@ exports.list = (req, res, next) => {
 
         // render view
         res.render('portfolio/trades', {
+            user: user,
             data: data
         });
 
     })
     .catch(err => {
         console.log('Error reading database: ', err);
+        next(err);
     })
 
 }

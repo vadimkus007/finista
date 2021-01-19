@@ -76,6 +76,11 @@ exports.info = (req, res, next) => {
         return next();
     }
 
+    var user = 0;
+    if (req.isAuthenticated()) {
+        user = req.session.passport.user;
+    }
+
     const portfolioId = req.session.portfolio.id;
 
     var data = {};
@@ -615,10 +620,14 @@ exports.info = (req, res, next) => {
 
         // render view
         res.render('profit', {
+            user: user,
             data: data
         });
 
     })
-    .catch(error => console.log(error));
+    .catch(error => {
+        console.log(error);
+        next(error);
+    });
 
 }

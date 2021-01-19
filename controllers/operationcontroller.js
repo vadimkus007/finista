@@ -13,7 +13,8 @@ exports.list = (req, res, next) => {
         });
     })
     .catch((err) => {
-        console.log('Error reading operations: ', err)
+        console.log('Error reading operations: ', err);
+        next(err);
     })
 }
 
@@ -33,7 +34,10 @@ exports.action = (req, res, next) => {
                 title: req.body.title,
             })
             .then(newOperation => console.log(`Operation ${newOperation.title} is successfully created.`))
-            .catch(err => console.log('Error while creating operation: ', err));
+            .catch(err => {
+                console.log('Error while creating operation: ', err);
+                next(err);
+            });
 
 
             res.redirect('operations');
@@ -52,7 +56,10 @@ exports.action = (req, res, next) => {
                             console.log(`Operation ${req.body.title} deleted successfully.`);
                         }
                 })
-                .catch(err => console.log('Error deleting operation:', err));
+                .catch(err => {
+                    console.log('Error deleting operation:', err);
+                    next(err);
+                });
 
             }
 
@@ -73,6 +80,7 @@ exports.action = (req, res, next) => {
             })
             .catch(err => {
                 console.log('Error updating Operation table: ', err);
+                next(err);
             });
 
             res.redirect('operations');
@@ -111,7 +119,8 @@ exports.edit = (req, res, next) => {
 
     })
     .catch((err) => {
-        console.log('Error reading operation: ', err)
+        console.log('Error reading operation: ', err);
+        next(err);
     });
 
 }

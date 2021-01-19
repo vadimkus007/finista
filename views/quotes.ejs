@@ -50,31 +50,31 @@
                 <tfoot>
                 </tfoot>
                 <tbody>
-                  <% for (var i = 0; i < data['stock'].length; i++) { %>   
+                  <% data.shares.forEach(row => { %> 
                     <tr>
-                      <td><a href = "/quotes/<%= data['stock'][i]['SECID'] %>" ><%= data['stock'][i]['SECID'] %></a></td>
-                      <td><%= data['stock'][i]['SHORTNAME'] %></td>
-                      <td><%= data['stock'][i]['LAST'] %></td>
+                      <td><a href = "/quotes/<%= row.SECID %>" ><%= row.SECID %></a></td>
+                      <td><%= row.SHORTNAME %></td>
+                      <td><%= row.LAST %></td>
                       <td>
                         <span style="
-                        <% if(data['stock'][i]['LASTTOPREVPRICE']<0){ %>
+                        <% if(row.LASTTOPREVPRICE<0){ %>
                           color:red;
                         <% } %>
-                        <% if(data['stock'][i]['LASTTOPREVPRICE']>0){ %>
+                        <% if(row.LASTTOPREVPRICE>0){ %>
                           color:green;
                         <% } %>
                         "> 
-                        <%= data['stock'][i]['LASTTOPREVPRICE'] %> 
+                        <%= row.LASTTOPREVPRICE %> 
                         %</span>
                       </td>
-                      <td><%= data['stock'][i]['OPEN'] %></td>
-                      <td><%= data['stock'][i]['LOW'] %></td>
-                      <td><%= data['stock'][i]['HIGH'] %></td>
-                      <td><%= data['stock'][i]['WAPRICE'] %></td>
-                      <td><%= data['stock'][i]['VALTODAY'] %></td>
-                      <td><%= data['stock'][i]['TIME'] %></td>
+                      <td><%= row.OPEN %></td>
+                      <td><%= row.LOW %></td>
+                      <td><%= row.HIGH %></td>
+                      <td><%= row.WAPRICE %></td>
+                      <td><%= row.VALTODAY %></td>
+                      <td><%= row.TIME %></td>
                     </tr>
-                  <% } %>
+                  <% }) %>
                 </tbody>
               </table>
 
@@ -101,31 +101,31 @@
                 <tfoot>
                 </tfoot>
                 <tbody>
-                  <% for (var i = 0; i < data['etf'].length; i++) { %>   
+                  <% data.etf.forEach(row => { %> 
                     <tr>
-                      <td><a href = "/quotes/<%= data['etf'][i]['SECID'] %>" ><%= data['etf'][i]['SECID'] %></a></td>
-                      <td><%= data['etf'][i]['SHORTNAME'] %></td>
-                      <td><%= data['etf'][i]['LAST'] %></td>
+                      <td><a href = "/quotes/<%= row.SECID %>" ><%= row.SECID %></a></td>
+                      <td><%= row.SHORTNAME %></td>
+                      <td><%= row.LAST %></td>
                       <td>
                         <span style="
-                        <% if(data['etf'][i]['LASTTOPREVPRICE']<0){ %>
+                        <% if(row.LASTTOPREVPRICE<0){ %>
                           color:red;
                         <% } %>
-                        <% if(data['etf'][i]['LASTTOPREVPRICE']>0){ %>
+                        <% if(row.LASTTOPREVPRICE>0){ %>
                           color:green;
                         <% } %>
                         "> 
-                        <%= data['stock'][i]['LASTTOPREVPRICE'] %> 
+                        <%= row.LASTTOPREVPRICE %> 
                         %</span>
                       </td>
-                      <td><%= data['etf'][i]['OPEN'] %></td>
-                      <td><%= data['etf'][i]['LOW'] %></td>
-                      <td><%= data['etf'][i]['HIGH'] %></td>
-                      <td><%= data['etf'][i]['WAPRICE'] %></td>
-                      <td><%= data['etf'][i]['VALTODAY'] %></td>
-                      <td><%= data['etf'][i]['TIME'] %></td>
+                      <td><%= row.OPEN %></td>
+                      <td><%= row.LOW %></td>
+                      <td><%= row.HIGH %></td>
+                      <td><%= row.WAPRICE %></td>
+                      <td><%= row.VALTODAY %></td>
+                      <td><%= row.TIME %></td>
                     </tr>
-                  <% } %>
+                  <% }) %>
                 </tbody>
               </table>
             </div>
@@ -145,16 +145,16 @@
                 <tfoot>
                 </tfoot>
                 <tbody>
-                  <% for (var i = 0; i < data['index'].length; i++) { %>   
+                  <% data.index.forEach(row => { %> 
                     <tr>
-                      <td><a href = "/quotes/<%= data['index'][i]['SECID'] %>" ><%= data['index'][i]['SECID'] %></a></td>
-                      <td><%= data['index'][i]['NAME'] %></td>
-                      <td><%= data['index'][i]['CURRENTVALUE'] %></td>
-                      <td><%= data['index'][i]['LASTCHANGETOOPENPRC'] %> %</td>
-                      <td><%= data['index'][i]['MONTHCHANGEPRC'] %> %</td>
-                      <td><%= data['index'][i]['YEARCHANGEPRC'] %> %</td>
+                      <td><a href = "/quotes/<%= row.SECID %>" ><%= row.SECID %></a></td>
+                      <td><%= row.NAME %></td>
+                      <td><%= row.CURRENTVALUE %></td>
+                      <td><%= row.LASTCHANGETOOPENPRC %> %</td>
+                      <td><%= row.MONTHCHANGEPRC %> %</td>
+                      <td><%= row.YEARCHANGEPRC %> %</td>
                     </tr>
-                  <% } %>
+                  <% }) %>
                 </tbody>
               </table>
 

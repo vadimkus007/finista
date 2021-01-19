@@ -1,5 +1,5 @@
 var authController = require('../controllers/authcontroller.js');
-var quotesController = require('../controllers/quotescontroller.js');
+// var quotesController = require('../controllers/quotescontroller.js');
 var favoritesController = require('../controllers/favoritescontroller.js');
 var portfoliosController = require('../controllers/portfolioscontroller.js');
 var portfolioController = require('../controllers/portfoliocontroller.js');
@@ -19,9 +19,9 @@ module.exports = function(app, passport) {
     app.get('/favorites', isLoggedIn, favoritesController.list);
     app.post('/favorites', isLoggedIn, favoritesController.action);
 
-    app.get('/quotes', quotesController.list);
-    app.get('/quotes/:secid', quotesController.info);
-    app.post('/quotes/:secid', quotesController.favorite);
+//    app.get('/quotes', quotesController.list);
+//    app.get('/quotes/:secid', quotesController.info);
+//    app.post('/quotes/:secid', quotesController.favorite);
 
     app.post('/signup', passport.authenticate('local-signup', {
         successRedirect: '/quotes',
@@ -37,10 +37,10 @@ module.exports = function(app, passport) {
     app.get('/portfolios', isLoggedIn, portfoliosController.list);
     app.post('/portfolios', isLoggedIn, portfoliosController.action);
 
-    app.get('/operations', operationController.list);
-    app.post('/operations', operationController.action);
-    app.get('/operations/new', operationController.new);
-    app.get('/operations/edit/:id', operationController.edit);
+    app.get('/operations', isLoggedIn, operationController.list);
+    app.post('/operations', isLoggedIn, operationController.action);
+    app.get('/operations/new', isLoggedIn, operationController.new);
+    app.get('/operations/edit/:id', isLoggedIn, operationController.edit);
 
     app.get('/portfolio', isLoggedIn, portfolioController.info);
     

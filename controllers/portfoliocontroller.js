@@ -23,6 +23,11 @@ exports.info = (req, res, next) => {
         return next();
     }
 
+    var user = 0;
+    if (req.isAuthenticated()) {
+        user = req.session.passport.user;
+    }
+
     const portfolioId = req.session.portfolio.id;
 
     const getDates = function(startDate, stopDate) {
@@ -154,7 +159,10 @@ exports.info = (req, res, next) => {
 
 
     const getBoardShareInfo = function(secids) {
-        return Promise.all([getShareInfo(secids), getBoardInfo(secids)]);
+        return Promise.all([
+            getShareInfo(secids), 
+            getBoardInfo(secids)
+        ]);
     }
 
     // get market data
@@ -171,6 +179,7 @@ exports.info = (req, res, next) => {
         return Promise.all(promises)
     }
 
+    // getRubs
     const getRubs = function(id) {
         return Trade.findAll({
                     attributes: [
@@ -188,6 +197,7 @@ exports.info = (req, res, next) => {
         });
     }
 
+    // render view
     const renderView = function(data) {
         var renderdata = {};
 
@@ -198,6 +208,7 @@ exports.info = (req, res, next) => {
 
         // render
         res.render('portfolio/index', {
+            user: user,
             data: renderdata
         });
     }
@@ -698,7 +709,10 @@ exports.info = (req, res, next) => {
 
         renderView(data);
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        console.log(err);
+        next(err);
+    });
 
 }
 

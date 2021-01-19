@@ -89,6 +89,11 @@ exports.info = (req, res, next) => {
         return next();
     }
 
+    var user = 0;
+    if (req.isAuthenticated()) {
+        user = req.session.passport.user;
+    }
+
     const portfolioId = req.session.portfolio.id;
 
     var data = {};
@@ -299,6 +304,7 @@ exports.info = (req, res, next) => {
 //console.log(sectors);
         // render view
         res.render('analytics', {
+            user: user,
             data: renderdata
         });
 

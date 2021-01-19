@@ -30,7 +30,8 @@ exports.list = (req, res, next) => {
 
     })
     .catch((err) => {
-        console.log('Error reading portfolios: ', err)
+        console.log('Error reading portfolios: ', err);
+        next(err);
     });
 }
 
@@ -51,7 +52,10 @@ exports.action = (req, res, next) => {
                             console.log(`Portfolio ${req.body.title} deleted successfully.`);
                         }
                 })
-                .catch(err => console.log('Error deleting portfolio:', err));
+                .catch(err => {
+                    console.log('Error deleting portfolio:', err);
+                    next(err);
+                });
 
             }
 
@@ -182,6 +186,7 @@ exports.action = (req, res, next) => {
                 })
                 .catch(err => {
                     console.log('Error reading portfolio: ', err);
+                    next(err);
                 });
 
             } else {
@@ -203,8 +208,6 @@ exports.action = (req, res, next) => {
                     res.redirect(`/portfolio`);
                 }
             } 
-
-            res.redirect('portfolios');
     }
 }
 
