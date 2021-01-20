@@ -9,12 +9,42 @@ function update() {
     data.share.forEach(function(item) {
         sum = sum + $('#amount'+item.secid).val() * item.price;
         $('#sum'+item.secid).html(($('#amount'+item.secid).val() * item.price).toFixed(2));
+        // new goal sum
+        $('#sumGoal'+item.secid).html(Number(item.percentGoalTotal*total/100).toFixed(2));
+        // new difference
+        $('#difference'+item.secid).html((Number($('#sumGoal'+item.secid).html()) - Number(item.sum)).toFixed(2));
+        // add class to difference
+        $('#difference'+item.secid).removeClass('table-success');
+        $('#difference'+item.secid).removeClass('table-danger');
+        if (Math.abs(Number($('#difference'+item.secid).html()) - Number($('#sumGoal'+item.secid).html() * 0.1))) {
+            if (Number($('#difference'+item.secid).html()) > 0) {
+                $('#difference'+item.secid).addClass('table-success');
+            }
+            if (Number($('#difference'+item.secid).html()) < 0) {
+                $('#difference'+item.secid).addClass('table-danger');
+            }
+        }
     });
     var dShare = sum;
 
     data.etf.forEach(item => {
         sum = sum + $('#amount'+item.secid).val() * item.price;
         $('#sum'+item.secid).html(($('#amount'+item.secid).val() * item.price).toFixed(2));
+        // new goal sum
+        $('#sumGoal'+item.secid).html(Number(item.percentGoalTotal*total/100).toFixed(2));
+        // new difference
+        $('#difference'+item.secid).html((Number($('#sumGoal'+item.secid).html()) - Number(item.sum)).toFixed(2));
+        // add class to difference
+        $('#difference'+item.secid).removeClass('table-success');
+        $('#difference'+item.secid).removeClass('table-danger');
+        if (Math.abs(Number($('#difference'+item.secid).html()) - Number($('#sumGoal'+item.secid).html() * 0.1))) {
+            if (Number($('#difference'+item.secid).html()) > 0) {
+                $('#difference'+item.secid).addClass('table-success');
+            }
+            if (Number($('#difference'+item.secid).html()) < 0) {
+                $('#difference'+item.secid).addClass('table-danger');
+            }
+        }
     });
     var dEtf = sum - dShare;
 

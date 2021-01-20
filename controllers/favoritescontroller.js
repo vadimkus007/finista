@@ -25,61 +25,50 @@ exports.list = (req, res, next) => {
         raw: true
     })
     .then((rows) => { // Result processing
-
         data = rows;
-
         // get boards infor for all securities
-        let urls = [];
         
-        for (var i = 0; i<rows.length; i++) {
-            let url = `http://iss.moex.com/iss/securities/${rows[i].secid}.json?iss.meta=off&iss.only=boards&boards.columns=secid,boardid,market,engine`;
-            urls.push(url); 
-        }
-            
-        let promises = urls.map(index => Moex.fetchJSON(index));
+        let promises = [];
+        rows.forEach(row => {
+            promises.push(Moex.getPrimaryBoard(row.secid));
+        });
             
         return Promise.all(promises)
     })
-    .then(responses => {
-
-        for (var i = 0; i<data.length; i++) {
-            let resp = responses[i];
-            for (key in resp.boards.columns) {
-                data[i][resp.boards.columns[key]] = resp.boards.data[0][key];
-            }
-        }
-
+    .then(boards => {      
             // get market info for all securities
 
-        let urls = [];
-        for (var i = 0; i<data.length; i++) {
-            let url = `http://iss.moex.com/iss/engines/${data[i].engine}/markets/${data[i].market}/boards/${data[i].boardid}/securities/${data[i].secid}.json?iss.meta=off&iss.only=securities,marketdata&securities.columns=SECID,SHORTNAME,CURRENCYID&marketdata.columns=LAST,LASTTOPREVPRICE,UPDATETIME`;
-            urls.push(url);
-        }
+        let request = {};
+        let options = {
+            'iss.only': 'securities,marketdata',
+            'securities.columns': 'SECID,SHORTNAME,CURRENCYID',
+            'marketdata.columns': 'LAST,LASTTOPREVPRICE,UPDATETIME'
+        };
 
-        let promises = urls.map(url => Moex.fetchJSON(url));
+        let promises = [];
+        boards.forEach(board => {
+            request.engines = board.engine,
+            request.markets = board.market,
+            request.boards = board.boardid,
+            request.securities = board.secid
+            promises.push(Moex.getRequest(request, options));
+        });
 
-        return Promise.all(promises)
+        return Promise.all(promises);
     })
     .then((responses) => {
 
         for (var i = 0; i<data.length; i++) {
-            let securities = responses[i].securities;
-            let marketdata = responses[i].marketdata;
-            for (key in securities.columns) {
-                data[i][securities.columns[key]] = securities.data[0][key];
-            }
-            for (key in marketdata.columns) {
-                data[i][marketdata.columns[key]] = marketdata.data[0][key];
-            }
+            Object.assign(data[i],responses[i].securities[0],responses[i].marketdata[0]);
         }
-
         // render view
+
         res.render('favorites', {
             title: 'Избранное',
             user: user,
             data: data
         }); // render view
+
     })
     .catch(err => {
         console.log('Error reading data: ', err);
@@ -90,16 +79,22 @@ exports.list = (req, res, next) => {
 
 exports.action = (req, res, next) => {
 
+    var user = 0;
+    if (req.isAuthenticated()) {
+        user = req.session.passport.user;
+    }
+
     switch (req.body.action) {
 
         case 'delete':
 
+console.log('DELETE');
+console.log('\nDELETE', req.body);
         // Delete Favorites rows
-            if (req.body.cids) {
-                req.body.cids.forEach(cid => {
+            if (req.body.secid) {
                     Favorite.destroy({
                         where: {
-                            id: cid
+                            id: req.body.secid
                         }
                     })
                     .then(rowDeleted => {
@@ -111,7 +106,6 @@ exports.action = (req, res, next) => {
                         console.log(err);
                         next(err);
                     });
-                });
             }
             res.redirect('favorites');
             break;

@@ -6,8 +6,7 @@ const Favorite = models.Favorite;
 
 var exports = module.exports = {}
 
-exports.list = (req, res, next) => {
-    
+exports.list = (req, res, next) => {    
     // get User from request
     let user = 0;
     if (req.isAuthenticated()) {
@@ -85,7 +84,7 @@ exports.list = (req, res, next) => {
             arr.push(Object.assign(result.index.securities[i], result.index.marketdata[i]));
         }
         result.index = arr;
-        
+      
         // Render view
         res.render('quotes', {
             title: 'Котировки',

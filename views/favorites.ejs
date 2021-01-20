@@ -8,55 +8,36 @@
 <% block('menu', 'favorites') %>
 
 <form method="POST" action="/favorites" class="">
+<input type="hidden" id="secid" name="secid" value="" />
+<div class="row">
+
+    <% data.forEach(item => { %>
+    <div class="col-sm-6 col-xl-3">
+    <card class="card shadow mb-4" style="position: relative;">
         
-  
-          
-                  
-                  <div id="toolbar" class="toolbar row" role="toolbar">
-                      <div class="">
-                                <button type="submit" class="btn-primary btn btn-sm" name="action" value="delete" onClick="confirm('Удалить выбранные инструменты?');">
-                                    <div class="btn-content">
-                                        Удалить
-                                    </div>
-                                </button>
-                        </div>
-                  </div>
+        <a href="/quotes/<%= item.secid %>" style="text-decoration: none !important; color:#858796;">
+        <div class="card-body text-content-center py-3">
+            <div class="col-12 text-center font-weight-bold"><h3><%= item.SHORTNAME %></h3></div>
+            <div class="col-12 text-center"><h4><%= item.LAST %></h4></div>
+            <div class="col-12 text-center <% if (item.LASTTOPREVPRICE > 0) { %>text-success<% } %><% if (item.LASTTOPREVPRICE < 0) { %>text-danger<% } %>"><h4><%= Number(item.LAST*item.LASTTOPREVPRICE/(100+item.LASTTOPREVPRICE)).toFixed(2) %> <% if (item.CURRENCYID == 'SUR') { %><i class="fas fa-sm fw fa-ruble-sign"></i><% } %><% if (item.CURRENCYID == 'USD') { %>$<% } %> (<%= item.LASTTOPREVPRICE %> %)</h4></div>
+        </div>
+        </a>
+        <ul class="navbar-nav" style="position:absolute; right: 0px; top: 0px;">
+            <li class="nav-item">
+                <button type="submit" name="action" value="delete" class="btn" onClick="if (confirm('Дествительно удалить инструмент из избранного?')) {setSecidId(<%= item.id %>);}"><i class="fas fw fa-times"></i></button>
+            </li>
+        </ul>   
+    </card>
+    </div>
+    <% }) %>
 
-                  <div class="table-responsive row">
-                      <table class="table table-striped table-bordered table-hover" id="favoritesTable">
-                          <thead>
-                              <tr>
-                                  <th></th>
-                                  <th>Тикер</th>
-                                  <th>Компания</th>
-                                  <th>Последняя</th>
-                                  <th>Изменение, %</th>
-                              </tr>
-                          </thead>
-                          <tfoot>
-                          </tfoot>
-                          <tbody>
-                              <% for (var i = 0; i < data.length; i++) { %>   
-                              <tr>
-                                  <td><input type="checkbox" name="cids[]" value="<%= data[i]['id'] %>" title="" onclick="" /></td>
-                                  <td><a href = "/quotes/<%= data[i]['secid'] %>" ><%= data[i]['secid'] %></a></td>
-                                  <td><%= data[i]['SHORTNAME'] %></td>
-                                  <td><%= data[i]['LAST'] %></td>
-                                  <td><span style="
-                                      <% if(data[i]['LASTTOPREVPRICE']<0){ %>
-                                        color:red;
-                                      <% } %>
-                                      <% if(data[i]['LASTTOPREVPRICE']>0){ %>
-                                        color:green;
-                                      <% } %>
-                                  "><%= data[i]['LASTTOPREVPRICE'] %> %</span></td>
-                              </tr>
-                              <% } %>
-                          </tbody>
-                      </table>
-                  </div>
-
-
+</div> 
 
 </form>
+
+<script>
+        function setSecidId(id) {
+            document.getElementById('secid').value = id;
+        }
+</script>
 
