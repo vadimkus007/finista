@@ -1,2 +1,1 @@
 # finista
-finista project
