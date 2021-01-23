@@ -6,35 +6,116 @@ const Moex = require('../lib/moex');
 
 var exports = module.exports = {}
 
-var getSecurities = function(cb) {
+var getSecurities = function() {
 
     const urls = [
         'http://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities.json?iss.meta=off&iss.only=securities&securities.columns=SECID,SHORTNAME',
         'http://iss.moex.com/iss/engines/stock/markets/foreignshares/boards/FQBR/securities.json?iss.meta=off&iss.only=securities&securities.columns=SECID,SHORTNAME',
-        'http://iss.moex.com/iss/engines/stock/markets/shares/boards/TQTF/securities.json?iss.meta=off&iss.only=securities&securities.columns=SECID,SHORTNAME'
+        'http://iss.moex.com/iss/engines/stock/markets/shares/boards/TQTF/securities.json?iss.meta=off&iss.only=securities&securities.columns=SECID,SHORTNAME',
+        'http://iss.moex.com/iss/engines/stock/markets/bonds/boardgroups/58/securities.json?iss.meta=off&iss.only=securities&securities.columns=SECID,SHORTNAME'
     ];
 
     let promises = urls.map(index => Moex.fetchJSON(index));
-    Promise.all(promises)
-    .then(results => {
-        let data = [];
-        for (var i = 0; i<results.length; i++) {
-            results[i].securities.data.forEach(record => {
-                let newRecord = {};
-                newRecord['secid'] = record[0];
-                newRecord['name'] = record[1];
-                if (i === 2) {
-                    newRecord['group'] = 'ETF/ПИФ';
-                } else {
-                    newRecord['group'] = 'Акции';
-                }
-                data.push(newRecord);
-            });
-        }
-        cb(null, data);
-    })
-    .catch(err => console.log(err));
+    return new Promise((resolve, reject) => {
+        Promise.all(promises)
+        .then(results => {
+            let data = [];
+            for (var i = 0; i<results.length; i++) {
+                results[i].securities.data.forEach(record => {
+                    let newRecord = {};
+                    newRecord['secid'] = record[0];
+                    newRecord['name'] = record[1];
+                    switch (i) {
+                        case 2:
+                            newRecord['group'] = 'ETF/ПИФ';
+                            break;
+                        case 3:
+                            newRecord['group'] = 'Облигация';
+                            break;
+                        default:
+                            newRecord['group'] = 'Акция';
+                            break;
+                    }
+                    data.push(newRecord);
+                });
+            }
+            resolve(data);
+        })
+        .catch(err => {
+            console.log(err);
+            reject(err);
+        });
+    });
 }
+
+// find trade
+var findTrade = function(trade) {
+    return new Promise((resolve, reject) => {
+        if (trade.id == '') {
+            resolve(false);
+        } else {
+            Trade.findOne({
+                where: {
+                    id: parseInt(trade.id)
+                },
+                raw: true
+            })
+            .then(found => {
+                if (found) {
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
+            })
+            .catch(err => {
+                reject(err);
+            })
+        }
+    })
+} // findTrade
+
+var createTrade = function(trade, portfolioId) {
+    return Trade.create({
+        portfolioId: parseInt(portfolioId),
+        operationId: parseInt(trade.operationId),
+        secid: trade.secid,
+        price: trade.price,
+        amount: parseInt(trade.amount),
+        date: trade.date,
+        comment: trade.comment,
+        comission: (trade.comission === '') ? 0 : trade.comission,
+        value: trade.value,
+        accint: trade.accint
+    });
+}; // createTrade
+
+var updateTrade = function(trade, portfolioId) {
+    return Trade.update({
+        portfolioId: parseInt(portfolioId),
+        operationId: parseInt(trade.operationId),
+        secid: trade.secid,
+        price: trade.price,
+        amount: parseInt(trade.amount),
+        date: trade.date,
+        comment: trade.comment,
+        comission: (trade.comission === '') ? 0 : trade.comission,
+        value: trade.value,
+        accint: trade.accint
+    }, {
+        where: {
+            id: trade.id
+        }
+    });
+} // updateTrade
+
+var saveTrade = function(result, trade, portfolioId) {
+    if (result) {
+        return updateTrade(trade, portfolioId);
+    } else {
+        return createTrade(trade, portfolioId);
+    }
+} // saveTrade
+
 
 exports.action = (req, res, next) => {
 
@@ -57,214 +138,50 @@ exports.action = (req, res, next) => {
 
         case 'save':
 
-            if (req.body.id !== '') {
+            findTrade(req.body)
+            .then(result => {
+                return saveTrade(result, req.body, portfolioId);
+            })
+            .then(() => {
+                console.log('Trade saved successfully.');
+                res.redirect('/portfolio/trades');
+            })
+            .catch(err => {
+                console.log(err);
+                
+                var data = {};
+                data.trade = req.body;
+                data.isNew = false;
 
-                Trade.findOne({
-                    where: {id: parseInt(req.body.id)},
+                Portfolio.findOne({
+                    where: {
+                        id: portfolioId
+                    },
                     raw: true
                 })
-                .then(foundOne => {
+                .then(portfolio => {
+                    data.portfolio = portfolio;
 
-                    if(!foundOne) {
-                        // Trade create
+                    return Operation.findAll({
+                        raw: true
+                    });
+                })
+                .then(operations => {
+                    data.operations = operations;
 
-                        Trade.create({
-                            portfolioId: parseInt(portfolioId),
-                            operationId: parseInt(req.body.operationId),
-                            secid: req.body.secid,
-                            price: req.body.price,
-                            amount: parseInt(req.body.amount),
-                            date: req.body.date,
-                            comment: req.body.comment,
-                            comission: (req.body.comission === '') ? 0 : req.body.comission
-                        })
-                        .then(() => {
-                            console.log('New Trade created!');
-                            res.redirect(`/portfolio/trades`);
-                        })
-                        .catch(err => {
+                    return getSecurities();
+                })
+                .then(securities => {
+                    data.securities = securities;
 
-                            console.log('Error creating Trade: ', err);
-
-                            var data = {};
-                            data.trade = req.body;
-                            data.isNew = false;
-
-                            // find Portfolio
-                            Portfolio.findOne({
-                                where: {
-                                    id: portfolioId
-                                },
-                                raw: true
-                            })
-                            .then(portfolio => {
-                                data.portfolio = portfolio;
-
-                                Operation.findAll({
-                                    raw: true
-                                })
-                                .then(operations => {
-                                    data.operations = operations;
-
-                                    // get securities for list
-                                    getSecurities((err_secid, securities) => {
-                                        data.securities = securities;
-                                        // render view
-
-                                        res.render('portfolio/trade-edit', {
-                                            user: user,
-                                            data: data,
-                                            error: err
-                                        });                           
-                                    });
-
-                                }).catch(err=>{
-                                    console.log('Error reading operations');
-                                    next(err);
-                                });
-                            }).catch(err=>{
-                                console.log('Error reading portfolio');
-                                next(err);
-                            });
-
-                        });
-
-                    } else {
-
-                        // Trade update
-                        Trade.update({
-                            portfolioId: parseInt(portfolioId),
-                            operationId: parseInt(req.body.operationId),
-                            secid: req.body.secid,
-                            price: req.body.price,
-                            amount: parseInt(req.body.amount),
-                            date: req.body.date,
-                            comment: req.body.comment,
-                            comission: (req.body.comission === '') ? 0 : req.body.comission
-                        }, {
-                            where: {
-                                id: parseInt(req.body.id)
-                            }
-                        })
-                        .then((rowsUpdated) => {
-                            console.log(`${rowsUpdated} rows updated in Trades`);
-                            res.redirect(`/portfolio/trades`);
-                        })
-                        .catch(err => {
-                            console.log('Error updating Trades table: ', err);
-                            
-                            var data = {};
-                            data.trade = req.body;
-                            data.isNew = false;
-
-                            // find Portfolio
-                            Portfolio.findOne({
-                                where: {
-                                    id: portfolioId
-                                },
-                                raw: true
-                            })
-                            .then(portfolio => {
-                                data.portfolio = portfolio;
-
-                                Operation.findAll({
-                                    raw: true
-                                })
-                                .then(operations => {
-                                    data.operations = operations;
-
-                                    // get securities for list
-                                    getSecurities((err_secid, securities) => {
-                                        data.securities = securities;
-                                        // render view
-
-                                        res.render('portfolio/trade-edit', {
-                                            user: user,
-                                            data: data,
-                                            error: err
-                                        });                           
-                                    });
-
-                                }).catch(err=>{
-                                    console.log('Error reading operations');
-                                    next(err);
-                                });
-                            }).catch(err=>{
-                                console.log('Error reading portfolio');
-                                next(err);
-                            });
-
-                        });
-                    }
-
+                    res.render('portfolio/trade-edit', {
+                        user: user,
+                        data: data,
+                        error: err
+                    });   
                 })
 
-                
-            } else {
-
-                Trade.create({
-                    portfolioId: parseInt(portfolioId),
-                    operationId: parseInt(req.body.operationId),
-                    secid: req.body.secid,
-                    price: req.body.price,
-                    amount: parseInt(req.body.amount),
-                    date: req.body.date,
-                    comment: req.body.comment,
-                    comission: (req.body.comission === '') ? 0 : req.body.comission
-                })
-                .then(() => {
-                    console.log('New Trade created!');
-                    res.redirect(`/portfolio/trades`);
-                })
-                .catch(err => {
-
-                    console.log('Error creating Trade: ', err);
-                    
-
-                    var data = {};
-                    data.trade = req.body;
-                    data.isNew = false;
-
-                            // find Portfolio
-                            Portfolio.findOne({
-                                where: {
-                                    id: portfolioId
-                                },
-                                raw: true
-                            })
-                            .then(portfolio => {
-                                data.portfolio = portfolio;
-
-                                Operation.findAll({
-                                    raw: true
-                                })
-                                .then(operations => {
-                                    data.operations = operations;
-
-                                    // get securities for list
-                                    getSecurities((err_secid, securities) => {
-                                        data.securities = securities;
-                                        // render view
-
-                                        res.render('portfolio/trade-edit', {
-                                            user: user,
-                                            data: data,
-                                            error: err
-                                        });                           
-                                    });
-
-                                }).catch(err=>{
-                                    console.log('Error reading operations');
-                                    next(err);
-                                });
-                            }).catch(err=>{
-                                console.log('Error reading portfolio');
-                                next(err);
-                            });
-
-                });
-
-            }
+            });
 
             break;
 
@@ -304,15 +221,16 @@ exports.action = (req, res, next) => {
                     data.operations = result[2];
                     data.isNew = false;
 
-                    // get securities for list
-                    getSecurities((err, securities) => {
-                        data.securities = securities;
-                        // render view
-                        res.render('portfolio/trade-edit', {
-                            user: user,
-                            data: data
-                        });                           
-                    });
+                    return getSecurities();
+
+                })
+                .then(securities => {
+                    data.securities = securities;
+                    // render view
+                    res.render('portfolio/trade-edit', {
+                        user: user,
+                        data: data
+                    }); 
                 })
                 .catch(err => {
                     console.log('Error reading database: ', err);
@@ -340,17 +258,16 @@ exports.action = (req, res, next) => {
                     data.operations = result[1];
                     data.isNew = true;
 
-                    // get securities for list
-                    getSecurities((err, securities) => {
-                        data.securities = securities;
-                        // render view
-                        res.render('portfolio/trade-edit', {
-                            user: user,
-                            data: data
-                        });                           
+                    return getSecurities();
+                    
+                })
+                .then(securities => {
+                    data.securities = securities;
+                    // render view
+                    res.render('portfolio/trade-edit', {
+                        user: user,
+                        data: data
                     });
-                    
-                    
                 })
                 .catch(err => {
                     console.log('Error reading database: ', err);
@@ -434,6 +351,8 @@ exports.list = (req, res, next) => {
     .then(results => {
         data.portfolio = results[0];
         data.trades = results[1];
+
+console.log('data.trades', data.trades);
 
         // render view
         res.render('portfolio/trades', {

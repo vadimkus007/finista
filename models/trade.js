@@ -58,6 +58,22 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 1
     },
+    value: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: false,
+      defaultValue: 100.00,
+      validate: {
+        isDecimal: true
+      }
+    },
+    accint: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: false,
+      defaultValue: 0.00,
+      validate: {
+        isDecimal: true
+      }
+    },
     date: {
       type: DataTypes.DATE,
       allowNull: false,

@@ -90,9 +90,10 @@ exports.info = (req, res, next) => {
                 attributes: [
                     'secid',
                     'operationId',
-                    [sequelize.fn('sum', sequelize.literal('(`price`*`amount`)')), 'sum'],
+                    [sequelize.fn('sum', sequelize.literal('`price`*`value`*`amount`/100')), 'sum'],
                     [sequelize.fn('sum', sequelize.col('comission')), 'comission'],
-                    [sequelize.fn('sum', sequelize.col('amount')), 'amount']
+                    [sequelize.fn('sum', sequelize.col('amount')), 'amount'],
+                    [sequelize.fn('sum', sequelize.col('accint')), 'accint']
                 ],
                 group: ['secid', 'operationId'],
                 where: {
@@ -112,9 +113,10 @@ exports.info = (req, res, next) => {
                 attributes: [
                     'secid',
                     'operationId',
-                    [sequelize.fn('sum', sequelize.literal('(`price`*`amount`)')), 'sum'],
+                    [sequelize.fn('sum', sequelize.literal('`price`*`value`*`amount`/100')), 'sum'],
                     [sequelize.fn('sum', sequelize.col('comission')), 'comission'],
-                    [sequelize.fn('sum', sequelize.col('amount')), 'amount']
+                    [sequelize.fn('sum', sequelize.col('amount')), 'amount'],
+                    [sequelize.fn('sum', sequelize.literal('`accint`*`amount`')), 'accint']
                 ],
                 group: ['secid', 'operationId'],
                 where: {
@@ -128,6 +130,35 @@ exports.info = (req, res, next) => {
             });
         }
     }
+
+    // getTradesAll
+    const getTradesAll = function(portfolioId, date) {
+        if (typeof date !== 'undefined') {
+            return Trade.findAll({
+                where: {
+                    [Op.and]: [
+                        {'portfolioId' : portfolioId},
+                        sequelize.where(sequelize.fn('date', sequelize.col('date')), '<=', date)
+                    ]
+                },
+                order: [
+                    ['date', 'ASC']
+                ],
+                raw: true
+            });
+        } else {
+            return Trade.findAll({
+                where: {
+                    'portfolioId' : portfolioId
+                },
+                order: [
+                    ['date', 'ASC']
+                ],
+                raw: true
+            })
+
+        }
+    } // getTradesAll
 
 
     // share info
@@ -204,6 +235,7 @@ exports.info = (req, res, next) => {
         renderdata.portfolio = data.portfolio;
         renderdata.shares = data.shares;
         renderdata.etf = data.etf;
+        renderdata.bonds = data.bonds;
         renderdata.history = data.history;
 
         // render
@@ -394,6 +426,25 @@ exports.info = (req, res, next) => {
                                 if (item.secid !== 'RUB') {
                                     data.cashe[index] = data.cashe[index] + Number(item.sum) - Number(item.comission);
                                 }
+                                break;
+                            case 4:
+                                data.cashe[index] = data.cashe[index] + Number(item.sum) - Number(item.comission);
+                            data.secids[index][item.secid].amount = data.secids[index][item.secid].amount - Number(item.amount);
+                                break;
+                            case 5:
+                                data.cashe[index] = data.cashe[index] + Number(item.sum) - Number(item.comission);
+                                break;
+                            case 6:
+                                data.cashe[index] = data.cashe[index] + Number(item.sum) - Number(item.comission);
+                                break;
+                            case 7:
+                                data.secids[index][item.secid].amount = data.secids[index][item.secid].amount + Number(item.amount);
+                                data.cashe[index] = data.cashe[index] - Number(item.sum) - Number(item.accint) - Number(item.comission);
+                                break;
+                            case 8:
+                                data.secids[index][item.secid].amount = data.secids[index][item.secid].amount - Number(item.amount);
+                                    data.cashe[index] = data.cashe[index] + Number(item.sum) - Number(item.accint) - Number(item.comission);
+                                break;
                         }
                     });
                     data.sharesCost[index] = 0;
@@ -432,7 +483,7 @@ exports.info = (req, res, next) => {
             getPortfolio(parseInt(id))
             .then(portfolio => {
                 data.portfolio = portfolio;
-                return getTrades(data.portfolio.id)
+                return getTradesAll(data.portfolio.id)
             })
             .then(trades => {
                 data.trades = trades;
@@ -462,33 +513,58 @@ exports.info = (req, res, next) => {
 
                 let cashe = 0;
 
-                data.trades.forEach(trade => {
-                    securities[trade.secid] = {};
-                    securities[trade.secid]['buy'] = 0;
-                    securities[trade.secid]['sell'] = 0;
-                    securities[trade.secid]['amount'] = 0;
-                    securities[trade.secid]['dividends'] = 0;
+                data.trades.forEach(secid => {
+                    securities[secid.secid] = {};
+                    securities[secid.secid]['buy'] = 0;
+                    securities[secid.secid]['sell'] = 0;
+                    securities[secid.secid]['amount'] = 0;
+                    securities[secid.secid]['dividends'] = 0;
+                    securities[secid.secid]['meanprice'] = 0;
                 });
 
                 // calculate securities data
                 data.trades.forEach(trade => {
                     switch (trade.operationId) {
                         case 1:
-                            securities[trade.secid].buy = Number(securities[trade.secid].buy) + Number(trade.sum) + Number(trade.comission);
+                            securities[trade.secid].buy = Number(securities[trade.secid].buy) + Number(trade.price) * Number(trade.amount) + Number(trade.comission);
                             securities[trade.secid].amount = Number(securities[trade.secid].amount) + Number(trade.amount);
                             securities[trade.secid]['meanprice'] = Number(securities[trade.secid].buy) / Number(securities[trade.secid].amount);
                             break;
                         case 2: 
-                            securities[trade.secid].sell = Number(securities[trade.secid].sell) + Number(trade.sum) - Number(trade.comission);
+                            securities[trade.secid].sell = Number(securities[trade.secid].sell) + Number(trade.price) * Number(trade.amount) - Number(trade.comission);
                             securities[trade.secid].amount = Number(securities[trade.secid].amount) - Number(trade.amount);
                             break;
                         case 3: 
-                            securities[trade.secid].dividends = Number(securities[trade.secid].dividends) + Number(trade.sum) - Number(trade.comission);
+                            securities[trade.secid].dividends = Number(securities[trade.secid].dividends) + Number(trade.price)*Number(trade.amount) - Number(trade.comission);
+                            break;
+                            // bonds
+                        case 4:
+                            securities[trade.secid].amount = Number(securities[trade.secid].amount) - Number(trade.amount);
+                            securities[trade.secid].sell = Number(securities[trade.secid].sell) + Number(trade.price*trade.value*trade.amount/100) - Number(trade.accint) - Number(trade.comission);
+                            break;
+                        case 5:
+                            securities[trade.secid].dividends = Number(securities[trade.secid].dividends) + Number(trade.price*trade.amount) - Number(trade.comission);
+                            break;
+                        case 6:
+                            securities[trade.secid].dividends = Number(securities[trade.secid].dividends) + Number(trade.price*trade.amount) - Number(trade.comission);
+                            break;
+                        case 7:
+                            securities[trade.secid].amount = Number(securities[trade.secid].amount) + Number(trade.amount);
+                            securities[trade.secid].buy = Number(securities[trade.secid].buy) + Number(trade.price*trade.value*trade.amount/100) + Number(trade.accint*trade.amount) + Number(trade.comission);
+                            securities[trade.secid]['meanprice'] = Number(1*securities[trade.secid].meanprice + trade.price*trade.amount) / (Number(securities[trade.secid].amount));
+                            securities[trade.secid]['value'] = trade.value;
+                            break;
+
+                        case 8:
+                            securities[trade.secid].amount = Number(securities[trade.secid].amount) - Number(trade.amount);
+                            securities[trade.secid].sell = Number(securities[trade.secid].sell) + Number(trade.price*trade.value*trade.amount/100) - Number(trade.accint*trade.amount) - Number(trade.comission);
                             break;
                     }
                 });
 
                 //calculate cashe
+
+
                 for (key in securities) {
                     if (key == 'RUB') {
                         cashe = cashe + securities[key].buy - securities[key].sell;
@@ -526,7 +602,6 @@ exports.info = (req, res, next) => {
                         securities[board.boards.data[0][0]]['engine'] = board.boards.data[0][3];
                     });
 
-
                     // CALCULATE MARKET DATA
                     data.marketdata.forEach(row => {
                         securities[row.marketdata.data[0][0]]['last'] = row.marketdata.data[0][1];
@@ -535,16 +610,25 @@ exports.info = (req, res, next) => {
                     });
 
                     for (key in securities) {
-                        securities[key]['cost'] = securities[key].last * securities[key].amount;
-                        securities[key]['exchangeprofit'] = (securities[key].last - securities[key].meanprice) * securities[key].amount;
-                        securities[key]['exchangeprofitprcnt'] = 100*securities[key]['exchangeprofit']/securities[key]['buy'];
-                        securities[key]['profit'] = Number(securities[key].sell) + Number(securities[key].cost) + Number(securities[key].dividends) - Number(securities[key].buy);
-                        securities[key]['totalchange'] = securities[key].change * securities[key].amount;
+                        if (securities[key].group == 'stock_bonds') {
+                            securities[key].cost = securities[key].last * securities[key].value * securities[key].amount / 100;
+                            securities[key].exchangeprofit = (securities[key].last - securities[key].meanprice) * securities[key].value * securities[key].amount / 100;
+                            securities[key]['exchangeprofitprcnt'] = 100*securities[key]['exchangeprofit']/securities[key]['buy'];
+                            securities[key]['profit'] = Number(securities[key].sell) + Number(securities[key].cost) + Number(securities[key].dividends) - Number(securities[key].buy);
+                            securities[key]['totalchange'] = securities[key].change * securities[key].amount;
+                         } else {
+                            securities[key]['cost'] = securities[key].last * securities[key].amount;
+                            securities[key]['exchangeprofit'] = (securities[key].last - securities[key].meanprice) * securities[key].amount;
+                            securities[key]['exchangeprofitprcnt'] = 100*securities[key]['exchangeprofit']/securities[key]['buy'];
+                            securities[key]['profit'] = Number(securities[key].sell) + Number(securities[key].cost) + Number(securities[key].dividends) - Number(securities[key].buy);
+                            securities[key]['totalchange'] = securities[key].change * securities[key].amount;
+                        }
                     }
 
                 // prepare data for view
                                 let shares = [];
                                 let etf = [];
+                                let bonds = [];
 
                                 data.portfolio = data.portfolio;
 
@@ -552,9 +636,11 @@ exports.info = (req, res, next) => {
 
                                 data.shares = {};
                                 data.etf = {};
+                                data.bonds = {};
 
                                 data.portfolio.shares = {};
                                 data.portfolio.etf = {};
+                                data.portfolio.bonds = {};
 
                                 for (key in securities) {
                                     switch(securities[key]['group']) {
@@ -570,17 +656,23 @@ exports.info = (req, res, next) => {
                                         case 'stock_ppif':
                                             etf.push(securities[key]);
                                             break;
+                                        case 'stock_bonds':
+                                            bonds.push(securities[key]);
+                                            break;
                                     }
                                 }
 
                                 // data for parts of shares - etf
                                 let cost_shares = 0;
                                 let cost_etf = 0;
+                                let cost_bonds = 0;
 
                                 data.portfolio.shares.profit = 0;
                                 data.portfolio.etf.profit = 0;
+                                data.portfolio.bonds.profit = 0;
                                 data.portfolio.shares.change = 0;
                                 data.portfolio.etf.change = 0;
+                                data.portfolio.bonds.change = 0;
 
                                 shares.forEach(item => {
                                     cost_shares = Number(cost_shares) + Number(item.cost);
@@ -603,16 +695,28 @@ exports.info = (req, res, next) => {
                                     etf[key]['percentage'] = 100* etf[key].cost / cost_etf;
                                 }
 
+                                bonds.forEach(item => {
+                                    cost_bonds = Number(cost_bonds) + Number(item.cost);
+                                    data.portfolio.bonds.profit = data.portfolio.bonds.profit + Number(item.profit);
+                                    data.portfolio.bonds.change = data.portfolio.bonds.change + Number(item.totalchange);
+                                });
+                                data.portfolio.bonds.cost = cost_bonds;
+                                for (key in bonds) {
+                                    bonds[key]['percentage'] = 100* bonds[key].cost / cost_bonds;
+                                }
+
                                 data.shares = shares;
                                 data.etf = etf;
+                                data.bonds = bonds;
 
 
                                 // portfolio data
                                 data.portfolio.cost = Number(data.portfolio.shares.cost) + 
                                                     Number(data.portfolio.etf.cost) + 
+                                                    Number(data.portfolio.bonds.cost) +
                                                     Number(data.portfolio.cashe);
-                                data.portfolio.profit = Number(data.portfolio.shares.profit) + Number(data.portfolio.etf.profit);
-                                data.portfolio.change = Number(data.portfolio.shares.change) + Number(data.portfolio.etf.change);
+                                data.portfolio.profit = Number(data.portfolio.shares.profit) + Number(data.portfolio.etf.profit) + Number(data.portfolio.bonds.profit);
+                                data.portfolio.change = Number(data.portfolio.shares.change) + Number(data.portfolio.etf.change) + Number(data.portfolio.bonds.change);
 
                                 // date processing
                                 let dateopen = new Date(data.portfolio.dateopen);
@@ -666,7 +770,6 @@ exports.info = (req, res, next) => {
             })
             .catch(err => reject(err));
 
-
         });
     }
 
@@ -705,7 +808,6 @@ exports.info = (req, res, next) => {
 //        console.log('*** RES.trades ***', res.data.trades);
 //        console.log('*** HISTORY ***', history);
         data.history = history;
-
 
         renderView(data);
     })

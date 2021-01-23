@@ -53,9 +53,27 @@
                                         <td><%= row['operation.title'] %></td>
                                         <td><%= row.date.toISOString().slice(0,10) %></td>
                                         <td><%= row.amount %></td>
-                                        <td><%= row.price %></td>
+                                        <td>
+                                            <% if (row.operationId == 7 || row.operationId == 4) { %>
+                                                <%= Number((row.price * row.value / 100) + 1*row.accint).toFixed(2) %>
+                                            <% } else if (row.operationId == 8) { %>
+                                                <%= Number((row.price * row.value / 100) - 1*row.accint).toFixed(2) %>
+                                            <% } else { %>
+                                                <%= row.price %>
+                                            <% } %>
+                                                
+                                        </td>
                                         <td><%= row.comission %></td>
-                                        <td><%= ((row.price * row.amount) + 1*row.comission).toFixed(2) %></td>
+                                        <td>
+                                            <% if (row.operationId == 7 || row.operationId == 4) { %>
+                                                <%= Number(row.amount*((row.price * row.value / 100) + 1*row.accint) + 1*row.comission).toFixed(2) %>
+                                            <% } else if (row.operationId == 8) { %>
+                                                <%= Number(row.amount*((row.price * row.value / 100) - 1*row.accint) + 1*row.comission).toFixed(2) %>
+                                            <% } else { %>
+                                                <%= Number(row.amount*row.price + 1*row.comission).toFixed(2) %>
+                                            <% } %>
+                                            
+                                        </td>
                                         <td>
                                             
                                             <!-- Dropdown menu in cells -->

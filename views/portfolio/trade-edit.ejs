@@ -2,7 +2,6 @@
 <% block('title', title) %>
 <% block('menu', 'portfolio trades') %>
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,6 +37,9 @@
     <!-- Custom scripts for all pages-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
 
+    <!-- Script for Edit view -->
+    <script src="/js/trade-edit.js"></script>
+
 
 </head>
 
@@ -66,44 +68,74 @@
             <form id="new-trade" name="newTrade" method="POST" action="/portfolio/trades" class="form needs-validation">
                 <input type="hidden" id="id" name="id" value="<%= (!data.isNew) ? data.trade.id : '' %>" />
                 <input type="hidden" name="portfolioId" value="<%= data.portfolio.id %>" />
-                <div class="form-group">
-                    <label for="type">Тип сделки:</label>
-                    <select name="type" id="type" class="form-control mr-sm-2" onChange="updateForm();">
-                        <option value="1" 
-                            <% if (typeof data.trade !== 'undefined' && data.trade.secid !== data.portfolio.currency) { %>
-                            selected="selected"
-                            <% } %>
-                        >Акция/ПИФ/ETF</option>
-                        <option value="2" 
-                            <% if (typeof data.trade !== 'undefined' && data.trade.secid === data.portfolio.currency) { %>
-                            selected="selected"
-                            <% } %>
-                        >Деньги</option>
-                    </select>
-                    <!-- <label for="secid" class="">Тикер компании*</label> -->
-                    <label for="secid">Тикер:</label>
-                    <select name="secid" class="form-control mr-sm-2 select2" id="secid" searchable="Search here..">
-                        <option value="" disabled selected>Выберите бумагу</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="operationId" class="">Операция:</label>
-                    <select id="operationId" class="form-control mr-sm-2" name="operationId" >
-                        <% data.operations.forEach(row => { %>
-                            <option value="<%= row.id %>" 
-                                <% if (typeof data.trade !== 'undefined' && row.id == data.trade.operationId) { %>
+                <div class="form-group form-row">
+                    <div class="col">
+                        <label for="type">Тип сделки:</label>
+                        <select name="type" id="type" class="form-control mr-sm-2" onChange="updateForm();">
+                            <option value="1" 
+                                <% if (typeof data.trade !== 'undefined' && data.trade.secid !== data.portfolio.currency) { %>
                                 selected="selected"
                                 <% } %>
-                            ><%= row.title %></option>
-                        <% }) %>
-                    </select>
-                    <label for="date" class="">Дата:*</label>
-                    <input type="date" id="date" class="form-control sm-2" name="date" value="<% if (typeof data.trade !== 'undefined') { %><% if (typeof data.trade.date == 'object') {%><%=data.trade.date.toISOString().slice(0,10)%><%} else {%><%=data.trade.date%><%}%><%}else{var now = new Date().toISOString().slice(0,10)%><%=now%><%}%>" />
-                    <label for="price" class="" id="labelPrice">Цена:*</label>
-                    <input type="text" id="price" class="form-control sm-2" name="price" value="<%= (typeof data.trade !== 'undefined') ? data.trade.price : '' %>" placeholder="Цена" />
-                    <label for="amount" class="" id="labelAmount">Количество:*</label>
-                    <input type="text" id="amount" class="form-control mr-sm-2" name="amount" value="<%= (typeof data.trade !== 'undefined') ? data.trade.amount : 1 %>" placeholder="Количество" />
+                            >Акция/ETF/ПИФ</option>
+                            <option value="2" 
+                                <% if (typeof data.trade !== 'undefined' && data.trade.secid !== data.portfolio.currency) { %>
+                                selected="selected"
+                                <% } %>
+                            >Облигация</option>
+                            <option value="3" 
+                                <% if (typeof data.trade !== 'undefined' && data.trade.secid === data.portfolio.currency) { %>
+                                selected="selected"
+                                <% } %>
+                            >Деньги</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                    <!-- <label for="secid" class="">Тикер компании*</label> -->
+                        <label for="secid">Тикер:</label>
+                        <select name="secid" class="form-control select2" id="secid" searchable="Search here..">
+                            <option value="" disabled selected>Выберите бумагу</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group form-row">
+                    <div class="col">
+                        <label for="operationId" class="">Операция:</label>
+                        <select id="operationId" class="form-control mr-sm-2" name="operationId" onChange="updateOperationSelect()">
+                            <% data.operations.forEach(row => { %>
+                                <option value="<%= row.id %>" 
+                                    <% if (typeof data.trade !== 'undefined' && row.id == data.trade.operationId) { %>
+                                    selected="selected"
+                                    <% } %>
+                                ><%= row.title %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label for="date" class="">Дата:*</label>
+                        <input type="date" id="date" class="form-control sm-2" name="date" value="<% if (typeof data.trade !== 'undefined') { %><% if (typeof data.trade.date == 'object') {%><%=data.trade.date.toISOString().slice(0,10)%><%} else {%><%=data.trade.date%><%}%><%}else{var now = new Date().toISOString().slice(0,10)%><%=now%><%}%>" />
+                    </div>
+                </div>
+                <div class="form-group form-row">
+                    <div class="col">
+                        <label for="price" class="" id="labelPrice">Цена:*</label>
+                        <input type="text" id="price" class="form-control sm-2 mb-2" name="price" value="<%= (typeof data.trade !== 'undefined') ? data.trade.price : '' %>" />
+                    </div>
+                    <div class="col">
+                        <label for="amount" class="" id="labelAmount">Количество:*</label>
+                        <input type="text" id="amount" class="form-control mr-sm-2 mb-2" name="amount" value="<%= (typeof data.trade !== 'undefined') ? data.trade.amount : 1 %>" placeholder="Количество" />
+                    </div>
+                </div>
+
+                <div class="form-row mb-2">
+                    <div class="col">
+                        <label for="value" id="valueLabel">Номинал, руб.:*</label>
+                        <input type="text" id="value" class="form-control" name="value" value="<%= (typeof data.trade !== 'undefined') ? data.trade.value : '100.00' %>" placeholder="Номинал" />
+                    </div>
+                    <div class="col">
+                    <label for="accint" id="accintLabel">НКД, руб.:</label>
+                    <input type="text" id="accint" class="form-control" name="accint" value="<%= (typeof data.trade !== 'undefined') ? data.trade.accint : '0.00' %>" placeholder="НКД" />
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -178,111 +210,6 @@
 <% } %>
 <script>
     var data = <%- JSON.stringify(data) %>;
-
-    function insertAfter(referenceNode, newNode) {
-                referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-    }
-
-// Edit trade scripts
-function updateForm() {
-            var type = $("#type :selected").val();
-
-                switch(type) {
-                    case '1':
-                        
-                        $("#secid").show();
-                        $("secid").empty();
-                        buildSelect();
-
-                        $("#operationId option[value=1]").text('Покупка');
-                        $("#operationId option[value=2]").text('Продажа');
-                        if ($("#operationId option").size == 2) {
-                            $("#operationId").append('<option value="3">Дивиденд</option>');
-                        } else {
-                            $("#operationId option[value=3]").text('Дивиденд');
-                        }
-
-                        $("#labelPrice").text("Цена:*");
-
-                        $("#amount").show();
-                        $("#labelAmount").show();
-
-                        break;
-                    case '2':
-                        $("#secid").empty();
-                        $("#secid").append('<option value="RUB" selected="selected">Деньги</option>');
-                        // $("#secid").hide();
-
-                        $("#operationId option[value=1]").text('Внести');
-                        $("#operationId option[value=2]").text('Вывести');
-                        $("#operationId option[value=3]").remove();
-
-                        $("#labelPrice").text("Сумма:*");
-
-                        $("#amount").val('1');
-                        $("#amount").hide();
-                        $("#labelAmount").hide();
-
-
-                        break;
-                }
-        }
-
-        function buildSelect() {
-
-            const securities = data.securities;
-
-            $("#secid").empty();
-            $("#secid").append('<option value="" disabled selected>Выберите бумагу</option>');
-             // construct options for secid select
-            securities.forEach(function(security) {
-                $("#secid").append('<option value="'+security.secid+'">'+security.secid+' ('+security.name+') ('+security.group+')</option>')
-            })
-
-            if (typeof data.trade !== 'undefined') {
-                var secid = JSON.stringify(data.trade.secid); 
-            } else {
-                var secid = null;
-            }
-
-            $("#secid option[value='"+secid+"']").attr("selected","selected");
-        }
-
-// build select
-$(document).ready(function() {                
-    buildSelect();
-    updateForm();
-    $(".select2").select2();
-});
-
-// validation form
-$(document).ready(function() {
-
-
-            if (err) {
-
-                for (var i = 0; i<err.errors.length; i++) {
-                    var el_id = err.errors[i].path;
-
-                    var el = document.getElementById(el_id);
-                    el.classList.add("is-invalid");
-                    
-                    var div = document.createElement("div");
-                    div.classList.add("invalid-feedback");
-                    div.innerHTML = err.errors[i].message;
-
-                    insertAfter(el, div);
-
-                    el.addEventListener('change', function (event) {
-                        event.target.classList.remove("is-invalid");
-                        event.target.nextElementSibling.remove();
-                    });
-                }
-
-            }
-
-});
-
 </script>
 
 </body>

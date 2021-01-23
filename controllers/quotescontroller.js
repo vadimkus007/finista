@@ -108,7 +108,7 @@ exports.list = (req, res, next) => {
         }
         result.bonds = arr;
  
-console.log('BONDS', result.bonds);
+//console.log('BONDS', result.bonds);
 
         // Render view
         res.render('quotes', {
