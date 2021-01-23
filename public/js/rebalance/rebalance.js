@@ -16,7 +16,7 @@ function update() {
         // add class to difference
         $('#difference'+item.secid).removeClass('table-success');
         $('#difference'+item.secid).removeClass('table-danger');
-        if (Math.abs(Number($('#difference'+item.secid).html()) - Number($('#sumGoal'+item.secid).html() * 0.1))) {
+        if (Math.abs(Number($('#difference'+item.secid).html())) > Number($('#sumGoal'+item.secid).html() * 0.1)) {
             if (Number($('#difference'+item.secid).html()) > 0) {
                 $('#difference'+item.secid).addClass('table-success');
             }
@@ -37,7 +37,7 @@ function update() {
         // add class to difference
         $('#difference'+item.secid).removeClass('table-success');
         $('#difference'+item.secid).removeClass('table-danger');
-        if (Math.abs(Number($('#difference'+item.secid).html()) - Number($('#sumGoal'+item.secid).html() * 0.1))) {
+        if (Math.abs(Number($('#difference'+item.secid).html())) > Number($('#sumGoal'+item.secid).html() * 0.1)) {
             if (Number($('#difference'+item.secid).html()) > 0) {
                 $('#difference'+item.secid).addClass('table-success');
             }

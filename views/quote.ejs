@@ -5,14 +5,13 @@
 
 <div class="row mb-4">
     <div class="col-lg-6">
-                <div class="card shadow mb-6">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <% if (data['market'] == 'index') { %>
-                            <h6 class="m-0 text-primary font-weight-bold"><%= data['NAME'] %> (<%= data['SECID'] %>)</h6>
-                        <% } else { %>
-                            <h6 class="m-0 text-primary font-weight-bold"><%= data['SECNAME'] %> (<%= data['SECID'] %>)</h6>        
-                        <% } %>
-                        <div class="dropdown noarrow">
+        
+        <% if (data.market == 'index') { %>
+            
+            <div class="card shadow mb-6">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 text-primary font-weight-bold"><%= data['NAME'] %> (<%= data['SECID'] %>)</h6>
+                    <div class="dropdown noarrow">
                             <form method="POST" action="/quotes/<%= data['SECID'] %>" class="">
                                  
                                 <input type="checkbox" name="favorite" 
@@ -23,35 +22,29 @@
                                 <label class="star-checkbox-label" for="favorite"></label>
                             </form>
                         </div>
+                    </div> <!-- favorites -->
+                 <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-12 d-flex justify-content-center">
+                            <div style="font-size:2.8rem;" class="d-flex font-weight-bold text-gray-800 mr-2">
+                                <%= data['CURRENTVALUE'] %>
+                            </div>
+                            <div 
+                                <%= (data.LASTCHANGETOOPENPRC > 0) ? 'class=text-success' : '' %>
+                                <%= (data.LASTCHANGETOOPENPRC < 0) ? 'class=text-danger' : '' %>
+                            >
+                                <% if (data.LASTCHANGETOOPENPRC > 0) { %>
+                                    <i class="fas fa-fw fa-arrow-circle-up"></i>
+                                <% } %>
+                                <% if (data.LASTCHANGETOOPENPRC < 0) { %>
+                                    <i class="fas fa-fw fa-arrow-circle-down"></i>
+                                <% } %>
+                                <%= data.LASTCHANGETOOPENPRC %> % 
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <% if (data['market'] == 'index') { %>
-                            <div class="row d-flex justify-content-center mb-2">
-                                <div class="d-flex align-items-end">
-                                    <div style="font-size:2.8rem;" class="d-flex font-weight-bold text-gray-800 mr-2">
-                                        <%= data['CURRENTVALUE'] %>
-                                    </div>
-                                
-                                
-                                    <div class="d-flex mb-4">
-                                        <div style="
-                                        <% if(data['LASTCHANGETOOPENPRC']<0){ %>
-                                            color:red;">
-                                            <i class="fas fa-fw fa-arrow-circle-down"></i>
-                                        <% } %>
-                                        <% if(data['LASTCHANGETOOPENPRC']>0){ %>
-                                            color:green;">
-                                            <i class="fas fa-fw fa-arrow-circle-up"></i>
-                                        <% } %>
-                                        
-                                        <%= data['LASTCHANGETOOPENPRC'] %> %
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div> <!-- row -->
 
-                            <div class="row mb-4 ml-2">
+                    <div class="row mb-4 ml-2">
                                 <div class="col-lg-3">
                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                         Максимальное
@@ -84,60 +77,58 @@
                                         <%= data['ANNUALLOW'] %>
                                     </div>
                                 </div>
-                            </div> <!-- row -->
+                    </div> <!-- row -->
 
-                            <div class="row mb-4 ml-2 d-flex flex-row align-items-center">
-                                <div class="col-lg-6">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        Объем торгов
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        <%= data['VALTODAY'] %>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        Капитализация
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        <%= data['CAPITALIZATION'] %>
-                                    </div>
-                                </div>
-                            </div> <!-- row -->
+                    <hr>
 
-                            <div class="row ml-2">
-                                <a  class="font-weight-bold" href="https://www.moex.com/ru/index/<%= data['SECID'] %>" target="_blank" rel="nofollow">Профиль эмитента &rarr;</a>
+                    <div class="row ml-2">
+                        <a  class="font-weight-bold" href="https://www.moex.com/ru/index/<%= data['SECID'] %>" target="_blank" rel="nofollow">Профиль эмитента &rarr;</a>
+                    </div>
+
+                 </div>
+            </div> 
+            <!-- card -->
+        <% } %>
+
+        <% if (data.market == 'shares' || data.market == 'foreignshares') { %>
+
+            <div class="card shadow mb-6">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 text-primary font-weight-bold"><%= data['SECNAME'] %> (<%= data['SECID'] %>)</h6>
+                    <div class="dropdown noarrow">
+                            <form method="POST" action="/quotes/<%= data['SECID'] %>" class="">
+                                 
+                                <input type="checkbox" name="favorite" 
+                                    <% if (favorite) { %>
+                                        checked="checked" 
+                                    <% } %>
+                                onChange="this.form.submit()" id="favorite" class="star-checkbox">
+                                <label class="star-checkbox-label" for="favorite"></label>
+                            </form>
+                        </div>
+                    </div> <!-- favorites -->
+                 <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-12 d-flex justify-content-center">
+                            <div style="font-size:2.8rem;" class="d-flex font-weight-bold text-gray-800 mr-2">
+                                <%= data['LAST'] %>
                             </div>
+                            <div 
+                                <%= (data.LASTCHANGETOOPENPRC > 0) ? 'class=text-success' : '' %>
+                                <%= (data.LASTCHANGETOOPENPRC < 0) ? 'class=text-danger' : '' %>
+                            >
+                                <% if (data.LASTCHANGETOOPENPRC > 0) { %>
+                                    <i class="fas fa-fw fa-arrow-circle-up"></i>
+                                <% } %>
+                                <% if (data.LASTCHANGETOOPENPRC < 0) { %>
+                                    <i class="fas fa-fw fa-arrow-circle-down"></i>
+                                <% } %>
+                                <%= data.LASTCHANGETOOPENPRC %> % 
+                            </div>
+                        </div>
+                    </div>
 
-
-                        <% } else { %>
-
-                            <div class="row d-flex justify-content-center mb-2">
-                                <div class="d-flex align-items-end">
-                                    <div style="font-size:2.8rem;" class="d-flex font-weight-bold text-gray-800 mr-2">
-                                        <%= data['LAST'] %>
-                                    </div>
-                                
-                                
-                                    <div class="d-flex mb-4">
-                                        <div style="
-                                        <% if(data['LASTTOPREVPRICE']<0){ %>
-                                            color:red;">
-                                            <i class="fas fa-fw fa-arrow-circle-down"></i>
-                                        <% } %>
-                                        <% if(data['LASTTOPREVPRICE']>0){ %>
-                                            color:green;">
-                                            <i class="fas fa-fw fa-arrow-circle-up"></i>
-                                        <% } %>
-                                        
-                                        <%= data['LASTTOPREVPRICE'] %> %
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div> <!-- row -->
-
-                            <div class="row mb-4 ml-2">
+                    <div class="row mb-4 ml-2">
                                 <div class="col-lg-3">
                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                         Предложение
@@ -170,37 +161,177 @@
                                         <%= data['LOW'] %>
                                     </div>
                                 </div>
-                            </div> <!-- row -->
+                    </div> <!-- row -->
 
-                            <div class="row mb-4 ml-2 d-flex flex-row align-items-center">
-                                <div class="col-lg-6">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        Сделок сегодня
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        <%= data['NUMTRADES'] %>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        Капитализация
-                                    </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        <%= data['ISSUECAPITALIZATION'] %>
-                                    </div>
-                                </div>
-                            </div> <!-- row -->
+                    <hr>
 
-                            <div class="row ml-2">
-                                <a  class="font-weight-bold" href="https://www.moex.com/ru/issue.aspx?code=<%= data['SECID'] %>" target="_blank" rel="nofollow">Профиль эмитента &rarr;</a>
+                    <div class="row ml-2">
+                        <a  class="font-weight-bold" href="https://www.moex.com/ru/issue.aspx?code=<%= data['SECID'] %>" target="_blank" rel="nofollow">Профиль эмитента &rarr;</a>
+                    </div>
+
+                 </div>
+            </div> 
+            <!-- card -->
+
+        <% } %>        
+
+        <% if (data.market == 'bonds') { %>
+            <div class="card shadow mb-6">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 text-primary font-weight-bold"><%= data['SECNAME'] %> (<%= data['SECID'] %>)</h6>
+                    <div class="dropdown noarrow">
+                            <form method="POST" action="/quotes/<%= data['SECID'] %>" class="">
+                                 
+                                <input type="checkbox" name="favorite" 
+                                    <% if (favorite) { %>
+                                        checked="checked" 
+                                    <% } %>
+                                onChange="this.form.submit()" id="favorite" class="star-checkbox">
+                                <label class="star-checkbox-label" for="favorite"></label>
+                            </form>
+                        </div>
+                    </div> <!-- favorites -->
+                 <div class="card-body">
+                    <div class="row mb-2">
+                        <div class="col-12 d-flex justify-content-center">
+                            <div style="font-size:2.8rem;" class="d-flex font-weight-bold text-gray-800 mr-2">
+                                <%= data['LAST'] %>
                             </div>
-    
-                        <% } %>
-                        
-                    </div> <!-- card body -->
-                </div> <!-- card --> 
-    </div> <!-- .col-lg-6 -->
+                            <div 
+                                <%= (data.LASTCHANGETOOPENPRC > 0) ? 'class=text-success' : '' %>
+                                <%= (data.LASTCHANGETOOPENPRC < 0) ? 'class=text-danger' : '' %>
+                            >
+                                <% if (data.LASTCHANGETOOPENPRC > 0) { %>
+                                    <i class="fas fa-fw fa-arrow-circle-up"></i>
+                                <% } %>
+                                <% if (data.LASTCHANGETOOPENPRC < 0) { %>
+                                    <i class="fas fa-fw fa-arrow-circle-down"></i>
+                                <% } %>
+                                <%= data.LASTCHANGETOOPENPRC %> % 
+                            </div>
+                        </div>
+                    </div>
 
+                    <hr>
+                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                        <div>
+                            Доходность последней сделки: 
+                        </div>
+                        <div>
+                            <%= Number(data.YIELD).toFixed(2) %>
+                            <span> %</span>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                        <div>
+                            Дата погашения: 
+                        </div>
+                        <div>
+                            <%= data.MATDATE %>
+                        </div>
+                    </div>
+                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                        <div>
+                            Дюрация: 
+                        </div>
+                        <div>
+                            <%= data.DURATION %>
+                        </div>
+                    </div>
+                    <hr>  
+
+                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                        <div>
+                            Номинальная стоимость лота: 
+                        </div>
+                        <div>
+                            <%= data.LOTVALUE %>
+                            <span><i class="fas fa-fw fa-sm fa-ruble-sign"></i></span>
+                        </div>
+                    </div>
+                    <hr>
+
+                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                        <div>
+                            Дата досрочного выкупа: 
+                        </div>
+                        <div>
+                            <%= (data.OFFERDATE) ? data.OFFERDATE : 'Нет' %>
+                        </div>
+                    </div>
+                    <% if (data.OFFERDATE) { %>              
+                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                        <div>
+                            Цена оферты: 
+                        </div>
+                        <div>
+                            <%= Number(data.BUYBACKPRICE).toFixed(2) %>
+                            <span><i class="fas fa-fw fa-sm fa-ruble-sign"></i></span>
+                        </div>
+                    </div>
+                    <% } %>
+                    <hr>
+
+                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                        <div>
+                            Дата выплаты купона: 
+                        </div>
+                        <div>
+                            <%= data.NEXTCOUPON %>
+                        </div>
+                    </div>
+                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                        <div>
+                            Сумма купона: 
+                        </div>
+                        <div>
+                            <%= data.COUPONVALUE %>
+                            <span><i class="fas fa-fw fa-sm fa-ruble-sign"></i></span>
+                        </div>
+                    </div>
+                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                        <div>
+                            Ставка купона: 
+                        </div>
+                        <div>
+                            <%= data.COUPONPERCENT ? data.COUPONPERCENT : 0 %> %
+                        </div>
+                    </div>
+                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                        <div>
+                            Длительность купона: 
+                        </div>
+                        <div>
+                            <%= data.COUPONPERIOD %>
+                        </div>
+                    </div>
+                    <div class="d-inline-flex flex-row justify-content-between col-12">
+                        <div>
+                            НКД на дату расчетов: 
+                        </div>
+                        <div>
+                            <%= data.ACCRUEDINT %>
+                            <span><i class="fas fa-fw fa-sm fa-ruble-sign"></i></span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+
+                    <div class="row ml-2">
+                        <a  class="font-weight-bold" href="https://www.moex.com/ru/issue.aspx?board=<%= data.boardid %>&code=<%= data.SECID %>" target="_blank" rel="nofollow">Профиль эмитента &rarr;</a>
+                    </div>
+
+                 </div>
+            </div> 
+            <!-- card -->
+        <% } %>
+
+    </div> 
+
+    <!-- Highcharts -->
     <div class="col-lg-6">
             <div class="card shadow mb-6">
                 <div class="card-header py-3">
@@ -211,9 +342,11 @@
                 </div>
             </div>
     </div>
+    <!-- Highcharts -->
 
-</div>
+</div>    
 
+<% if (data.dividends && data.dividends.length > 0) { %>
 <div class="row">
             <div class="card shadow mb-6">
                 <div class="card-header py-3">
@@ -244,10 +377,7 @@
                 </div>
             </div>
 </div>
-
-
-
-
+<% } %>
     
     <!-- Highcharts -->
     <script src="https://code.highcharts.com/stock/highstock.js"></script>

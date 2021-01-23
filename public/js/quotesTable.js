@@ -2,4 +2,5 @@ $(document).ready(function() {
         $('#quotesTable1').dataTable();
         $('#quotesTable2').dataTable();
         $('#quotesTable3').dataTable();
+        $('#quotesTable4').dataTable();
     });

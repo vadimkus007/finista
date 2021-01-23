@@ -161,7 +161,44 @@
             </div>
 
             <div class="tab-pane fade" id="bond">
-              Bonds
+              <table class = "table table-striped table-bordered table-hover" id = "quotesTable4">
+                <thead>
+                  <tr>
+                    <th>Тикер</th>
+                    <th>Название</th>
+                    <th>Цена посл., %</th>
+                    <th>Изменение посл., %</th>
+                    <th>Ср. взв. цена, %</th>
+                    <th>Доход. посл. сд.</th>
+                    <th>Дюрация</th>
+                    <th>Сумма купона</th>
+                    <th>Дата оферты</th>
+                    <th>Дата погашения</th>
+                    <th>Доходность к оферте</th>
+                    <th>Доходность для последнего купона</th>
+                  </tr>
+                </thead>
+                <tfoot>
+                </tfoot>
+                <tbody>
+                  <% data.bonds.forEach(row => { %> 
+                    <tr>
+                      <td><a href = "/quotes/<%= row.SECID %>" ><%= row.SECID %></a></td>
+                      <td><%= row.SHORTNAME %></td>
+                      <td><% if (row.LAST) { %><%= row.LAST %> %<% } else {%>-<%}%></td>
+                      <td><% if (row.LASTCHANGEPRCNT) { %><%= row.LASTCHANGEPRCNT %> %<% } else {%>-<%}%></td>
+                      <td><% if (row.WAPRICE) { %><%= row.WAPRICE %> %<% } else {%>-<%}%></td>
+                      <td><%= row.YIELD %> %</td>
+                      <td><%= row.DURATION %></td>
+                      <td><%= row.COUPONVALUE %></td>
+                      <td><% if (row.OFFERDATE) { %><%= row.OFFERDATE %><% } else {%>-<%}%></td>
+                      <td><%= row.MATDATE %></td>
+                      <td><%= (row.YIELDTOOFFER) ? row.YIELDTOOFFER : '-' %></td>
+                      <td><%= (row.YIELDLASTCOUPON) ? row.YIELDLASTCOUPON : '-' %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
             </div>
 
           </div>
@@ -169,3 +206,4 @@
         </div>
 
       </section>
+

@@ -48,10 +48,21 @@ exports.list = (req, res, next) => {
 
     promises.push(Moex.getRequest(request, options));
 
+    // bonds (boardgroup = 58)
+    request = {};
+    request = {
+        engines: 'stock',
+        markets: 'bonds',
+        boardgroups: '58',
+        securities: '' 
+    };
+
+    promises.push(Moex.getRequest(request, options));
+
     Promise.all(promises)
     .then(data => {
 
-        let section_keys = ['stock', 'stock', 'etf', 'index', 'index'];
+        let section_keys = ['stock', 'stock', 'etf', 'index', 'index', 'bonds'];
 
         // append data obtained
         let result = {};
@@ -65,6 +76,10 @@ exports.list = (req, res, next) => {
         result.index = data[3];
         result.index.securities = result.index.securities.concat(data[4].securities);
         result.index.marketdata = result.index.marketdata.concat(data[4].marketdata);
+
+        //bonds
+        result.bonds = data[5];
+        
 
         let arr = [];
         for (var i=0; i<result.shares.securities.length; i++) {
@@ -84,7 +99,17 @@ exports.list = (req, res, next) => {
             arr.push(Object.assign(result.index.securities[i], result.index.marketdata[i]));
         }
         result.index = arr;
-      
+
+        // bonds
+        arr = [];
+        for (var i=0; i<result.bonds.securities.length; i++) {
+            let obj = {};
+            arr.push(Object.assign(result.bonds.securities[i], result.bonds.marketdata[i]));
+        }
+        result.bonds = arr;
+ 
+console.log('BONDS', result.bonds);
+
         // Render view
         res.render('quotes', {
             title: 'Котировки',
@@ -153,7 +178,7 @@ exports.info = (req, res, next) => {
                 
         data['candles'] = candles; // [ date, price ] format
 
-
+console.log('DATA', data);
                 // Dividends
                 // Moex.getCustom(`https://iss.moex.com/iss/securities/${data['SECID']}/dividends.json?iss.meta=off&dividends.columns=registryclosedate,value`, (err, result) => {
 

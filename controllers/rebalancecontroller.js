@@ -109,7 +109,6 @@ exports.show = (req, res, next) => {
     })
     .then(cashe => {
         data.cashe = cashe.cashe;
-
         // get secids amount in portfolio
         return Portfolio.getSecidsAmount(portfolioId, data.secids);
     })
