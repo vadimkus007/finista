@@ -223,6 +223,7 @@ exports.info = (req, res, next) => {
             obj[secid.secid].amount = 0;
             obj[secid.secid].buy = 0;
             obj[secid.secid].sell = 0;
+            obj[secid.secid].value = 0;
         });
         data.securities = obj;
 
@@ -237,6 +238,15 @@ exports.info = (req, res, next) => {
                     case 2: 
                         data.securities[trade.secid].amount = Number(data.securities[trade.secid].amount) - Number(trade.amount);
                         break;
+                    case 4:
+                        data.securities[trade.secid].amount = Number(data.securities[trade.secid].amount) - Number(trade.amount);
+                        break;
+                    case 7:
+                        data.securities[trade.secid].amount = Number(data.securities[trade.secid].amount) + Number(trade.amount);
+                        break;
+                    case 8:
+                        data.securities[trade.secid].amount = Number(data.securities[trade.secid].amount) - Number(trade.amount);
+                        break;
                 }
             }
         });
@@ -246,10 +256,20 @@ exports.info = (req, res, next) => {
             if (trade.secid !== data.portfolio.currency) {
                 switch(trade.operationId) {
                     case 1:
-                        data.securities[trade.secid].buy = Number(data.securities[trade.secid].buy) + Number(trade.sum) + Number(trade.comission);
+                        data.securities[trade.secid].buy = Number(data.securities[trade.secid].buy) + Number(trade.price*trade.amount) + Number(trade.comission);
                         break;
                     case 2:
-                        data.securities[trade.secid].sell = Number(data.securities[trade.secid].sell) + Number(trade.sum) - Number(trade.comission);
+                        data.securities[trade.secid].sell = Number(data.securities[trade.secid].sell) + Number(trade.price*trade.amount) - Number(trade.comission);
+                        break;
+                    case 4:
+                        data.securities[trade.secid].sell = Number(data.securities[trade.secid].sell) + Number(trade.price*trade.value*trade.amount/100) - Number(trade.comission);
+                        break;
+                    case 7:
+                        data.securities[trade.secid].buy = Number(data.securities[trade.secid].buy) + Number(trade.price*trade.value*trade.amount/100) + Number(trade.accint) + Number(trade.comission);
+                        data.securities[trade.secid].value = trade.value;
+                        break;
+                    case 8:
+                        data.securities[trade.secid].sell = Number(data.securities[trade.secid].sell) + Number(trade.price*trade.value*trade.amount/100) - Number(trade.accint) - Number(trade.comission);
                         break;
                 }
             }
@@ -257,14 +277,26 @@ exports.info = (req, res, next) => {
 
         // calculate prices for each secid
         data.prices.forEach(price => {
-            data.securities[price.secid].price = Number(data.securities[price.secid].amount) * Number(price.price);
+            if (data.securities[price.secid].value == 0) {
+                data.securities[price.secid].price = Number(data.securities[price.secid].amount) * Number(price.price);
+            } else {
+                data.securities[price.secid].price = Number(data.securities[price.secid].amount) * Number(price.price) * Number(data.securities[price.secid].value) / 100;
+            }
         });
 
         // Calculate dividends
         data.dividends = 0;
         data.trades.forEach(trade => {
-            if (trade.operationId == 3) {
-                data.dividends = data.dividends + Number(trade.sum) - Number(trade.comission);
+            switch (trade.operationId) {
+                case 3:
+                    data.dividends = data.dividends + Number(trade.price*trade.amount) - Number(trade.comission);
+                    break;
+                case 5:
+                    data.dividends = data.dividends + Number(trade.price*trade.amount) - Number(trade.comission);
+                    break;
+                case 6:
+                    data.dividends = data.dividends + Number(trade.price*trade.amount) - Number(trade.comission);
+                    break;
             }
         });
 
@@ -277,6 +309,7 @@ exports.info = (req, res, next) => {
             data.securitiesSell = Number(data.securitiesSell) + Number(data.securities[key].sell);
             data.securitiesPrice = Number(data.securitiesPrice) + Number(data.securities[key].price);
         };
+
         data.portfolioPrice = data.cashe + data.securitiesPrice;
 
         // calculate XIRR
@@ -319,13 +352,33 @@ exports.info = (req, res, next) => {
             let amount = [];
             let time = [];
             secid.forEach(item => {
-
                 obj.secid = item.secid;
-                let sum = Number(item.price) * Number(item.amount);
-                if (Number(item.operationId) == 1) {
-                    sum = (-1) * sum - Number(item.comission); // Buy
-                } else {
-                    sum = sum - Number(item.comission); // Sell or dividends
+                let sum = 0;
+                switch (item.operationId) {
+                    case 1:
+                        sum = sum - Number(item.price*item.amount) - Number(item.comission);
+                        break;
+                    case 2:
+                        sum = sum + Number(item.price*item.amount) - Number(item.comission);
+                        break;
+                    case 3:
+                        sum = sum + Number(item.price*item.amount) - Number(item.comission);
+                        break;
+                    case 4:
+                        sum = sum + Number(item.value*item.price*item.amount/100) - Number(item.comission);
+                        break;
+                    case 5:
+                        sum = sum + Number(item.price*item.amount) - Number(item.comission);
+                        break;
+                    case 6:
+                        sum = sum + Number(item.price*item.amount) - Number(item.comission);
+                        break;
+                    case 7:
+                        sum = sum - Number(item.value*item.price*item.amount/100) - Number(item.accint*item.amount) - Number(item.comission);
+                        break;
+                    case 8:
+                        sum = sum + Number(item.value*item.price*item.amount/100) - Number(item.accint*item.amount) - Number(item.comission);
+                        break;
                 }
                 amount.push(Number(sum));
                 time.push(item.date);
@@ -333,11 +386,15 @@ exports.info = (req, res, next) => {
             // push the last data on securities price
             amount.push(Number(data.securities[obj.secid].price));
             time.push(new Date());
+            
             //calculate XIRR
-
-            var rate = finance.XIRR(amount, time, 0);
-            if (isNaN(rate)) {
-                rate = AAGR(amount, time);
+            if (amount.length > 1) {
+                var rate = finance.XIRR(amount, time, 0);
+                if (isNaN(rate)) {
+                    rate = AAGR(amount, time);
+                }
+            } else {
+                rate = 0;
             }
 
             obj.rate = rate;
@@ -421,7 +478,6 @@ exports.info = (req, res, next) => {
             data.annual[i].amounts = amounts[i];
         }
 
-
         // process all periods data.annual
         data.annual.forEach(period => {
 
@@ -433,6 +489,7 @@ exports.info = (req, res, next) => {
                 obj[secid.secid].amount = 0;
                 obj[secid.secid].buy = 0;
                 obj[secid.secid].sell = 0;
+                obj[secid.secid].value = 0;
             });
             period.securities = obj;
 
@@ -441,30 +498,51 @@ exports.info = (req, res, next) => {
                 period.securities[secid.secid].amount = secid.amount;
             });
 
-            // calculate prices for each secid
-            period.prices.forEach(price => {
-                period.securities[price.secid].price = Number(period.securities[price.secid].amount) * Number(price.price);
-            });
-
             // calculate buy and sell prices for securities
             period.trades.forEach(trade => {
                 if (trade.secid !== data.portfolio.currency) {
                     switch(trade.operationId) {
                         case 1:
-                            period.securities[trade.secid].buy = Number(period.securities[trade.secid].buy) + Number(trade.sum) + Number(trade.comission); 
+                            period.securities[trade.secid].buy = Number(period.securities[trade.secid].buy) + Number(trade.price*trade.amount) + Number(trade.comission); 
                             break;
                         case 2:
-                            period.securities[trade.secid].sell = Number(period.securities[trade.secid].sell) + Number(trade.sum) - Number(trade.comission);
+                            period.securities[trade.secid].sell = Number(period.securities[trade.secid].sell) + Number(trade.price*trade.amount) - Number(trade.comission);
+                            break;
+                        case 4:
+                            period.securities[trade.secid].sell = Number(period.securities[trade.secid].sell) + Number(trade.value*trade.price*trade.amount/100) - Number(trade.comission);
+                        case 7:
+                            period.securities[trade.secid].buy = Number(period.securities[trade.secid].buy) + Number(trade.value*trade.price*trade.amount/100) + Number(trade.accint*trade.amount) + Number(trade.comission);
+                            period.securities[trade.secid].value = trade.value;
+                            break;
+                        case 8:
+                            period.securities[trade.secid].sell = Number(period.securities[trade.secid].sell) + Number(trade.value*trade.price*trade.amount/100) - Number(trade.accint*trade.amount) - Number(trade.comission);
                             break;
                     }
                 }
             });
 
+// calculate prices for each secid
+            period.prices.forEach(price => {
+                if (period.securities[price.secid].value !== 0) {
+                    period.securities[price.secid].price = Number(price.price)*Number(period.securities[price.secid].amount)*Number(period.securities[price.secid].value)/100;
+                } else {
+                    period.securities[price.secid].price = Number(period.securities[price.secid].amount) * Number(price.price);
+                } 
+            });
+
             // Calculate dividends
             period.dividends = 0;
             period.trades.forEach(trade => {
-                if (trade.operationId == 3) {
-                    period.dividends = Number(period.dividends) + Number(trade.sum) - Number(trade.comission);
+                switch (trade.operationId) {
+                    case 3:
+                        period.dividends = Number(period.dividends) + Number(trade.price*trade.amount) - Number(trade.comission);
+                        break;
+                    case 5:
+                        period.dividends = Number(period.dividends) + Number(trade.price*trade.amount) - Number(trade.comission);
+                        break;
+                    case 6:
+                        period.dividends = Number(period.dividends) + Number(trade.price*trade.amount) - Number(trade.comission);
+                        break;
                 }
             });
 
@@ -574,10 +652,35 @@ exports.info = (req, res, next) => {
                             period.securities[operation.secid].xirrData.amount.push(sum);
                             period.securities[operation.secid].xirrData.time.push(operation.date);
                             break;
+                        case 4:
+                            sum = Number(operation.value*operation.price*operation.amount/100) - Number(operation.comission);
+                            period.securities[opeartion.secid].xirrData.amount.push(sum);
+                            period.securities[operation.secid].xirrData.time.push(operation.date);
+                            break;
+                        case 5:
+                            sum = Number(operation.price) * Number(operation.amount) - Number(operation.comission);
+                            period.securities[operation.secid].xirrData.amount.push(sum);
+                            period.securities[operation.secid].xirrData.time.push(operation.date);
+                            break;
+                        case 6:
+                            sum = Number(operation.price) * Number(operation.amount) - Number(operation.comission);
+                            period.securities[operation.secid].xirrData.amount.push(sum);
+                            period.securities[operation.secid].xirrData.time.push(operation.date);
+                            break;
+                        case 7:
+                            sum = Number(operation.value*operation.price*operation.amount/100) + Number(operation.accint*operation.amount) + Number(operation.comission);
+                            period.securities[operation.secid].xirrData.amount.push(-sum);
+                            period.securities[operation.secid].xirrData.time.push(operation.date);
+                            break;
+                        case 8:
+                            sum = Number(operation.value*operation.price*operation.amount/100) - Number(operation.accint*operation.amount) - Number(operation.comission);
+                            period.securities[operation.secid].xirrData.amount.push(sum);
+                            period.securities[operation.secid].xirrData.time.push(operation.date);
+                            break;
                     }
                 });
             });
-            
+          
             for (key in period.securities) {
                 let arr = [];
                 for (var i = 0; i<period.securities[key].xirrData.amount.length; i++) {
@@ -595,7 +698,8 @@ exports.info = (req, res, next) => {
                 arr.forEach(row => {
                     amount.push(row[0]);
                     time.push(row[1]);
-                })
+                });
+
                 let rate = finance.XIRR(amount, time, 0)
                 
                 // if XIRR is imposible to calculate use geometrical average value
@@ -606,17 +710,10 @@ exports.info = (req, res, next) => {
 
                 period.securities[key].rate = rate;
 
-//console.log(key, period.securities[key].rate, amount, time);
-
             }
 
         }); // for each periods
 
-
-
-
-//console.log(secidsProfit);
-//console.log('DATA.annual', data.annual);
 
         // render view
         res.render('profit', {
