@@ -1,3 +1,5 @@
+
+// jQuery validator for bootstrap 4
 jQuery.validator.setDefaults({
     onfocusout: function (e) {
         this.element(e);
@@ -24,6 +26,7 @@ jQuery.validator.setDefaults({
     }
 });
 
+// server validator
 function insertAfter(referenceNode, newNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
