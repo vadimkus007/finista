@@ -1,19 +1,23 @@
 <% layout('../layout/page') %>
 <% block('title', 'Свойства портфеля') %>
 <% block('menu', 'portfolios') %>
+<% script('/vendor/jquery-validate/dist/jquery.validate.min.js') %>
+<% script('/js/validate.js') %>
+<% script('/js/portfolio-edit.js') %>
 
         <div class="row">
 
-            <div class="">
-            <form id="new-portfolio" class="" name="newPortfolio" method="POST" action="/portfolios" role="form">
+            <div class="col-6">
+            <form id="portfolioEdit" class="form validate" name="portfolioEdit" method="POST" action="/portfolios" role="form">
                 <input type="hidden" name="id" value="<%= !isNew ? data.id : '' %>" />
-                <div class="form-group">
-                    <label for="title">Название портфеля:</label>
-                    <input class="form-control" id="title" name="title" type="text" value="<%= !isNew ? data.title : '' %>" placeholder="Введите название портфеля" />
+                <div class="form-group form-row">
+                    <label for="title">* Название портфеля:</label>
+                    <input class="form-control mr-sm-2" id="title" name="title" type="text" value="<%= !isNew ? data.title : '' %>" placeholder="Введите название портфеля" required="required"/>
                 </div>
-                <div class="form-group row">
-                    <label for="currency" class="ml-sm-3 mr-sm-2">Валюта:</label>
-                        <select name="currency" id="currency" class="mr-sm-2">
+                <div class="form-group form-row">
+                    <div class="col">
+                        <label for="currency" class="mr-sm-2">Валюта:</label>
+                        <select name="currency" id="currency" class="form-control mr-sm-2">
                             <option value="RUB" 
                                 <% if (data.currency === 'RUB') { %>
                                 selected="selected"
@@ -39,56 +43,32 @@
                                 >GBP
                             </option>
                         </select>
+                    </div>
+                    <div class="col">
                     <label for="comission" class="mr-sm-2">Комиссия по умолчанию, %:</label>
-                    <input class="mr-sm-2" id="comission" type="text" name="comission" value="<%= isNew ? '0' : data.comission %>" />
-                    <label for="dateopen" class="mr-sm-2">Дата открытия:</label>
-                    <input type="date" id="dateopen" name="dateopen" class="mr-sm-2" 
-                        value="<% if (typeof data.dateopen !== 'undefined') { %><% if (typeof data.dateopen == 'object') {%><%=data.dateopen.toISOString().slice(0,10)%><%} else {%><%=data.dateopen%><%}%><%}else{%>2020-01-01<%}%>" />
-                </div>
-                <div class="form-group">
-                    <label for="memo">Описание:</label>
-                    <textarea name="memo" class="form-control" placeholder="Описание"><%= !isNew ? data.memo : '' %></textarea>
+                        <input class="form-control mr-sm-2" id="comission" type="text" name="comission" value="<%= isNew ? '0' : data.comission %>" />
+                    </div>
                 </div>
 
-                <div class="form-group row d-flex justify-center ml-2">
+                <div class="form-group form-row">
+                        <label for="dateopen" class="mr-sm-2">Дата открытия:</label>
+                        <input type="date" id="dateopen" name="dateopen" class="form-control mr-sm-2" 
+                        value="<% if (typeof data.dateopen !== 'undefined') { %><% if (typeof data.dateopen == 'object') {%><%=data.dateopen.toISOString().slice(0,10)%><%} else {%><%=data.dateopen%><%}%><%}else{%><%= new Date().toISOString().slice(0,10) %><%}%>" />
+                </div>
+                
+                <div class="form-group form-row">
+                    <label for="memo">Описание:</label>
+                    <textarea name="memo" class="form-control mr-sm-2" placeholder="Описание"><%= !isNew ? data.memo : '' %></textarea>
+                </div>
+
+                <div class="form-group form-row d-flex justify-center ml-2">
                     <button type="submit" class="btn btn-primary btn-sm mr-sm-2" name="action" value="save">Сохранить</button>
-                    <button type="submit" class="btn btn-primary btn-sm" name="action" value="cancel">Отменить</button>
+                    <a href="/portfolios" class="btn btn-primary btn-sm">Отменить</a>
                 </div>
             </form>
             </div>
         </div>
 
     <script>
-
-        $(document).ready(function(e) {
-
-            function insertAfter(referenceNode, newNode) {
-                referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-            }
-
-            var err = <%if (typeof error !== 'undefined') {%><%- JSON.stringify(error) %><%} else {%><%=null%><%}%>;
-            
-            if (err) {
-
-                for (var i = 0; i<err.errors.length; i++) {
-                    var el_id = err.errors[i].path;
-
-                    var el = document.getElementById(el_id);
-                    el.classList.add("is-invalid");
-                    
-                    var div = document.createElement("div");
-                    div.classList.add("invalid-feedback");
-                    div.innerHTML = err.errors[i].message;
-
-                    insertAfter(el, div);
-
-                    el.addEventListener('change', function (event) {
-                        event.target.classList.remove("is-invalid");
-                        event.target.nextElementSibling.remove();
-                    });
-                }
-
-            }
-        })
-        
+        var err = <%if (typeof error !== 'undefined') {%><%- JSON.stringify(error) %><%} else {%><%=null%><%}%>;
     </script>

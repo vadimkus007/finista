@@ -199,6 +199,9 @@ exports.action = (req, res, next) => {
             }
 
             break;
+        case 'cancel':
+            res.redirect('/portfolios');
+            break;
 
         default:
             if (req.session) {

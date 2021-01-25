@@ -1,6 +1,3 @@
-function insertAfter(referenceNode, newNode) {
-                referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-    }
 
 // Edit trade scripts
 function updateForm() {
@@ -166,31 +163,48 @@ $(document).ready(function() {
     updateForm();
     updateOperationSelect();
     $(".select2").select2();
-});
+    validate(err);
 
-// validation form
-$(document).ready(function() {
-
-            if (err) {
-
-                for (var i = 0; i<err.errors.length; i++) {
-                    var el_id = err.errors[i].path;
-
-                    var el = document.getElementById(el_id);
-                    el.classList.add("is-invalid");
-                    
-                    var div = document.createElement("div");
-                    div.classList.add("invalid-feedback");
-                    div.innerHTML = err.errors[i].message;
-
-                    insertAfter(el, div);
-
-                    el.addEventListener('change', function (event) {
-                        event.target.classList.remove("is-invalid");
-                        event.target.nextElementSibling.remove();
-                    });
-                }
-
+    $('.validate').validate({
+        rules: {
+            secid: {
+                required: true
+            },
+            price: {
+                required: true
+            },
+            amount: {
+                number: true,
+                min: 1
+            },
+            value: {
+                number: true,
+                min: 0
+            },
+            accint: {
+                number: true,
+                min: 0
             }
-
+        },
+        messages: {
+            secid: {
+                required: 'Пожалуйста, выберите элемент из списка'
+            },
+            price: {
+                required: 'Цена сделки не может быть пустой'
+            },
+            amount: {
+                number: 'Неправильно введено количество',
+                min: 'Количество не может быть меньше 1'
+            },
+            value: {
+                number: 'Номинал облигации должен быть числом',
+                min: 'Номинал облигации не можеь быть отрицательным'
+            },
+            accint: {
+                number: 'НКД должен быть числом',
+                min: 'НКД не можеь быть отрицательным'
+            }
+        }
+    })
 });

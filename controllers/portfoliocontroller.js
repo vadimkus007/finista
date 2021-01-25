@@ -300,12 +300,7 @@ exports.info = (req, res, next) => {
             })
             .then(secids => {
                 data.secids = secids;
-/*
-                return getTrades(id, dateEnd);
-            })
-            .then(trades => {
-                data.trades = trades;
-*/
+
                 // get boards info
                 return getBoards(data.secids)
             })
@@ -506,7 +501,6 @@ exports.info = (req, res, next) => {
                 return getRubs(data.portfolio.id);
             })
             .then(rubs => {
-
                 data.rubs = rubs;
 
                 // calculate data and prepare for render
@@ -573,9 +567,9 @@ exports.info = (req, res, next) => {
                     }
                 }
 
-
                 data.portfolio.cashe = cashe;
-                data.portfolio.casheIn = securities.RUB.buy;
+                data.portfolio.casheIn = 0;
+                data.portfolio.casheIn = (typeof securities.RUB !== 'undefined') ? securities.RUB.buy : 0;
                 // remove RUB from securities
                 delete securities['RUB'];
 
@@ -724,8 +718,12 @@ exports.info = (req, res, next) => {
                                 let days = today - dateopen;
                                 days = Math.ceil(days/(1000*60*60*24));
 
-                                data.portfolio.annualyield = 100 * (365/days) * data.portfolio.profit / data.portfolio.casheIn;
-
+                                if (days == 0 || data.portfolio.casheIn == 0) {
+                                    data.portfolio.annualyield = 0;
+                                } else {
+                                    data.portfolio.annualyield = 100 * (365/days) * data.portfolio.profit / data.portfolio.casheIn;
+                                }
+                                
         // calculation of xirr
                               
                 var args = [];
@@ -757,8 +755,11 @@ exports.info = (req, res, next) => {
                     d.push(arg.when);
                 });
 
-                // var rate = xirr(args);
-                var rate = finance.XIRR(sum, d, 0);
+                // XIRR 
+                var rate = 0;
+                if (sum.length > 1) {
+                    rate = finance.XIRR(sum, d, 0);
+                }
 
                 data.portfolio['xirr'] = rate;
                 data.portfolio.xirr = data.portfolio.xirr.toFixed(2);
@@ -803,7 +804,7 @@ exports.info = (req, res, next) => {
     })
     .then(history => {
 
-//       console.log('*** DATA ***', data);
+
 //        console.log('*** RES.secids ***', res.data.secids);
 //        console.log('*** RES.trades ***', res.data.trades);
 //        console.log('*** HISTORY ***', history);

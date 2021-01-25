@@ -329,11 +329,14 @@ exports.info = (req, res, next) => {
         sum.push(data.portfolioPrice);
         time.push(new Date());
 
-        var rate = finance.XIRR(sum, time, 0);
-        if (isNaN(rate)) {
-            rate = AAGR(sum, time);
+        var rate = 0;
+        if (sum.length > 1) {
+            rate = finance.XIRR(sum, time, 0);
+            if (isNaN(rate)) {
+                rate = AAGR(sum, time);
+            }
         }
-
+        
         data.rate = rate;
 
         data.portfolioPL = Number(data.portfolioPrice) - Number(data.income) + Number(data.outcome);
@@ -597,7 +600,13 @@ exports.info = (req, res, next) => {
                 time.push(new Date(period.year + '-12-31'));
             }
 
-            period.rate = finance.XIRR(sum, time, 0);
+            period.rate = 0;
+            if (sum.length > 1) {
+                period.rate = finance.XIRR(sum, time, 0);
+                if (isNaN(period.rate)) {
+                    period.rate = AAGR(sum, time);
+                }
+            }
 
             period.portfolioPL = Number(period.portfolioPrice) - Number(period.prevPortfolioPrice) - Number(period.income) + Number(period.outcome);
 

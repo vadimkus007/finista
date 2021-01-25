@@ -151,6 +151,7 @@ exports.info = (req, res, next) => {
             obj[secid.secid].buy = 0;
             obj[secid.secid].sell = 0;
             obj[secid.secid].dividends = 0;
+            obj[secid.secid].value = 0;
         });
         data.secids = obj;
 
@@ -161,14 +162,33 @@ exports.info = (req, res, next) => {
                 switch(trade.operationId) {
                     case 1: 
                         data.secids[trade.secid].amount = Number(data.secids[trade.secid].amount) + Number(trade.amount);
-                        data.secids[trade.secid].buy = Number(data.secids[trade.secid].buy) + Number(trade.sum) + Number(trade.comission);
+                        data.secids[trade.secid].buy = Number(data.secids[trade.secid].buy) + Number(trade.price*trade.amount) + Number(trade.comission);
                         break;
                     case 2: 
                         data.secids[trade.secid].amount = Number(data.secids[trade.secid].amount) - Number(trade.amount);
-                        data.secids[trade.secid].sell = Number(data.secids[trade.secid].sell) + Number(trade.sum) - Number(trade.comission);
+                        data.secids[trade.secid].sell = Number(data.secids[trade.secid].sell) + Number(trade.price*trade.amount) - Number(trade.comission);
                         break;
                     case 3:
-                        data.secids[trade.secid].dividends = Number(data.secids[trade.secid].dividends) + Number(trade.sum) - Number(trade.comission);
+                        data.secids[trade.secid].dividends = Number(data.secids[trade.secid].dividends) + Number(trade.price*trade.amount) - Number(trade.comission);
+                        break;
+                    case 4:
+                        data.secids[trade.secid].amount = Number(data.secids[trade.secid].amount) - Number(trade.amount);
+                        data.secids[trade.secid].sell = Number(data.secids[trade.secid].sell) + Number(trade.value*trade.amount*trade.price/100) - Number(trade.comission);
+                        break;
+                    case 5: 
+                        data.secids[trade.secid].dividends = Number(data.secids[trade.secid].dividends) + Number(trade.price*trade.amount) - Number(trade.comission);
+                        break;
+                    case 6: 
+                        data.secids[trade.secid].dividends = Number(data.secids[trade.secid].dividends) + Number(trade.price*trade.amount) - Number(trade.comission);
+                        break;
+                    case 7:
+                        data.secids[trade.secid].amount = Number(data.secids[trade.secid].amount) + Number(trade.amount);
+                        data.secids[trade.secid].buy = Number(data.secids[trade.secid].buy) + Number(trade.value*trade.amount*trade.price/100) + Number(trade.accint*trade.amount) + Number(trade.comission);
+                        data.secids[trade.secid].value = trade.value;
+                        break;
+                    case 8:
+                        data.secids[trade.secid].amount = Number(data.secids[trade.secid].amount) - Number(trade.amount);
+                        data.secids[trade.secid].sell = Number(data.secids[trade.secid].sell) + Number(trade.value*trade.amount*trade.price/100) - Number(trade.accint*trade.amount) - Number(trade.comission);
                         break;
                 }
             }
@@ -189,7 +209,12 @@ exports.info = (req, res, next) => {
 
         // calculate prices for each secid
         data.prices.forEach(price => {
-            data.secids[price.SECID].price = Number(data.secids[price.SECID].amount) * Number(price.LAST);
+            if (data.secids[price.SECID].value !== 0) {
+                data.secids[price.SECID].price = Number(data.secids[price.SECID].amount) * Number(price.LAST) * Number(data.secids[price.SECID].value) / 100;
+            } else {
+                data.secids[price.SECID].price = Number(data.secids[price.SECID].amount) * Number(price.LAST);
+            }
+            
         });
 
         // prepare renderdata
@@ -200,6 +225,7 @@ exports.info = (req, res, next) => {
         let sum = Number(data.cashe.cashe);
         let sumShare = 0;
         let sumEtf = 0;
+        let sumBonds = 0;
         for (key in data.secids) {
             sum = sum + Number(data.secids[key].price);
             if (data.secids[key].group == 'stock_shares' || data.secids[key].group == 'stock_dr') {
@@ -208,11 +234,15 @@ exports.info = (req, res, next) => {
             if (data.secids[key].group == 'stock_etf' || data.secids[key].group == 'stock_ppif') {
                 sumEtf = sumEtf + Number(data.secids[key].price);
             }
+            if (data.secids[key].group == 'stock_bonds') {
+                sumBonds = sumBonds + Number(data.secids[key].price);
+            }
         }
 
         let actives = [];
         let shares = [];
         let etf = [];
+        let bonds = [];
         for (key in data.secids) {
             let value = Number(100 * Number(data.secids[key].price) / Number(sum)).toFixed(2);
             let obj = {name: key, y: value};
@@ -227,6 +257,11 @@ exports.info = (req, res, next) => {
                 obj = {name: key, y: value};
                 etf.push(obj);
             }
+            if (data.secids[key].group == 'stock_bonds') {
+                value = Number(100 * Number(data.secids[key].price) / Number(sumBonds)).toFixed(2)
+                obj = {name: key, y: value};
+                bonds.push(obj);
+            }
         }
         let value = Number(100*Number(data.cashe.cashe)/Number(sum)).toFixed(2);
         actives.push({name: 'Рубли', y: value});
@@ -235,16 +270,25 @@ exports.info = (req, res, next) => {
 
         // actives types
         let activeTypes = [];
-        value = Number(100*Number(sumShare)/(Number(sum))).toFixed(2);
-        activeTypes.push({name: 'Акции', y: value});
-        value = Number(100*Number(sumEtf)/(Number(sum))).toFixed(2);
-        activeTypes.push({name: 'ETF/ПИФ', y: value});
+        if (sumShare !== 0) {
+            value = Number(100*Number(sumShare)/(Number(sum))).toFixed(2);
+            activeTypes.push({name: 'Акции', y: value});
+        }
+        if (sumEtf !== 0) {
+            value = Number(100*Number(sumEtf)/(Number(sum))).toFixed(2);
+            activeTypes.push({name: 'ETF/ПИФ', y: value});
+        }
+        if (sumBonds !== 0) {
+            value = Number(100*Number(sumBonds)/(Number(sum))).toFixed(2);
+            activeTypes.push({name: 'Облигации', y: value});
+        }
         value = Number(100*Number(data.cashe.cashe)/(Number(sum))).toFixed(2);
         activeTypes.push({name: 'Рубли', y: value});
 
         renderdata.activeTypes = activeTypes;
         renderdata.shares = shares;
         renderdata.etf = etf;
+        renderdata.bonds = bonds;
 
 // process sectors
         var sectors = [];

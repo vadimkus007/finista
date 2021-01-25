@@ -352,7 +352,7 @@ exports.list = (req, res, next) => {
         data.portfolio = results[0];
         data.trades = results[1];
 
-console.log('data.trades', data.trades);
+//console.log('data.trades', data.trades);
 
         // render view
         res.render('portfolio/trades', {
