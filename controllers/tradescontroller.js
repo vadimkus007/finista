@@ -133,7 +133,6 @@ exports.action = (req, res, next) => {
 
     const portfolioId = req.session.portfolio.id;
 
-    
     switch (req.body.action) {
 
         case 'save':
@@ -366,5 +365,42 @@ exports.list = (req, res, next) => {
         next(err);
     })
 
+}
+
+exports.import = (req, res, next) => {
+
+    if (req.session.portfolio == null) {
+        req.flash('message', 'Portfolio is not defined');
+        
+        res.redirect('/portfolios');
+        return next();
+    }
+
+    var user = 0;
+    if (req.isAuthenticated()) {
+        user = req.session.passport.user;
+    }
+
+    const portfolioId = req.session.portfolio.id;
+
+    var data = {};
+
+    Portfolio.findOne({
+        where: {id: parseInt(portfolioId)},
+        raw: true
+    })
+    .then(portfolio => {
+        data.portfolio = portfolio;
+
+        // render view
+        res.render('portfolio/import', {
+            user: user,
+            data: data
+        });
+    })
+    .catch(err => {
+        console.log(err);
+        next(err);
+    });
 }
 

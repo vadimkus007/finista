@@ -1,0 +1,35 @@
+<% layout('../layout/portfolio') %>
+<% var title = 'Импорт сделок - ' + data.portfolio.title; %>
+<% block('title', title) %>
+<% block('menu', 'portfolio import') %>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 text-primary font-weight-bold">Загрузка отчетов</h6>
+    </div>
+    <div class="card-body">
+        <form class="form" action="/portfolio/trades/import" method="POST" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col">
+                    <p>Допустимые расширения файлов: <code>.xlsx</code></p>
+                    <p>В настояший момент поддерживается импорт сделок и зачислений от брокера Сбербанк, которые можно получить через сбербанк-online.</p>
+                </div>
+            </div>
+            <hr>
+            <div class="form-group form-row">
+                <label for="tradesFile">Загрузить отчет по сделкам</label>
+                <input type="file" id="tradesFile" name="tradesFile" class="form-control" />
+            </div>
+            <hr>
+            <div class="form-group form-row">
+                <label for="casheFile">Загрузить отчет по зачислениям и списаниям</label>
+                <input type="file" id="casheFile" name="casheFile" class="form-control" />
+            </div>
+            <hr>
+            <div class="form-group form-row">
+                <button type="submit" class="btn btn-primary btn-sm mr-sm-2" name="action" value="upload">Загрузить</button>
+                <a href="/portfolio/trades/import" class="btn btn-primary btn-sm mr-sm-2">Отменить</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -3,7 +3,7 @@ module.exports = {
     name: 'finista-dev',
     script: './bin/www',
     watch: true,
-    ignore_watch: ['node_modules','views','template','public'],
+    ignore_watch: ['node_modules','views','template','public','tmp','uploads'],
     watch_options: {
       followSymlinks: false
     }

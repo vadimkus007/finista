@@ -8,6 +8,7 @@ var tradesController = require('../controllers/tradescontroller.js');
 var analyticsController = require('../controllers/analyticscontroller.js');
 var profitController = require('../controllers/profitcontroller.js');
 var rebalanceController = require('../controllers/rebalancecontroller.js');
+var importController = require('../controllers/importcontroller.js');
  
 module.exports = function(app, passport) {
  
@@ -46,6 +47,8 @@ module.exports = function(app, passport) {
     
     app.get('/portfolio/trades', isLoggedIn, tradesController.list);
     app.post('/portfolio/trades', isLoggedIn, tradesController.action);
+    app.get('/portfolio/trades/import', isLoggedIn, tradesController.import);
+    app.post('/portfolio/trades/import', isLoggedIn, importController.import);
 
     app.get('/portfolio/analytics', isLoggedIn, analyticsController.info);
 
