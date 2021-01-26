@@ -14,18 +14,50 @@ var finance = new Finance;
 
 var exports = module.exports = {};
 
-exports.info = (req, res, next) => {
-
-    if (req.session.portfolio == null) {
-        req.flash('message', 'Portfolio is not defined');
-        
-        res.redirect('/portfolios');
-        return next();
+exports.select = (req, res, next) => {
+    
+    var user = 0;
+    if (req.isAuthenticated()) {
+        user = req.session.passport.user;
     }
+
+    if (typeof req.session.portfolio == 'undefined') {
+
+        req.flash('message', 'Portfolio is not defined.');
+
+        res.redirect('/portfolios');
+    }
+
+    Portfolio.findOne({
+        where: {
+            id: req.session.portfolio.id
+        },
+        raw: true
+    })
+    .then(portfolio => {
+        req.session.portfolio = portfolio;
+
+        res.redirect('/portfolio/actives');
+
+    })
+    .catch(err => {
+        console.log(err);
+        return next(err);
+    })
+}
+
+exports.info = (req, res, next) => {
 
     var user = 0;
     if (req.isAuthenticated()) {
         user = req.session.passport.user;
+    }
+
+    if (typeof req.session.portfolio == 'undefined') {
+        req.locals.message = req.flash('message', 'Portfolio is not defined');
+        
+        res.redirect('/portfolios');
+        return next();
     }
 
     const portfolioId = req.session.portfolio.id;

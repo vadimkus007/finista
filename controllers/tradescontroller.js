@@ -149,17 +149,9 @@ exports.action = (req, res, next) => {
                 console.log(err);
                 
                 var data = {};
+                data.portfolio = req.session.portfolio;
                 data.trade = req.body;
                 data.isNew = false;
-
-                Portfolio.findOne({
-                    where: {
-                        id: portfolioId
-                    },
-                    raw: true
-                })
-                .then(portfolio => {
-                    data.portfolio = portfolio;
 
                     return Operation.findAll({
                         raw: true
@@ -178,8 +170,6 @@ exports.action = (req, res, next) => {
                         data: data,
                         error: err
                     });   
-                })
-
             });
 
             break;
@@ -194,30 +184,25 @@ exports.action = (req, res, next) => {
 
                 // EDIT form
 
-                func = Portfolio.findOne({
-                    where: {id: parseInt(portfolioId)},
-                    raw: true
-                });
-                promises.push(func); // portfolio -> [0]
 
                 func = Trade.findOne({
                     where: {id: parseInt(req.body.id)},
                     raw: true
                 });
-                promises.push(func); // trade -> [1]
+                promises.push(func); // trade -> [0]
 
                 func = Operation.findAll({
                     raw: true
                 });
-                promises.push(func); // operations -> [2]
+                promises.push(func); // operations -> [1]
 
                 // perform database search
                 Promise.all(promises)
                 .then(result => {
-                    data.portfolio = result[0];
-                    data.trade = result[1];
+                    data.portfolio = req.session.portfolio;
+                    data.trade = result[0];
 
-                    data.operations = result[2];
+                    data.operations = result[1];
                     data.isNew = false;
 
                     return getSecurities();
@@ -239,26 +224,15 @@ exports.action = (req, res, next) => {
             } else {
 
                 // CREATE form
-
-                func = Portfolio.findOne({
-                    where: {id: parseInt(portfolioId)},
+                data.portfolio = req.session.portfolio;
+                Operation.findAll({
                     raw: true
-                });
-                promises.push(func); // portfolio [0]
-                func = Operation.findAll({
-                    raw: true
-                });
-                promises.push(func); // operations [1]
-
-
-                Promise.all(promises)
-                .then(result => {
-                    data.portfolio = result[0];
-                    data.operations = result[1];
+                })
+                .then(operations => {
+                    data.operations = operations;
                     data.isNew = true;
 
                     return getSecurities();
-                    
                 })
                 .then(securities => {
                     data.securities = securities;
@@ -271,7 +245,7 @@ exports.action = (req, res, next) => {
                 .catch(err => {
                     console.log('Error reading database: ', err);
                     next(err);
-                })
+                });
             }
 
             break;
@@ -318,19 +292,15 @@ exports.list = (req, res, next) => {
         user = req.session.passport.user;
     }
 
-    const portfolioId = req.session.portfolio.id;
-
     var data = {};
 
+    data.portfolio = req.session.portfolio;
+
     var promises = [];
-    let func = Portfolio.findOne({
-        where: {id: parseInt(portfolioId)},
-        raw: true
-    });
-    promises.push(func); // portfolio
+
     func = Trade.findAll({
             where: {
-                portfolioId: portfolioId
+                portfolioId: req.session.portfolio.id
             },
             include: [
                 {
@@ -348,8 +318,7 @@ exports.list = (req, res, next) => {
 
     Promise.all(promises)
     .then(results => {
-        data.portfolio = results[0];
-        data.trades = results[1];
+        data.trades = results[0];
 
 //console.log('data.trades', data.trades);
 
@@ -381,26 +350,15 @@ exports.import = (req, res, next) => {
         user = req.session.passport.user;
     }
 
-    const portfolioId = req.session.portfolio.id;
-
     var data = {};
+    data.portfolio = req.session.portfolio;
 
-    Portfolio.findOne({
-        where: {id: parseInt(portfolioId)},
-        raw: true
-    })
-    .then(portfolio => {
-        data.portfolio = portfolio;
 
-        // render view
-        res.render('portfolio/import', {
-            user: user,
-            data: data
-        });
-    })
-    .catch(err => {
-        console.log(err);
-        next(err);
+    // render view
+    res.render('portfolio/import', {
+        user: user,
+        data: data
     });
+
 }
 

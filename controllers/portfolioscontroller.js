@@ -202,13 +202,15 @@ exports.action = (req, res, next) => {
         case 'cancel':
             res.redirect('/portfolios');
             break;
-
+        // select portfolio
         default:
             if (req.session) {
                 if (req.body.portfolioId && req.body.portfolioId !== '') {
-                    req.session.portfolio = {id: parseInt(req.body.portfolioId)};
+                    
+                    req.session.portfolio = {};
+                    req.session.portfolio.id = req.body.portfolioId;
 
-                    res.redirect(`/portfolio`);
+                    res.redirect(`/portfolio/`);
                 }
             } 
     }

@@ -94,19 +94,11 @@ exports.info = (req, res, next) => {
         user = req.session.passport.user;
     }
 
-    const portfolioId = req.session.portfolio.id;
 
     var data = {};
+    data.portfolio = req.session.portfolio;
 
-    libPortfolio.getPortfolio(portfolioId)
-
-    .then(portfolio => {
-
-        data.portfolio = portfolio;
-
-        return libPortfolio.getSecids(portfolioId)
-    
-    })
+    libPortfolio.getSecids(data.portfolio.id)
     .then(secids => {
         data.secids = secids;
 
@@ -115,13 +107,13 @@ exports.info = (req, res, next) => {
     .then(sectors => {
         data.sectors = sectors
 
-        return libPortfolio.getTrades(portfolioId);
+        return libPortfolio.getTrades(data.portfolio.id);
 
     })
     .then(trades => {
         data.trades = trades;
 
-        return libPortfolio.getCashe(portfolioId)
+        return libPortfolio.getCashe(data.portfolio.id)
 
     })
     .then(cashe => {

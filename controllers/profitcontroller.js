@@ -81,33 +81,25 @@ exports.info = (req, res, next) => {
         user = req.session.passport.user;
     }
 
-    const portfolioId = req.session.portfolio.id;
-
     var data = {};
-
-    libPortfolio.getPortfolio(portfolioId)
-    .then(portfolio => {
-        data.portfolio = portfolio;
-        data.annual = [];
+    data.portfolio = req.session.portfolio;
+    data.annual = [];
 //        var years = [];
-        for (var year = moment(portfolio.dateopen).format('YYYY'); year <= moment().format('YYYY'); year++) {
+    for (var year = moment(data.portfolio.dateopen).format('YYYY'); year <= moment().format('YYYY'); year++) {
             
-            data.annual.push({'year': String(year)});
+        data.annual.push({'year': String(year)});
 
-//            years.push(String(year));
-//            data[year] = {};
-        }
+    }
 //        data.years = years;
 
-        // get cashe for eyear
-        let promises = [];
-        promises.push(libPortfolio.getCashe(portfolioId));
-        data.annual.forEach(year => {
-            promises.push(libPortfolio.getCashe(portfolioId, year.year + '-12-31')); // end of period
-        });
+    // get cashe for eyear
+    let promises = [];
+    promises.push(libPortfolio.getCashe(data.portfolio.id));
+    data.annual.forEach(year => {
+        promises.push(libPortfolio.getCashe(data.portfolio.id, year.year + '-12-31')); // end of period
+    });
 
-        return Promise.all(promises)
-    })
+    Promise.all(promises)
     .then(cashes => {
         data.cashe = Number(cashes[0].cashe);
         cashes.splice(0,1);
@@ -120,9 +112,9 @@ exports.info = (req, res, next) => {
 
         // get income values
         let promises = [];
-        promises.push(libPortfolio.getIncomeYear(portfolioId));
+        promises.push(libPortfolio.getIncomeYear(data.portfolio.id));
         data.annual.forEach(year => {
-            promises.push(libPortfolio.getIncomeYear(portfolioId, year.year));
+            promises.push(libPortfolio.getIncomeYear(data.portfolio.id, year.year));
         });
 
         return Promise.all(promises);
@@ -139,9 +131,9 @@ exports.info = (req, res, next) => {
 
         // get outcome values
         let promises = [];
-        promises.push(libPortfolio.getOutcomeYear(portfolioId));
+        promises.push(libPortfolio.getOutcomeYear(data.portfolio.id));
         data.annual.forEach(year => {
-            promises.push(libPortfolio.getOutcomeYear(portfolioId, year.year));
+            promises.push(libPortfolio.getOutcomeYear(data.portfolio.id, year.year));
         });
 
         return Promise.all(promises);
@@ -158,9 +150,9 @@ exports.info = (req, res, next) => {
         // get comissions
         // get outcome values
         let promises = [];
-        promises.push(libPortfolio.getComissionYear(portfolioId));
+        promises.push(libPortfolio.getComissionYear(data.portfolio.id));
         data.annual.forEach(year => {
-            promises.push(libPortfolio.getComissionYear(portfolioId, year.year));
+            promises.push(libPortfolio.getComissionYear(data.portfolio.id, year.year));
         });
 
         return Promise.all(promises)
@@ -176,9 +168,9 @@ exports.info = (req, res, next) => {
         }
 
         let promises = [];
-        promises.push(libPortfolio.getTrades(portfolioId));
+        promises.push(libPortfolio.getTrades(data.portfolio.id));
         data.annual.forEach(year => {
-            promises.push(libPortfolio.getTradesYear(portfolioId, year.year)); 
+            promises.push(libPortfolio.getTradesYear(data.portfolio.id, year.year)); 
         });
 
         return Promise.all(promises)
@@ -194,7 +186,7 @@ exports.info = (req, res, next) => {
         }
 
         // get secids
-        return libPortfolio.getSecids(portfolioId)
+        return libPortfolio.getSecids(data.portfolio.id)
     })
     .then(secids => {
         data.secids = secids;
@@ -210,7 +202,7 @@ exports.info = (req, res, next) => {
         data.prices = prices;
 
         // get Rubs for XIRR calculation
-        return libPortfolio.getRubs(portfolioId);
+        return libPortfolio.getRubs(data.portfolio.id);
     })
     .then(rubs => {
         data.rubs = rubs;
@@ -342,7 +334,7 @@ exports.info = (req, res, next) => {
         data.portfolioPL = Number(data.portfolioPrice) - Number(data.income) + Number(data.outcome);
 
         // get secids operations 
-        return libPortfolio.getSecidsOperations(portfolioId, data.secids);
+        return libPortfolio.getSecidsOperations(data.portfolio.id, data.secids);
     })
     .then(operations => {
         data.operations = operations;
@@ -414,7 +406,7 @@ exports.info = (req, res, next) => {
 
         let promises = [];
         data.annual.forEach(period => {
-            promises.push(libPortfolio.getSecids(portfolioId, period.year + '-12-31'));
+            promises.push(libPortfolio.getSecids(data.portfolio.id, period.year + '-12-31'));
         })
 
         return Promise.all(promises);
@@ -457,7 +449,7 @@ exports.info = (req, res, next) => {
         // get operations for secids
         let promises = [];
         data.annual.forEach(period => {
-            promises.push(libPortfolio.getSecidsOperationsYear(portfolioId, period.secids, period.year));
+            promises.push(libPortfolio.getSecidsOperationsYear(data.portfolio.id, period.secids, period.year));
         });
 
         return Promise.all(promises);
@@ -471,7 +463,7 @@ exports.info = (req, res, next) => {
         // get amount for secids to the end of period
         let promises = [];
         data.annual.forEach(period => {
-            promises.push(libPortfolio.getSecidsAmount(portfolioId, period.secids, period.year + '-12-31'));
+            promises.push(libPortfolio.getSecidsAmount(data.portfolio.id, period.secids, period.year + '-12-31'));
         });
 
         return Promise.all(promises);
