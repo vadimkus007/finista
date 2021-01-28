@@ -83,7 +83,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10,2),
       defaultValue: 0.00
     },
-    comment: DataTypes.STRING
+    comment: DataTypes.STRING,
+    group: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Trade',

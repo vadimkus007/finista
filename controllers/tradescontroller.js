@@ -85,7 +85,8 @@ var createTrade = function(trade, portfolioId) {
         comment: trade.comment,
         comission: (trade.comission === '') ? 0 : trade.comission,
         value: trade.value,
-        accint: trade.accint
+        accint: trade.accint,
+        group: trade.group
     });
 }; // createTrade
 
@@ -100,7 +101,8 @@ var updateTrade = function(trade, portfolioId) {
         comment: trade.comment,
         comission: (trade.comission === '') ? 0 : trade.comission,
         value: trade.value,
-        accint: trade.accint
+        accint: trade.accint,
+        group: trade.group
     }, {
         where: {
             id: trade.id
@@ -108,11 +110,47 @@ var updateTrade = function(trade, portfolioId) {
     });
 } // updateTrade
 
+var getGroup = function(trade) {
+    return new Promise((resolve, reject) => {
+        Moex.getSecurityGroup(trade.secid)
+        .then(result => {
+            var group = null;
+            if (result) {
+
+                switch(result.group) {
+                    case 'stock_shares':
+                        group = 'Акция';
+                        break;
+                    case 'stock_dr':
+                        group = 'Депозитарная расписка';
+                        break;
+                    case 'stock_etf':
+                        group = 'ETF';
+                        break;
+                    case 'stock_ppif':
+                        group = 'ПИФ';
+                        break;
+                    case 'stock_bonds':
+                        group = 'Облигация';
+                        break;
+                    case 'stock_index':
+                        group = 'index';
+                        break;
+                }
+            }
+            trade.group = group;
+            resolve(trade);
+        })
+        .catch(err => reject(err));
+    });
+}
+
 var saveTrade = function(result, trade, portfolioId) {
+
     if (result) {
-        return updateTrade(trade, portfolioId);
+        return getGroup(trade).then(trade => updateTrade(trade, portfolioId));
     } else {
-        return createTrade(trade, portfolioId);
+        return getGroup(trade).then(trade => createTrade(trade, portfolioId));
     }
 } // saveTrade
 
@@ -153,13 +191,11 @@ exports.action = (req, res, next) => {
                 data.trade = req.body;
                 data.isNew = false;
 
-                    return Operation.findAll({
-                        raw: true
-                    });
+                Operation.findAll({
+                    raw: true
                 })
                 .then(operations => {
                     data.operations = operations;
-
                     return getSecurities();
                 })
                 .then(securities => {
@@ -170,8 +206,13 @@ exports.action = (req, res, next) => {
                         data: data,
                         error: err
                     });   
-            });
 
+                })
+                .catch(err=> {
+                    console.log(err);
+                });
+            });
+                
             break;
 
         case 'edit':

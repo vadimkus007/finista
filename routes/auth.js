@@ -1,16 +1,10 @@
 var authController = require('../controllers/authcontroller.js');
-// var quotesController = require('../controllers/quotescontroller.js');
 var favoritesController = require('../controllers/favoritescontroller.js');
 var portfoliosController = require('../controllers/portfolioscontroller.js');
-var portfolioController = require('../controllers/portfoliocontroller.js');
 var operationController = require('../controllers/operationcontroller.js');
-var tradesController = require('../controllers/tradescontroller.js');
-var analyticsController = require('../controllers/analyticscontroller.js');
-var profitController = require('../controllers/profitcontroller.js');
-var rebalanceController = require('../controllers/rebalancecontroller.js');
-var importController = require('../controllers/importcontroller.js');
 
 var portfolioRouter = require('../routes/portfolio.js');
+var usersRouter = require('../routes/users.js');
  
 module.exports = function(app, passport) {
  
@@ -43,10 +37,17 @@ module.exports = function(app, passport) {
 
     app.use('/portfolio', isLoggedIn, portfolioRouter);
 
+    app.use('/users', isLoggedIn, usersRouter);
+    app.post('/users/profile', passport.authenticate('local-change-profile', {
+        successRedirect: '/users/profile',
+        failureRedirect: '/users/profile',
+        failureFlash: true
+    }))
+
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated())
             return next();
-        req.session.returnTo = req.url;
+        req.session.returnTo = req.originalUrl;
         res.redirect('/signin');
     }
 

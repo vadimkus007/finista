@@ -10,6 +10,7 @@ module.exports = function(passport, user) {
     var LocalStrategy = require('passport-local').Strategy;
  
  
+    // SIGNUP
     passport.use('local-signup', new LocalStrategy(
  
         {
@@ -159,6 +160,83 @@ passport.use('local-signin', new LocalStrategy(
     }
  
 ));
+
+// LOCAL CHANGE PROFILE
+passport.use('local-change-profile', new LocalStrategy(
+
+    { 
+        usernameField: 'email',
+ 
+        passwordField: 'password',
+ 
+        passReqToCallback: true // allows us to pass back the entire request to the callback
+    },
+
+    function(req, email, password, done) {
+
+        var User = user;
+
+        var isValidPassword = function(userpass, password) {
+ 
+            return bCrypt.compareSync(password, userpass);
+ 
+        };
+
+        var generateHash = function(password) {
+                return bCrypt.hashSync(password, bCrypt.genSaltSync(8), null);
+        };
+
+        User.findOne({
+            where: {
+                email: email
+            }
+        })
+        .then(function(user) {
+
+            if (!isValidPassword(user.password, password)) {
+ 
+                return done(null, false, {
+                    message: req.flash('message', 'Incorrect password.')
+                });
+ 
+            }
+
+            var userinfo = user.get();
+
+            var data = {
+                email: req.body.email,
+                first_name: req.body.first_name,
+                last_name: req.body.last_name
+            }
+
+            if (req.body.newPassword !== '' && req.body.newPassword == req.body.confirmPassword) {
+
+                var userPassword = generateHash(req.body.newPassword);
+
+                data.password = userPassword;
+
+            } 
+
+            User.update(data, {
+                where: {
+                    id: userinfo.id
+                }
+            })
+            .then(result => {
+                return done(null, userinfo, {
+                    message: req.flash('message', 'User is updated successfully')
+                });
+            })
+            .catch(err => {
+                return done(err);
+            });
+            
+        })
+        .catch(err => {
+            return done(err);
+        })
+
+}));
 
     //serialize
     passport.serializeUser(function(user, done) {

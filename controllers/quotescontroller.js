@@ -35,7 +35,8 @@ exports.list = (req, res, next) => {
     promises.push(Moex.getRequest(request, options));
 
     request.markets = 'shares';
-    request.boards = 'TQTF';
+    //request.boards = 'TQTF';
+    request.boardgroups = '57';
 
     promises.push(Moex.getRequest(request, options));
 

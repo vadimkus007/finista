@@ -19,6 +19,7 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="css/signin.css" rel="stylesheet">
 
 </head>
 
@@ -32,7 +33,7 @@
             <div class="col-xl-10 col-lg-12 col-md-9">
 
                 <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
+                    <div class="card-body p-0 alert-body">
                         <!-- Nested Row within Card Body -->
                         <div class="row">
                             <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
@@ -62,11 +63,18 @@
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="/singup">Create an Account!</a>
+                                        <a class="small" href="/signup">Create an Account!</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+    <% if (typeof message !== 'undefined') { %>
+    <div class="alert-box">
+        <%= message %>
+    </div>
+    <% } %>
+
                     </div>
                 </div>
 
@@ -75,6 +83,7 @@
         </div>
 
     </div>
+
 
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>

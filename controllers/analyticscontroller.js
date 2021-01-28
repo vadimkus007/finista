@@ -8,16 +8,6 @@ const libPortfolio = require('../lib/portfolio');
 
 var exports = module.exports = {}
 
-const getSecuritiesGroups = function(secids) {
-    
-    let promises = [];
-
-    secids.forEach(secid => {
-        promises.push(Moex.getSecurityGroup(secid.secid))
-    });
-    return Promise.all(promises);
-}
-
 const getBoards = function(secids) {
     let promises = [];
 
@@ -118,12 +108,12 @@ exports.info = (req, res, next) => {
     })
     .then(cashe => {
         data.cashe = cashe;
-
+/*
         return getSecuritiesGroups(data.secids);
     })
     .then(groups => {
         data.groups = groups;
-
+*/
         return getBoards(data.secids);
     })
     .then(boards => {
@@ -155,6 +145,8 @@ exports.info = (req, res, next) => {
                     case 1: 
                         data.secids[trade.secid].amount = Number(data.secids[trade.secid].amount) + Number(trade.amount);
                         data.secids[trade.secid].buy = Number(data.secids[trade.secid].buy) + Number(trade.price*trade.amount) + Number(trade.comission);
+                        // add group
+                        data.secids[trade.secid].group = trade.group;
                         break;
                     case 2: 
                         data.secids[trade.secid].amount = Number(data.secids[trade.secid].amount) - Number(trade.amount);
@@ -177,6 +169,8 @@ exports.info = (req, res, next) => {
                         data.secids[trade.secid].amount = Number(data.secids[trade.secid].amount) + Number(trade.amount);
                         data.secids[trade.secid].buy = Number(data.secids[trade.secid].buy) + Number(trade.value*trade.amount*trade.price/100) + Number(trade.accint*trade.amount) + Number(trade.comission);
                         data.secids[trade.secid].value = trade.value;
+                        // add group
+                        data.secids[trade.secid].group = trade.group;
                         break;
                     case 8:
                         data.secids[trade.secid].amount = Number(data.secids[trade.secid].amount) - Number(trade.amount);
@@ -185,12 +179,6 @@ exports.info = (req, res, next) => {
                 }
             }
         });
-
-        // add group to secids
-        data.groups.forEach(group => {
-            data.secids[group.secid].group = group.group;
-        });
-
 
         // add sector to secids
         data.sectors.forEach(sector => {
@@ -220,13 +208,13 @@ exports.info = (req, res, next) => {
         let sumBonds = 0;
         for (key in data.secids) {
             sum = sum + Number(data.secids[key].price);
-            if (data.secids[key].group == 'stock_shares' || data.secids[key].group == 'stock_dr') {
+            if (data.secids[key].group == 'Акция' || data.secids[key].group == 'Депозитарная расписка') {
                 sumShare = sumShare + Number(data.secids[key].price);
             }
-            if (data.secids[key].group == 'stock_etf' || data.secids[key].group == 'stock_ppif') {
+            if (data.secids[key].group == 'ETF' || data.secids[key].group == 'ПИФ') {
                 sumEtf = sumEtf + Number(data.secids[key].price);
             }
-            if (data.secids[key].group == 'stock_bonds') {
+            if (data.secids[key].group == 'Облигация') {
                 sumBonds = sumBonds + Number(data.secids[key].price);
             }
         }
@@ -239,17 +227,17 @@ exports.info = (req, res, next) => {
             let value = Number(100 * Number(data.secids[key].price) / Number(sum)).toFixed(2);
             let obj = {name: key, y: value};
             actives.push(obj);
-            if (data.secids[key].group == 'stock_shares' || data.secids[key].group == 'stock_dr') {
+            if (data.secids[key].group == 'Акция' || data.secids[key].group == 'Депозитарная расписка') {
                 value = Number(100 * Number(data.secids[key].price) / Number(sumShare)).toFixed(2)
                 obj = {name: key, y: value};
                 shares.push(obj);
             }
-            if (data.secids[key].group == 'stock_etf' || data.secids[key].group == 'stock_ppif') {
+            if (data.secids[key].group == 'ETF' || data.secids[key].group == 'ПИФ') {
                 value = Number(100 * Number(data.secids[key].price) / Number(sumEtf)).toFixed(2)
                 obj = {name: key, y: value};
                 etf.push(obj);
             }
-            if (data.secids[key].group == 'stock_bonds') {
+            if (data.secids[key].group == 'Облигация') {
                 value = Number(100 * Number(data.secids[key].price) / Number(sumBonds)).toFixed(2)
                 obj = {name: key, y: value};
                 bonds.push(obj);

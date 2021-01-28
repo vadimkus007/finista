@@ -54,7 +54,7 @@ exports.info = (req, res, next) => {
     }
 
     if (typeof req.session.portfolio == 'undefined') {
-        req.locals.message = req.flash('message', 'Portfolio is not defined');
+        res.locals.message = req.flash('message', 'Portfolio is not defined');
         
         res.redirect('/portfolios');
         return next();
