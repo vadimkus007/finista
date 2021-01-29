@@ -8,9 +8,16 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-     return queryInterface.addColumn('Trades', 'group', {
-        type: Sequelize.STRING
-     })
+    return queryInterface.describeTable('Trades')
+    .then(tableDefinition => {
+        if (tableDefinition.group) {
+            return Promise.resolve();
+        } else {
+            return queryInterface.addColumn('Trades', 'group', {
+                type: Sequelize.STRING
+             });
+        }
+    })
   },
 
   down: async (queryInterface, Sequelize) => {
@@ -20,6 +27,13 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-     return queryInterface.removeColumn('Trades', 'group');
+    return queryInterface.describeTable('Trades')
+    .then(tableDefinition => {
+        if (tableDefinition.group) {
+            return queryInterface.removeColumn('Trades', 'group');
+        } else {
+            return Promise.resolve();
+        }
+    })
   }
 };

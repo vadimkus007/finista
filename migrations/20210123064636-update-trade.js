@@ -8,16 +8,34 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-     return queryInterface.addColumn('Trades', 'value', {
-        type: Sequelize.DECIMAL(10,2),
-        allowNull: false,
-        defaultValue: 100.00
-     })
-     .then(_ => queryInterface.addColumn('Trades', 'accint', {
-        type: Sequelize.DECIMAL(10,2),
-        allowNull: false,
-        defaultValue: 0.00
-     }));
+    return Promise.all([
+        
+        queryInterface.describeTable('Trades')
+        .then(tableDefinition => {
+
+            if (tableDefinition.value) return Promise.resolve();
+
+            return queryInterface.addColumn('Trades', 'value', {
+                type: Sequelize.DECIMAL(10,2),
+                allowNull: false,
+                defaultValue: 100.00
+             });
+        }),
+
+        queryInterface.describeTable('Trades')
+        .then(tableDefinition => {
+
+            if (tableDefinition.accint) return Promise.resolve();
+
+            return queryInterface.addColumn('Trades', 'accint', {
+                type: Sequelize.DECIMAL(10,2),
+                allowNull: false,
+                defaultValue: 0.00
+             });
+        })
+
+    ]);
+
   },
 
   down: async (queryInterface, Sequelize) => {
@@ -27,7 +45,25 @@ module.exports = {
      * Example:
      * await queryInterface.dropTable('users');
      */
-     return queryInterface.removeColumn('Trades', 'accint')
-     .then(_ => queryInterface.removeColumn('Trades', 'value'));
+     return Promise.all([
+
+        queryInterface.describeTable('Trades')
+        .then(tableDefinition => {
+            if (tableDefinition.value) {
+                return queryInterface.removeColumn('Trades', 'value');
+            } else {
+                return Promise.resolve();
+            }
+        }),
+
+        queryInterface.describeTable('Trades')
+        .then(tableDefinition => {
+            if (tableDefinition.accint) {
+                return queryInterface.removeColumn('Trades', 'accint');
+            } else {
+                return Promise.resolve();
+            }
+        })
+    ]);
   }
 };

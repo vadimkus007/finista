@@ -1,4 +1,4 @@
-<% layout('../layout/portfolio') %>
+<% layout('../layout/page') %>
 <% var title = 'Импорт сделок - ' + data.portfolio.title; %>
 <% block('title', title) %>
 <% block('menu', 'portfolio import') %>
@@ -28,7 +28,7 @@
             <hr>
             <div class="form-group form-row">
                 <button type="submit" class="btn btn-primary btn-sm mr-sm-2" name="action" value="upload">Загрузить</button>
-                <a href="/portfolio/trades/import" class="btn btn-primary btn-sm mr-sm-2">Отменить</a>
+                <!--<a href="/portfolio/trades/import" class="btn btn-primary btn-sm mr-sm-2">Отменить</a>-->
             </div>
         </form>
     </div>
