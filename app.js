@@ -41,16 +41,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use('/public', express.static(path.join(__dirname, 'public')));
-app.use('/bootstrap', express.static(path.join(__dirname, '/node_modules/bootstrap/dist/')));
-app.use('/popper', express.static(path.join(__dirname, '/node_modules/popper.js/dist/')));
+// app.use('/bootstrap', express.static(path.join(__dirname, '/node_modules/bootstrap/dist/')));
+// app.use('/popper', express.static(path.join(__dirname, '/node_modules/popper.js/dist/')));
 app.use('/highcharts', express.static(path.join(__dirname, '/node_modules/highcharts/')));
 app.use('/fontawesome', express.static(path.join(__dirname, '/node_modules/@fortawesome/fontawesome-free/')));
-
-const indexRouter = require('./routes/index');
-// const usersRouter = require('./routes/users');
-// const quotesRouter = require('./routes/quotes');
-const authRoute = require('./routes/auth')(app,passport);
 
 // Models
 var models = require("./models");
@@ -59,8 +53,13 @@ var models = require("./models");
 require('./config/passport/passport.js')(passport, models.User);
 
 // Routing
-app.use('/', indexRouter);
+const indexRouter = require('./routes/index');
+const authRoute = require('./routes/auth')(app,passport);
 // app.use('/users', usersRouter);
+const apiRoute = require('./routes/api');
+
+app.use('/', indexRouter);
+app.use('/api', apiRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

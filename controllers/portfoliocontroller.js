@@ -8,7 +8,6 @@ const sequelize = require('sequelize');
 const Op = sequelize.Op;
 
 var moment = require('moment');
-var xirr = require('xirr');
 var Finance = require('financejs');
 var finance = new Finance;
 

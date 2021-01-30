@@ -35,8 +35,8 @@ exports.list = (req, res, next) => {
     promises.push(Moex.getRequest(request, options));
 
     request.markets = 'shares';
-    //request.boards = 'TQTF';
-    request.boardgroups = '57';
+    request.boards = 'TQTF';
+    // request.boardgroups = '57';
 
     promises.push(Moex.getRequest(request, options));
 
@@ -109,7 +109,8 @@ exports.list = (req, res, next) => {
         }
         result.bonds = arr;
  
-//console.log('BONDS', result.bonds);
+// console.log('BONDS', result.bonds);
+// console.log('ETF', result.etf);
 
         // Render view
         res.render('quotes', {

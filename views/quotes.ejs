@@ -31,19 +31,19 @@
             
             <div class="tab-pane fade show active" id="stock">
               
-              <table class = "table table-striped table-bordered table-hover" id = "quotesTable1">
+              <table class = "table table-striped table-bordered table-hover " id = "quotesTable1">
                 <thead>
                   <tr>
                     <th>Тикер</th>
-                    <th>Компания</th>
+                    <th class="d-none d-sm-table-cell">Компания</th>
                     <th>Последняя</th>
                     <th>Изменение, %</th>
-                    <th>Открытие</th>
-                    <th>Мин.</th>
-                    <th>Макс.</th>
-                    <th>Ср.взвеш.</th>
-                    <th>Объем</th>
-                    <th>Время</th>
+                    <th class="d-none d-sm-table-cell">Открытие</th>
+                    <th class="d-none d-sm-table-cell">Мин.</th>
+                    <th class="d-none d-sm-table-cell">Макс.</th>
+                    <th class="d-none d-sm-table-cell">Ср.взвеш.</th>
+                    <th class="d-none d-sm-table-cell">Объем</th>
+                    <th class="d-none d-sm-table-cell">Время</th>
                   </tr>
                 </thead>
                 <tfoot>
@@ -52,7 +52,7 @@
                   <% data.shares.forEach(row => { %> 
                     <tr>
                       <td><a href = "/quotes/<%= row.SECID %>" ><%= row.SECID %></a></td>
-                      <td><%= row.SHORTNAME %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.SHORTNAME %></td>
                       <td><%= row.LAST %></td>
                       <td>
                         <span style="
@@ -66,12 +66,12 @@
                         <%= row.LASTTOPREVPRICE %> 
                         %</span>
                       </td>
-                      <td><%= row.OPEN %></td>
-                      <td><%= row.LOW %></td>
-                      <td><%= row.HIGH %></td>
-                      <td><%= row.WAPRICE %></td>
-                      <td><%= row.VALTODAY %></td>
-                      <td><%= row.TIME %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.OPEN %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.LOW %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.HIGH %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.WAPRICE %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.VALTODAY %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.TIME %></td>
                     </tr>
                   <% }) %>
                 </tbody>
@@ -86,15 +86,15 @@
                 <thead>
                   <tr>
                     <th>Тикер</th>
-                    <th>Компания</th>
+                    <th class="d-none d-sm-table-cell">Компания</th>
                     <th>Последняя</th>
                     <th>Изменение, %</th>
-                    <th>Открытие</th>
-                    <th>Мин.</th>
-                    <th>Макс.</th>
-                    <th>Ср.взвеш.</th>
-                    <th>Объем</th>
-                    <th>Время</th>
+                    <th class="d-none d-sm-table-cell">Открытие</th>
+                    <th class="d-none d-sm-table-cell">Мин.</th>
+                    <th class="d-none d-sm-table-cell">Макс.</th>
+                    <th class="d-none d-sm-table-cell">Ср.взвеш.</th>
+                    <th class="d-none d-sm-table-cell">Объем</th>
+                    <th class="d-none d-sm-table-cell">Время</th>
                   </tr>
                 </thead>
                 <tfoot>
@@ -103,7 +103,7 @@
                   <% data.etf.forEach(row => { %> 
                     <tr>
                       <td><a href = "/quotes/<%= row.SECID %>" ><%= row.SECID %></a></td>
-                      <td><%= row.SHORTNAME %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.SHORTNAME %></td>
                       <td><%= row.LAST %></td>
                       <td>
                         <span style="
@@ -117,12 +117,12 @@
                         <%= row.LASTTOPREVPRICE %> 
                         %</span>
                       </td>
-                      <td><%= row.OPEN %></td>
-                      <td><%= row.LOW %></td>
-                      <td><%= row.HIGH %></td>
-                      <td><%= row.WAPRICE %></td>
-                      <td><%= row.VALTODAY %></td>
-                      <td><%= row.TIME %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.OPEN %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.LOW %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.HIGH %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.WAPRICE %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.VALTODAY %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.TIME %></td>
                     </tr>
                   <% }) %>
                 </tbody>
@@ -134,11 +134,11 @@
                 <thead>
                   <tr>
                     <th>Тикер</th>
-                    <th>Название</th>
+                    <th class="d-none d-sm-table-cell">Название</th>
                     <th>Текущее значение</th>
-                    <th>Изменение за день</th>
-                    <th>Изменение за месяц</th>
-                    <th>Изменение за год</th>
+                    <th class="d-none d-sm-table-cell">Изменение за день</th>
+                    <th class="d-none d-sm-table-cell">Изменение за месяц</th>
+                    <th class="d-none d-sm-table-cell">Изменение за год</th>
                   </tr>
                 </thead>
                 <tfoot>
@@ -147,11 +147,11 @@
                   <% data.index.forEach(row => { %> 
                     <tr>
                       <td><a href = "/quotes/<%= row.SECID %>" ><%= row.SECID %></a></td>
-                      <td><%= row.NAME %></td>
+                      <td class="d-none d-sm-table-cell"><%= row.NAME %></td>
                       <td><%= row.CURRENTVALUE %></td>
-                      <td><%= row.LASTCHANGETOOPENPRC %> %</td>
-                      <td><%= row.MONTHCHANGEPRC %> %</td>
-                      <td><%= row.YEARCHANGEPRC %> %</td>
+                      <td class="d-none d-sm-table-cell"><%= row.LASTCHANGETOOPENPRC %> %</td>
+                      <td class="d-none d-sm-table-cell"><%= row.MONTHCHANGEPRC %> %</td>
+                      <td class="d-none d-sm-table-cell"><%= row.YEARCHANGEPRC %> %</td>
                     </tr>
                   <% }) %>
                 </tbody>
