@@ -5,14 +5,16 @@ const fileUpload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
-var app = express();
-var passport   = require('passport');
-var session    = require('express-session');
-var bodyParser = require('body-parser');
-var env = require('dotenv').config({path:'./.env'});
-var flash = require('connect-flash');
+const app = express();
+const passport = require('passport');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const env = require('dotenv').config({ path:'./.env' });
+const flash = require('connect-flash');
 
-//For BodyParser
+const config = require('./config/config.js');
+
+// For BodyParser
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -24,7 +26,7 @@ app.use(fileUpload({
 app.use(flash());
 
 // For Passport
-app.use(session({ secret: 'keyboard cat',resave: true, saveUninitialized:true})); // session secret
+app.use(session({ secret: config.secret, resave: true, saveUninitialized:true })); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
@@ -46,19 +48,19 @@ app.use('/highcharts', express.static(path.join(__dirname, '/node_modules/highch
 app.use('/fontawesome', express.static(path.join(__dirname, '/node_modules/@fortawesome/fontawesome-free/')));
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+// const usersRouter = require('./routes/users');
 // const quotesRouter = require('./routes/quotes');
 const authRoute = require('./routes/auth')(app,passport);
 
-//Models
+// Models
 var models = require("./models");
 
-//load passport strategies
+// load passport strategies
 require('./config/passport/passport.js')(passport, models.User);
 
 // Routing
 app.use('/', indexRouter);
-//app.use('/users', usersRouter);
+// app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -98,7 +100,7 @@ console.log('err.status', err.status);
     
 });
 
-//Sync Database
+// Sync Database
 models.sequelize.sync().then(function() {
     console.log('Nice! Database looks fine')
 }).catch(function(err) {
