@@ -55,8 +55,7 @@ require('./config/passport/passport.js')(passport, models.User);
 // Routing
 const indexRouter = require('./routes/index');
 const authRoute = require('./routes/auth')(app,passport);
-// app.use('/users', usersRouter);
-const apiRoute = require('./routes/api');
+const apiRoute = require('./routes/api/api');
 
 app.use('/', indexRouter);
 app.use('/api', apiRoute);

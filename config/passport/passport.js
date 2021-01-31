@@ -1,5 +1,12 @@
 //load bcrypt
-var bCrypt = require('bcryptjs');
+const bCrypt = require('bcryptjs');
+
+const config = require('../config.js');
+
+// JWT strategy
+const passportJWT = require('passport-jwt');
+const JWTStrategy = passportJWT.Strategy;
+const ExtractJWT = passportJWT.ExtractJwt;
  
  
 module.exports = function(passport, user) {
@@ -110,7 +117,7 @@ passport.use('local-signin', new LocalStrategy(
  
  
     function(req, email, password, done) {
- 
+
         var User = user;
  
         var isValidPassword = function(userpass, password) {
@@ -238,6 +245,8 @@ passport.use('local-change-profile', new LocalStrategy(
 
 }));
 
+    
+
     //serialize
     passport.serializeUser(function(user, done) {
         done(null, user.id);
@@ -253,4 +262,29 @@ passport.use('local-change-profile', new LocalStrategy(
             }
         });
     });
+
+    // jwt strategy
+
+    passport.use('jwt', new JWTStrategy(
+
+        {
+            jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+            secretOrKey: config.secret
+        },
+        function (jwtPayload, done) {
+
+            // find user in db
+            User.findOne({
+                where: {id: jwtPayload.id}
+            })
+
+            .then(user => {
+                return done(null, user);
+            })
+            .catch(err => {
+                return done(err);
+            })
+        }
+
+    ));
 }
