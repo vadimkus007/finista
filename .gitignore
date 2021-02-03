@@ -1,5 +1,6 @@
 # Игнорировать установленные npm пакеты
 node_modules
+client/node_modules
 dist
 __tests__
 

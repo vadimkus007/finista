@@ -1,6 +1,7 @@
 const express = require('express');
 var router = express.Router();
 const passport = require('passport');
+const jwt = require('jsonwebtoken');
 
 const config = require('../../config/config.js');
 
@@ -10,6 +11,9 @@ router.get('/', (req, res, next) => {
 
 // SIGNIN
 router.post('/signin', (req, res, next) => {
+
+console.log('REQ.body', req.body);
+
 
     passport.authenticate('local-signin', (err, user, done) => {
 

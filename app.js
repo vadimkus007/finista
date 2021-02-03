@@ -11,6 +11,7 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const env = require('dotenv').config({ path:'./.env' });
 const flash = require('connect-flash');
+const cors = require('cors');
 
 const config = require('./config/config.js');
 
@@ -23,6 +24,7 @@ app.use(fileUpload({
     tempFileDir: path.join(__dirname, 'tmp')
 }));
 
+ app.use(cors());
 app.use(flash());
 
 // For Passport
