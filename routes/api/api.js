@@ -12,14 +12,14 @@ router.get('/', (req, res, next) => {
 // SIGNIN
 router.post('/signin', (req, res, next) => {
 
-console.log('REQ.body', req.body);
+// console.log('REQ.body', req.body);
 
 
     passport.authenticate('local-signin', (err, user, done) => {
 
         if (err || !user) {
             return res.status(400).json({
-                message: 'Login failed',
+                message: req.flash('message'),
                 user: user
             });
         }
@@ -40,12 +40,29 @@ console.log('REQ.body', req.body);
 });
 
 router.get('/signin', (req, res, next) => {
-    res.json({message: 'GET /api/signin'});
+    res.json({message: req.flash('message')[0]});
 });
 
 router.get('/user', passport.authenticate('jwt', {session: false}), (req, res, next) => {
     res.json({message: 'private data'});
 });
+
+router.post('/signup', (req, res, next) => {
+
+console.log('req.body', req.body);
+
+    passport.authenticate('local-signup', (err, user, done) => {
+        if (err || !user) {
+            return res.status(400).json({
+                message: req.flash('message'),
+                error: err
+            });
+        }
+
+        res.json({user});
+
+    })(req, res, next);
+})
 
 
 module.exports = router;

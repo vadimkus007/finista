@@ -1,35 +1,73 @@
 import React from 'react';
+
 import './App.css';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import Signin from './components/Signin/Signin';
+import { 
+  BrowserRouter as Router, 
+  Route, 
+  Switch
+} from 'react-router-dom';
+
+import Home from './components/Home';
+import Signin from './components/Signin';
+import Signup from './components/Signup';
 import Dashboard from './components/Dashboard/Dashboard';
 import Preferences from './components/Preferences/Preferences';
-import useToken from './useToken';
+import Logout from './components/Logout';
+import NotFound from './components/NotFound';
+import PrivateRoute from './routes/PrivateRoute';
 
-function App() {
+import DefaultLayout from './layouts/DefaultLayout';
+import AuthLayout from './layouts/AuthLayout';
+
+import { history } from './helpers';
+// import { authenticationService } from './services';
+
+function App(props)  {
+
+    // sidebar toggle
+    // const [toggled, setToggled] = useState(true);
+
+    // const [currentUser, setCurrentUser] = useState(null);
 
     // const token = getToken();
-    const { token, setToken } = useToken();
+    //const { token, setToken } = useToken();
 
+/*
     if(!token) {
         return <Signin setToken = {setToken} />
     }
+*/
 
-  return (
-    <div className="wrapper">
-      <h1>Application</h1>
-      <BrowserRouter>
-        <Switch>
-          <Route path="/dashboard">
-            <Dashboard />
-          </Route>
-          <Route path="/preferences">
-            <Preferences />
-          </Route>
-        </Switch>
-      </BrowserRouter>
-    </div>
-  );
+    
+//    authenticationService.currentUser.subscribe(currentUser);
+
+    return (
+        <Router history={history}>
+            <Switch>
+            <Route path={['/logout', '/signup', '/signin']}>
+                <AuthLayout>          
+                    <Switch>
+                        <Route exact path="/logout" component={Logout} />
+                        <Route exact path="/signup" component={Signup} />
+                        <Route exact path="/signin" component={Signin} />
+                    </Switch>
+                </AuthLayout>
+            </Route>
+
+            <Route path={['/', '/dashboard', '/preferences']}>
+                <DefaultLayout>
+                    <Switch>
+                        <Route exact path="/" component={Home} />
+                        <Route exact path="/dashboard" component={Dashboard} />
+                        <PrivateRoute exact path="/preferences" component={Preferences} />
+                        <Route component={NotFound} />
+                    </Switch>
+                </DefaultLayout>
+            </Route>
+
+            </Switch>
+        </Router>
+    );
 }
 
 export default App;

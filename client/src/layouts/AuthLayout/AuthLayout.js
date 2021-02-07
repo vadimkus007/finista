@@ -1,11 +1,11 @@
 import React from 'react';
 
-export default function Dashboard() {
+export default function AuthLayout({children}) {
+
     return (
         <div id="content">
-
-        <h2>Dashboard</h2>
-
+            {children}
         </div>
     );
+
 }
