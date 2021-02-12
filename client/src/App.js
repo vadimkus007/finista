@@ -7,15 +7,15 @@ import {
   Switch
 } from 'react-router-dom';
 
-import Home from './components/Home';
-import Signin from './components/Signin';
-import Signup from './components/Signup';
-import Dashboard from './components/Dashboard/Dashboard';
+import Home from './pages/Home';
+import Signin from './pages/Signin';
+import Signup from './pages/Signup';
+import Dashboard from './pages/Dashboard/Dashboard';
 import Preferences from './components/Preferences/Preferences';
 import UserProfile from './pages/UserProfile';
 import Quotes from './pages/Quotes';
 import Logout from './components/Logout';
-import NotFound from './components/NotFound';
+import NotFound from './pages/NotFound';
 import PrivateRoute from './routes/PrivateRoute';
 
 import DefaultLayout from './layouts/DefaultLayout';

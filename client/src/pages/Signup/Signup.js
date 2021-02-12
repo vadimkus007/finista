@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import FormErrors from '../FormErrors';
+import FormErrors from '../../components/FormErrors';
 import { authenticationService } from '../../services';
 
 
