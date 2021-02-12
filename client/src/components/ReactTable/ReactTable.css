@@ -1,0 +1,50 @@
+.sort-desc :before {
+      content: "▼";
+      float: right;
+    }
+
+
+.sort-asc 
+    :before {
+      content: "▲";
+      float: right;
+    }
+
+div.dataTables_length, div.dataTables_filter {
+    text-align: right;
+}
+
+div.dataTables_length, div.dataTables_filter label {
+    font-weight: normal;
+    white-space: nowrap;
+    text-align: left;
+}
+
+div.dataTables_length, div.dataTables_filter input {
+    margin-left: 0.5em;
+    display: inline-block;
+    width: auto;
+}
+
+div.dataTables_info {
+    padding-top: 0.85em;
+}
+
+div.dataTables_paginate {
+    margin: 0;
+    white-space: nowrap;
+    text-align: right;
+}
+
+div.dataTables_paginate ul.pagination {
+    margin: 2px 0;
+    white-space: nowrap;
+    justify-content: flex-end;
+}
+
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    border-radius: 0.35rem;
+}

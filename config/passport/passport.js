@@ -287,4 +287,69 @@ passport.use('local-change-profile', new LocalStrategy(
         }
 
     ));
+
+    // jwt update user
+    passport.use('jwt-update', new JWTStrategy(
+        {
+            jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+            secretOrKey: config.secret,
+            passReqToCallback: true
+        },
+        function (req, jwtPayload, done) {
+
+            var userinfo = {};
+
+            var generateHash = function(password) {
+                return bCrypt.hashSync(password, bCrypt.genSaltSync(8), null);
+            };
+
+            // find user in db
+            User.findOne({
+                where: {id: jwtPayload.id}
+            })
+            .then(user => {
+
+                if (!user) {
+                    return done(null, false, {
+                        message: req.flash('message', 'User does not exist')
+                    });
+                }
+
+                userinfo = user.get();
+
+                var data = {
+                    email: req.body.email,
+                    first_name: req.body.first_name,
+                    last_name: req.body.last_name
+                }
+
+                if (req.body.password) {
+                    var newPassword = generateHash(req.body.password);
+                    data.password = newPassword;
+                }
+                return User.update(data, {
+                    where: {
+                        id: userinfo.id
+                    }
+                });
+            
+            })
+            .then(result => {
+
+                return User.findOne({
+                    where: {
+                        id: userinfo.id
+                    },
+                    raw: true
+                });
+            })
+            .then(user => {
+                return done(null, user, {message: req.flash('message', 'User updated successfully.')});
+            })
+            .catch(err => {
+                return done(err);
+            });
+
+        }
+    ));
 }

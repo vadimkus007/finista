@@ -12,6 +12,8 @@ import Signin from './components/Signin';
 import Signup from './components/Signup';
 import Dashboard from './components/Dashboard/Dashboard';
 import Preferences from './components/Preferences/Preferences';
+import UserProfile from './pages/UserProfile';
+import Quotes from './pages/Quotes';
 import Logout from './components/Logout';
 import NotFound from './components/NotFound';
 import PrivateRoute from './routes/PrivateRoute';
@@ -58,8 +60,10 @@ function App(props)  {
                 <DefaultLayout>
                     <Switch>
                         <Route exact path="/" component={Home} />
+                        <Route exact path="/quotes" component={Quotes} />
                         <Route exact path="/dashboard" component={Dashboard} />
                         <PrivateRoute exact path="/preferences" component={Preferences} />
+                        <PrivateRoute exact path="/user" component={UserProfile} />
                         <Route component={NotFound} />
                     </Switch>
                 </DefaultLayout>

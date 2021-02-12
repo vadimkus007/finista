@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { faHome } from "@fortawesome/free-solid-svg-icons";
+import { faChartArea } from "@fortawesome/free-solid-svg-icons";
 import { faTachometerAlt } from "@fortawesome/free-solid-svg-icons";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -27,6 +28,7 @@ export default function Sidebar(props) {
                 <SidebarBrand />
                 <SidebarDivider />
                 <SidebarNavItem text="Home" icon=<FontAwesomeIcon icon={faHome} /> href="/" />
+                <SidebarNavItem text="Котировки" icon=<FontAwesomeIcon icon={faChartArea} /> href="/quotes" />
                 <SidebarNavItem text="Dashboard" icon=<FontAwesomeIcon icon={faTachometerAlt} /> href="/dashboard" />
                 <SidebarNavItem text="Preferences" icon=<FontAwesomeIcon icon={faCog} /> href="/preferences" />
                 <SidebarHeading text="Портфель" />

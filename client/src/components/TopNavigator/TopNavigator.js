@@ -25,7 +25,7 @@ export default function TopNavigator(props) {
 
             <Nav as="ul" className="navbar-nav ml-auto">
                 <NavDropdown title={navUser} className="no-arrow">
-                    <NavDropdown.Item href="#">
+                    <NavDropdown.Item href="/user">
                         <span className="mr-2 text-gray-400"><FontAwesomeIcon icon={faUser} /></span>
                         Profile
                     </NavDropdown.Item>
