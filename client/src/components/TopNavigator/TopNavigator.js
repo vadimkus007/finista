@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Nav, NavDropdown } from 'react-bootstrap';
+
+import { authenticationService } from '../../services';
 
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -11,7 +13,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function TopNavigator(props) {
 
-    const navUser = <FontAwesomeIcon icon={faUser} />;
+    const [user, setUser] = useState({});
+
+    const navUser = () => (
+        <div>
+            <span className="mr-2">{user.first_name} {user.last_name}</span>
+            <FontAwesomeIcon icon={faUser} />
+        </div>
+    );
+
+    useEffect(() => {
+        const currentUser = authenticationService.currentUserValue;
+        if (currentUser) {
+            setUser(currentUser.user);
+        }
+    }, []); 
 
     return (
         <Nav
@@ -24,7 +40,7 @@ export default function TopNavigator(props) {
             </button>
 
             <Nav as="ul" className="navbar-nav ml-auto">
-                <NavDropdown title={navUser} className="no-arrow">
+                <NavDropdown title={navUser()} className="no-arrow">
                     <NavDropdown.Item href="/user">
                         <span className="mr-2 text-gray-400"><FontAwesomeIcon icon={faUser} /></span>
                         Profile

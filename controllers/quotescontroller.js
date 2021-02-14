@@ -180,7 +180,7 @@ exports.info = (req, res, next) => {
                 
         data['candles'] = candles; // [ date, price ] format
 
-console.log('DATA', data);
+//console.log('DATA', data);
                 // Dividends
                 // Moex.getCustom(`https://iss.moex.com/iss/securities/${data['SECID']}/dividends.json?iss.meta=off&dividends.columns=registryclosedate,value`, (err, result) => {
 

@@ -14,6 +14,7 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Preferences from './components/Preferences/Preferences';
 import UserProfile from './pages/UserProfile';
 import Quotes from './pages/Quotes';
+import Quote from './pages/Quote';
 import Logout from './components/Logout';
 import NotFound from './pages/NotFound';
 import PrivateRoute from './routes/PrivateRoute';
@@ -61,6 +62,7 @@ function App(props)  {
                     <Switch>
                         <Route exact path="/" component={Home} />
                         <Route exact path="/quotes" component={Quotes} />
+                        <Route path="/quotes/:secid" component={Quote} />
                         <Route exact path="/dashboard" component={Dashboard} />
                         <PrivateRoute exact path="/preferences" component={Preferences} />
                         <PrivateRoute exact path="/user" component={UserProfile} />

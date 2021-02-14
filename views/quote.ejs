@@ -30,16 +30,16 @@
                                 <%= data['CURRENTVALUE'] %>
                             </div>
                             <div 
-                                <%= (data.LASTCHANGETOOPENPRC > 0) ? 'class=text-success' : '' %>
-                                <%= (data.LASTCHANGETOOPENPRC < 0) ? 'class=text-danger' : '' %>
+                                <%= (data.LASTCHANGEPRCNT > 0) ? 'class=text-success' : '' %>
+                                <%= (data.LASTCHANGEPRCNT < 0) ? 'class=text-danger' : '' %>
                             >
-                                <% if (data.LASTCHANGETOOPENPRC > 0) { %>
+                                <% if (data.LASTCHANGEPRCNT > 0) { %>
                                     <i class="fas fa-fw fa-arrow-circle-up"></i>
                                 <% } %>
-                                <% if (data.LASTCHANGETOOPENPRC < 0) { %>
+                                <% if (data.LASTCHANGEPRCNT < 0) { %>
                                     <i class="fas fa-fw fa-arrow-circle-down"></i>
                                 <% } %>
-                                <%= data.LASTCHANGETOOPENPRC %> % 
+                                <%= data.LASTCHANGEPRCNT %> % 
                             </div>
                         </div>
                     </div>

@@ -99,5 +99,9 @@ router.post('/signup', (req, res, next) => {
 
 router.get('/quotes', quotesController.list);
 
+router.get('/quotes/:secid', quotesController.info);
+
+router.post('/quotes/:secid', quotesController.toggleFavorite);
+
 
 module.exports = router;

@@ -38,7 +38,7 @@ export default function Quotes() {
                         <h1 className="h3 mb-0 text-gray-800">Котировки</h1>
                     </div>
 
-                    <Card className="card shadow mb-4">
+                    <Card className="shadow mb-4">
                         <Card.Body>
                             <ul className="nav nav-tabs">
                                 <li className="nav-item">

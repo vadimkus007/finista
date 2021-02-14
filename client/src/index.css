@@ -11270,3 +11270,7 @@ body.sidebar-toggled footer.sticky-footer {
 #wrapper {
   display: flex;
 }
+
+.percent:after {
+  content: ' %';
+}
