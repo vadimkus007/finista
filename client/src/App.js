@@ -11,7 +11,7 @@ import Home from './pages/Home';
 import Signin from './pages/Signin';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard/Dashboard';
-import Preferences from './components/Preferences/Preferences';
+import Preferences from './pages/Preferences/Preferences';
 import UserProfile from './pages/UserProfile';
 import Quotes from './pages/Quotes';
 import Quote from './pages/Quote';
@@ -24,6 +24,10 @@ import AuthLayout from './layouts/AuthLayout';
 
 import { history } from './helpers';
 // import { authenticationService } from './services';
+
+// Notification container
+import 'react-notifications/lib/notifications.css';
+import { NotificationContainer } from 'react-notifications';
 
 function App(props)  {
 
@@ -72,6 +76,7 @@ function App(props)  {
             </Route>
 
             </Switch>
+            <NotificationContainer />
         </Router>
     );
 }

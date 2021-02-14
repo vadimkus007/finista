@@ -4,6 +4,8 @@ import { authHeader } from '../../helpers';
 import { authenticationService } from '../../services';
 import FormErrors from '../../components/FormErrors';
 
+import { NotificationManager } from 'react-notifications'
+
 export default function UserProfile(props) {
 
     const [email, setEmail] = useState('');
@@ -45,7 +47,8 @@ export default function UserProfile(props) {
             }
         })
         .catch(error => {
-            setFormErrors({error: error});
+            // setFormErrors({error: error});
+            NotificationManager.error(error, 'Error', 2000);
         })
     }
 
@@ -69,7 +72,8 @@ export default function UserProfile(props) {
         .then(response => {
 
             if (response.message) {
-                setFormErrors({message: response.message});
+                //setFormErrors({message: response.message});
+                NotificationManager.success(response.message, 'Success', 2000);
             }
 
             if (response.user) {
@@ -79,17 +83,20 @@ export default function UserProfile(props) {
         .then(response => {
             
             if (response.message) {
-                setFormErrors({message: response.message});
+                // setFormErrors({message: response.message});
+                NotificationManager.success(response.message, 'Success', 2000);
             }
 
             if (response.user) {
                // history.push('/');
             } else {
-                setFormErrors({error: response.message});
+                // setFormErrors({error: response.message});
+                NotificationManager.error(response.error, 'Error', 2000);
             }
         })
         .catch(err => {
-            setFormErrors({error: err});
+            // setFormErrors({error: err});
+            NotificationManager.error(err, 'Error', 2000);
         });
 
     }
@@ -101,7 +108,7 @@ export default function UserProfile(props) {
 
     return (
 
-        <div className="container">
+        <div className="container-fluid">
 
             <div className="card shadow mb-4">
                 <div className="card-header py-3">

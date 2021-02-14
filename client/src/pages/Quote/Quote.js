@@ -261,8 +261,6 @@ export default function Quote(props) {
     );
 
     return (
-        <div id="content-wrapper" className="d-flex flex-column">
-            <div id="content">
                 <div className="container-fluid">
                     <h1 className="h3 mb-4 text-gray-800">Информация об инструменте</h1>
 
@@ -367,8 +365,6 @@ export default function Quote(props) {
                         ? renderDividends(data.dividends) : null}
 
                 </div>
-            </div>
-        </div>
         
     );
 }

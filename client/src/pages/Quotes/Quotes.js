@@ -11,15 +11,21 @@ import {
     Card
 } from 'react-bootstrap';
 
+import Spinner from '../../components/Spinner';
+
+
 export default function Quotes() {
 
     const [data, setData] = useState({});
+
+    const [loading, setLoading] = useState(true);
 
     const getQuotes = () => {
         const endPoint = '/quotes';
         getRequest(endPoint)
         .then(data => {
             setData(data.data);
+            setLoading(false);
         })
         .catch(err => {
             console.log(err);
@@ -30,9 +36,32 @@ export default function Quotes() {
         getQuotes();
     }, []);
 
+    const TABLES = (
+        <div className="tab-content">
+            <div className="tab-pane fade show active" id="stock">
+                <SharesTable data={ data.shares }/>
+            </div>
+            <div className="tab-pane fade show" id="etf">
+                <SharesTable data={ data.etf }/>
+            </div>
+            <div className="tab-pane fade show" id="index">
+                <IndexTable data={ data.index }/>
+            </div>
+            <div className="tab-pane fade show" id="bonds">
+                <BondsTable data={ data.bonds }/>
+            </div>
+        </div>
+    );
+
+    const SPINNER = (
+        <div>
+            <Spinner />
+        </div>
+    );
+
     return (
-        <div id="content-wrapper" className="d-flex flex-column">
-            <div id="content">
+        
+
                 <div className="container-fluid">
                     <div className="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 className="h3 mb-0 text-gray-800">Котировки</h1>
@@ -55,25 +84,13 @@ export default function Quotes() {
                                 </li>
                             </ul>
 
-                            <div className="tab-content">
-                                <div className="tab-pane fade show active" id="stock">
-                                    <SharesTable data={ data.shares }/>
-                                </div>
-                                <div className="tab-pane fade show" id="etf">
-                                    <SharesTable data={ data.etf }/>
-                                </div>
-                                <div className="tab-pane fade show" id="index">
-                                    <IndexTable data={ data.index }/>
-                                </div>
-                                <div className="tab-pane fade show" id="bonds">
-                                    <BondsTable data={ data.bonds }/>
-                                </div>
-                            </div>
+                            {loading ? SPINNER : TABLES}
+
                         </Card.Body>
                     </Card>
 
                 </div>
-            </div>
-        </div>
+
+
     );
 }

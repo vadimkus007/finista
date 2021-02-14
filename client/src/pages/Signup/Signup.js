@@ -3,6 +3,8 @@ import { useHistory } from 'react-router-dom';
 import FormErrors from '../../components/FormErrors';
 import { authenticationService } from '../../services';
 
+import { NotificationManager } from 'react-notifications';
+
 
 export default function Signup(props) {
 
@@ -82,10 +84,12 @@ export default function Signup(props) {
                 history.push('/');
             } else {
                 setFormErrors({error: user.message});
+                NotificationManager.error(user.message, 'Error!', 2000);
             }
         })
         .catch(err => {
             setFormErrors({error: err});
+            NotificationManager.error(err, 'Error!', 2000);
         });
 
     }

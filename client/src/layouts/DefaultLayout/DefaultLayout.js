@@ -10,9 +10,11 @@ export default function DefaultLayout({children}) {
     return(
         <div id="wrapper">
             <Sidebar toggled={toggled} setToggled={setToggled}/>
-            <div id="content-wrapper">
+            <div id="content-wrapper" className="d-flex flex-column">
                 <TopNavigator />
-                {children}
+                <div id="content">
+                    {children}
+                </div>
             </div>
         </div>
     );
