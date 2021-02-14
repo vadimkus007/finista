@@ -169,7 +169,7 @@ exports.info = (req, res, next) => {
     })
     .then(results => {
 
-        var obj = {...results.securities[0], ...results.marketdata[0]};
+        var obj = {...results.securities[0], ...results.marketdata[0], ...board};
 
         data.securities = obj;
 
