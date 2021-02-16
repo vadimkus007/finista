@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../../config/config.js');
 
 const quotesController = require('../../controllers/api/quotescontroller');
+const portfoliosController = require('../../controllers/api/portfolioscontroller');
 
 router.get('/', (req, res, next) => {
   res.json({'message' : 'API router'});
@@ -102,6 +103,10 @@ router.get('/quotes', quotesController.list);
 router.get('/quotes/:secid', quotesController.info);
 
 router.post('/quotes/:secid', quotesController.toggleFavorite);
+
+router.get('/portfolios', portfoliosController.list);
+
+router.post('/portfolios/save', portfoliosController.save);
 
 
 module.exports = router;

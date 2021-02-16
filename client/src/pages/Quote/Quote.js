@@ -4,8 +4,6 @@ import { authenticationService } from '../../services';
 
 import { Card } from 'react-bootstrap';
 
-import { Link } from 'react-router-dom';
-
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
 

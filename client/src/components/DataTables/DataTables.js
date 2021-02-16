@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import ReactTable from '../ReactTable';
 
 // import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
@@ -7,8 +7,7 @@ function SharesTable (props) {
 
     const data = props.data;
 
-    const columns = useMemo(
-        () => [
+    const columns = [
         {
             accessor: 'SECID',
             Header: 'Тикер',
@@ -52,14 +51,7 @@ function SharesTable (props) {
             accessor: 'TIME',
             Header: 'Время'
         }
-    ]
-    );
-
-    const defaultSorted = [{
-        dataField: 'SECID',
-        order: 'asc'
-    }];
-
+    ];
 
     return (
         <ReactTable data={ data } columns={ columns } />
@@ -71,8 +63,7 @@ function IndexTable (props) {
 
     const data = props.data;
 
-    const columns = useMemo(
-        () => [
+    const columns = [
         {
             accessor: 'SECID',
             Header: 'Тикер',
@@ -98,14 +89,7 @@ function IndexTable (props) {
             accessor: 'YEARCHANGEPRC',
             Header: 'Изменение за год'
         }
-    ]
-    );
-
-    const defaultSorted = [{
-        dataField: 'SECID',
-        order: 'asc'
-    }];
-
+    ];
 
     return (
         <ReactTable data={ data } columns={ columns } />
@@ -117,8 +101,7 @@ function BondsTable (props) {
 
     const data = props.data;
 
-    const columns = useMemo(
-        () => [
+    const columns = [
         {
             accessor: 'SECID',
             Header: 'Тикер',
@@ -168,14 +151,7 @@ function BondsTable (props) {
             accessor: 'YIELDLASTCOUPON',
             Header: 'Доходность для последнего купона'
         },
-    ]
-    );
-
-    const defaultSorted = [{
-        dataField: 'SECID',
-        order: 'asc'
-    }];
-
+    ];
 
     return (
         <ReactTable data={ data } columns={ columns } />

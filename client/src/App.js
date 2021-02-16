@@ -17,6 +17,9 @@ import Quotes from './pages/Quotes';
 import Quote from './pages/Quote';
 import Logout from './components/Logout';
 import NotFound from './pages/NotFound';
+import Portfolios from './pages/Portfolios';
+import PortfolioEdit from './pages/PortfolioEdit';
+
 import PrivateRoute from './routes/PrivateRoute';
 
 import DefaultLayout from './layouts/DefaultLayout';
@@ -68,6 +71,8 @@ function App(props)  {
                         <Route exact path="/quotes" component={Quotes} />
                         <Route path="/quotes/:secid" component={Quote} />
                         <Route exact path="/dashboard" component={Dashboard} />
+                        <PrivateRoute exact path="/portfolios" component={Portfolios} />
+                        <PrivateRoute exact path="/portfolios/edit" component={PortfolioEdit} />
                         <PrivateRoute exact path="/preferences" component={Preferences} />
                         <PrivateRoute exact path="/user" component={UserProfile} />
                         <Route component={NotFound} />

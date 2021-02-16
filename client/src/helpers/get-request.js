@@ -1,4 +1,3 @@
-import { authenticationService } from '../services';
 import { authHeader } from '../helpers';
 
 const SERVER_URL = 'http://localhost:3001/api';
@@ -16,10 +15,9 @@ export function getRequest(endPoint) {
 export function postRequest(endPoint, body) {
     const API_URL = SERVER_URL + endPoint;
 
-    const requestOptions = { method: 'POST', headers: authHeader(), body: JSON.stringify(body) };
+    var requestOptions = { method: 'POST', headers: authHeader(), body: JSON.stringify(body) };
     requestOptions.headers['Content-Type'] = 'application/json';
     requestOptions.headers['Accept'] = 'application/json';
-
     return fetch(API_URL, requestOptions)
     .then(response => response.json());
 }

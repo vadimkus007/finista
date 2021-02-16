@@ -86,13 +86,13 @@ function ReactTable(props) {
         preGlobalFilteredRows,
         setGlobalFilter,
         page,
-        canPreviousPage,
-        canNextPage,
+//        canPreviousPage,
+//        canNextPage,
         pageOptions,
-        pageCount,
+//        pageCount,
         gotoPage,
-        nextPage,
-        previousPage,
+//        nextPage,
+//        previousPage,
         setPageSize,
         state: { pageIndex, pageSize }
     } = useTable({
@@ -109,7 +109,7 @@ function ReactTable(props) {
     );
 
     // pagination
-    let paginationConfig = {
+/*    let paginationConfig = {
       totalPages: 22,
       currentPage: 15,
       showMax: 5,
@@ -120,7 +120,7 @@ function ReactTable(props) {
       pageOneHref: 'https://example.com/items',
       shadow: true
     };
-
+*/
     function handlePageChange(pageNumber) {
         gotoPage(pageNumber-1);
     }
