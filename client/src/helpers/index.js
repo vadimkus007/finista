@@ -2,3 +2,4 @@ export * from './auth-header';
 export * from './handle-response';
 export * from './history';
 export * from './get-request';
+export * from './portfolio';

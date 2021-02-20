@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Button } from 'react-bootstrap';
 
 import Toolbar from '../../components/Toolbar';
-import TablePortfolioMenu from '../../components/TablePortfolioMenu';
+import TableCellMenu from '../../components/TableCellMenu';
 
 import { getRequest } from '../../helpers';
 
@@ -43,6 +43,12 @@ export default function Portfolios(props) {
 
     const handlePortfolioSelect = (portfolio) => {
         localStorage.setItem('portfolio', JSON.stringify(portfolio));
+        const fromPath = props.location.state ? props.location.state.from : null;
+        if (fromPath) {
+            props.history.push(fromPath);
+        } else {
+            props.history.push('/');
+        }
     }
 
     const handleNewPortfolio = (e) => {
@@ -58,6 +64,13 @@ export default function Portfolios(props) {
             pathname: '/portfolios/edit',
             state: portfolio
         });
+    }
+
+    const handleDeletePortfolio = (portfolio) => {
+        const conf = window.confirm('Дествительно удалить портфель и все его содержимое?');
+        if (conf) {
+            // del portfolio
+        }
     }
 
     return (
@@ -102,13 +115,16 @@ export default function Portfolios(props) {
                                                 { loading ? SPINNER : 
 
                                                     portfolios.map(portfolio => (
-                                                        <tr onClick={() => handlePortfolioSelect(portfolio)}>
-                                                            <td>{ portfolio.title }</td>
-                                                            <td>{ portfolio.dateopen.slice(0,10) }</td>
-                                                            <td>{ portfolio.currency }</td>
-                                                            <td>{ portfolio.comission }</td>
+                                                        <tr>
+                                                            <td  onClick={() => handlePortfolioSelect(portfolio)}>{ portfolio.title }</td>
+                                                            <td  onClick={() => handlePortfolioSelect(portfolio)}>{ portfolio.dateopen.slice(0,10) }</td>
+                                                            <td  onClick={() => handlePortfolioSelect(portfolio)}>{ portfolio.currency }</td>
+                                                            <td  onClick={() => handlePortfolioSelect(portfolio)}>{ portfolio.comission }</td>
                                                             <td>
-                                                                <TablePortfolioMenu fn={() => handleEditPortfolio(portfolio)}/>
+                                                                <TableCellMenu 
+                                                                    onEdit={() => handleEditPortfolio(portfolio)}
+                                                                    onDelete={() => handleDeletePortfolio(portfolio)}
+                                                                />
                                                             </td>
                                                         </tr>
                                                     ))

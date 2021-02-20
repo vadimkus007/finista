@@ -109,6 +109,7 @@ exports.import = (req, res, next) => {
                     };
                     switch (row[5]) {
                         case 'Акция':
+                            obj.group='Акция';
                             if (row[7] == 'Покупка') {
                                 obj.operationId = 1;
                             }
@@ -117,6 +118,7 @@ exports.import = (req, res, next) => {
                             }
                             break;
                         case 'Пай':
+                            obj.group = 'ETF';
                             if (row[7] == 'Покупка') {
                                 obj.operationId = 1;
                             }
@@ -125,6 +127,7 @@ exports.import = (req, res, next) => {
                             }
                             break;
                         case 'Депозитарная расписка':
+                        obj.group = 'Депозитарная расписка';
                             if (row[7] == 'Покупка') {
                                 obj.operationId = 1;
                             }
