@@ -317,6 +317,8 @@ exports.info = (req, res, next) => {
         })
     }
 
+    
+
 /* get price of portfolio on date
 
     */

@@ -8,6 +8,7 @@ const config = require('../../config/config.js');
 const quotesController = require('../../controllers/api/quotescontroller');
 const portfoliosController = require('../../controllers/api/portfolioscontroller');
 const tradesController = require('../../controllers/api/tradescontroller');
+const portfolioController = require('../../controllers/api/portfoliocontroller');
 
 router.get('/', (req, res, next) => {
   res.json({'message' : 'API router'});
@@ -109,13 +110,15 @@ router.get('/portfolios', portfoliosController.list);
 
 router.post('/portfolios/save', portfoliosController.save);
 
+router.get('/securities', tradesController.getSecids);
+
 router.get('/portfolio/:id/trades', tradesController.list);
 
 router.post('/portfolio/trades/save', tradesController.save);
 
 router.post('/portfolio/trades/delete', tradesController.delete);
 
-router.get('/securities', tradesController.getSecids);
+router.get('/portfolio/:id/actives', portfolioController.actives);
 
 
 module.exports = router;
