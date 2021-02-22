@@ -13,6 +13,8 @@ import { NotificationManager } from 'react-notifications';
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
 
+import ReactTableSort from '../../components/ReactTableSort';
+
 import Spinner from '../../components/Spinner';
 
 import { getRequest } from '../../helpers';
@@ -96,6 +98,67 @@ export default function Actives(props) {
             return '';
         }
     }
+
+    const columns = [
+        {
+            Header: 'Тикер',
+            accessor: 'secid',
+            Cell: (row) => (<a href={'/quotes'+row.value}>{row.value}</a>)
+        },
+        {
+            Header: 'Название',
+            accessor: 'SHORTNAME'
+        },
+        {
+            Header: 'Количество',
+            accessor: 'amount',
+        },
+        {
+            Header: 'Средняя цена',
+            accessor: 'meanPrice',
+            Cell: (row) => (<span>{Number(row.value).toFixed(2)}</span>)
+        },
+        {
+            Header: 'Текущая цена',
+            accessor: 'last',
+            Cell: (row) => (<span>{Number(row.value).toFixed(2)}</span>)
+        },
+        {
+            Header: 'Стоимость',
+            accessor: 'cost',
+            Cell: (row) => (<span>{Number(row.value).toFixed(2)}</span>)
+        },
+        {
+            Header: 'Курсовая прибыль, %',
+            accessor: 'exchangeProfitPrc',
+            Cell: (row) => (<span className={getClassName(row.value)}>{Number(row.value).toFixed(2)}</span>),
+        },
+        {
+            Header: 'Прибыль',
+            accessor: 'profit',
+            Cell: (row) => (<span className={getClassName(row.value)}>{Number(row.value).toFixed(2)}</span>)
+        },
+        {
+            Header: 'Изменение за день',
+            accessor: 'changePrc',
+            Cell: (row) => (<span className={getClassName(row.value)}>{Number(row.value).toFixed(2)} %</span>)
+        },
+        {
+            Header: 'Текущая доля',
+            accessor: 'percentage',
+            Cell: (row) => (<span>{Number(row.value).toFixed(2)}</span>)
+        }
+    ];
+
+    const data = [
+        {
+            secid: 'AFLT'
+        },
+        {
+            secid: 'GAZP'
+        }
+    ];
+
 
     return (
         <div className="container-fluid">
@@ -284,6 +347,9 @@ export default function Actives(props) {
                                     </tr>
                                 </tbody>
                             </table>
+
+
+
                         </Card.Body>
                     </Card>
                 </div>
@@ -297,40 +363,9 @@ export default function Actives(props) {
                             <h6 class="m-0 text-primary font-weight-bold">Акции</h6>
                         </Card.Header>
                         <Card.Body>
-                            <table className="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Тикер</th>
-                                        <th>Название</th>
-                                        <th>Количество</th>
-                                        <th>Средняя цена</th>
-                                        <th>Текущая цена</th>
-                                        <th>Стоимость</th>
-                                        <th>Курсовая прибыль, %</th>
-                                        <th>Прибыль</th>
-                                        <th>Изменение за день</th>
-                                        <th>Текущая доля</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    { shares.map(row => (
-                                        <tr>
-                                            <td>{row.secid}</td>
-                                            <td>{row.SHORTNAME}</td>
-                                            <td>{row.amount}</td>
-                                            <td>{Number(row.meanPrice).toFixed(2)}</td>
-                                            <td>{Number(row.last).toFixed(2)}</td>
-                                            <td>{Number(row.cost).toFixed(2)}</td>
-                                            <td className={getClassName(row.exchangeProfitPrc)}>{Number(row.exchangeProfitPrc).toFixed(2)}</td>
-                                            <td className={ getClassName(row.profit) }>{Number(row.profit).toFixed(2)}</td>
-                                            <td className={ getClassName(row.change) }>
-                                                {Number(row.change).toFixed(2)} ({Number(row.changePrc).toFixed(2)} %)
-                                            </td>
-                                            <td>{Number(row.percentage).toFixed(2)}</td>
-                                        </tr>
-                                    )) }
-                                </tbody>
-                            </table>
+
+                           <ReactTableSort columns={columns} data={shares} />
+
                         </Card.Body>
                     </Card>
                 </div>
@@ -345,40 +380,9 @@ export default function Actives(props) {
                             <h6 class="m-0 text-primary font-weight-bold">ETF/ПИФ</h6>
                         </Card.Header>
                         <Card.Body>
-                            <table className="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Тикер</th>
-                                        <th>Название</th>
-                                        <th>Количество</th>
-                                        <th>Средняя цена</th>
-                                        <th>Текущая цена</th>
-                                        <th>Стоимость</th>
-                                        <th>Курсовая прибыль, %</th>
-                                        <th>Прибыль</th>
-                                        <th>Изменение за день</th>
-                                        <th>Текущая доля</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    { etf.map(row => (
-                                        <tr>
-                                            <td>{row.secid}</td>
-                                            <td>{row.SHORTNAME}</td>
-                                            <td>{row.amount}</td>
-                                            <td>{Number(row.meanPrice).toFixed(2)}</td>
-                                            <td>{Number(row.last).toFixed(2)}</td>
-                                            <td>{Number(row.cost).toFixed(2)}</td>
-                                            <td className={getClassName(row.exchangeProfitPrc)}>{Number(row.exchangeProfitPrc).toFixed(2)}</td>
-                                            <td className={ getClassName(row.profit) }>{Number(row.profit).toFixed(2)}</td>
-                                            <td className={ getClassName(row.change) }>
-                                                {Number(row.change).toFixed(2)} ({Number(row.changePrc).toFixed(2)} %)
-                                            </td>
-                                            <td>{Number(row.percentage).toFixed(2)}</td>
-                                        </tr>
-                                    )) }
-                                </tbody>
-                            </table>
+
+                            <ReactTableSort columns={ columns } data={ etf } />
+
                         </Card.Body>
                     </Card>
                 </div>
@@ -393,40 +397,7 @@ export default function Actives(props) {
                             <h6 class="m-0 text-primary font-weight-bold">Облигации</h6>
                         </Card.Header>
                         <Card.Body>
-                            <table className="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Тикер</th>
-                                        <th>Название</th>
-                                        <th>Количество</th>
-                                        <th>Средняя цена</th>
-                                        <th>Текущая цена</th>
-                                        <th>Стоимость</th>
-                                        <th>Курсовая прибыль, %</th>
-                                        <th>Прибыль</th>
-                                        <th>Изменение за день</th>
-                                        <th>Текущая доля</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    { bonds.map(row => (
-                                        <tr>
-                                            <td>{row.secid}</td>
-                                            <td>{row.SHORTNAME}</td>
-                                            <td>{row.amount}</td>
-                                            <td>{Number(row.meanPrice).toFixed(2)}</td>
-                                            <td>{Number(row.last).toFixed(2)}</td>
-                                            <td>{Number(row.cost).toFixed(2)}</td>
-                                            <td className={getClassName(row.exchangeProfitPrc)}>{Number(row.exchangeProfitPrc).toFixed(2)}</td>
-                                            <td className={ getClassName(row.profit) }>{Number(row.profit).toFixed(2)}</td>
-                                            <td className={ getClassName(row.change) }>
-                                                {Number(row.change).toFixed(2)} ({Number(row.changePrc).toFixed(2)} %)
-                                            </td>
-                                            <td>{Number(row.percentage).toFixed(2)}</td>
-                                        </tr>
-                                    )) }
-                                </tbody>
-                            </table>
+                            <ReactTableSort columns={ columns } data={ bonds } />
                         </Card.Body>
                     </Card>
                 </div>

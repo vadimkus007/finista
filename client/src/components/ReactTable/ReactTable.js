@@ -4,6 +4,11 @@ import { useTable, useFilters, useGlobalFilter, useAsyncDebounce, usePagination,
 
 import Pagination from 'react-js-pagination';
 
+import { faSort } from "@fortawesome/free-solid-svg-icons";
+import { faSortUp } from "@fortawesome/free-solid-svg-icons";
+import { faSortDown } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import './ReactTable.css';
 
 
@@ -169,18 +174,18 @@ function ReactTable(props) {
                             className={
                                 column.isSorted
                                     ? column.isSortedDesc
-                                        ? "sort-desc"
-                                        : "sort-asc"
+                                        ? ""
+                                        : ""
                                     : ""
                             }
                             >
                                 {column.render('Header')}
-                                <span>
+                                <span className="ml-2">
                                         {column.isSorted
                                             ? column.isSortedDesc
-                                                ? ' '
-                                                : ' '
-                                            : ''}
+                                                ? <FontAwesomeIcon icon={faSortDown} />
+                                                : <FontAwesomeIcon icon={faSortUp} />
+                                            : <FontAwesomeIcon icon={faSort} className="text-gray-300" />}
                                 </span>
                             </th>
                         ))}
