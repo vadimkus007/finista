@@ -202,9 +202,6 @@ exports.show = (req, res, next) => {
                 }
             };
 
-console.log(data);
-console.log(securities);
-
             res.json({
                 message: 'It is still OK',
                 total: data.total,
