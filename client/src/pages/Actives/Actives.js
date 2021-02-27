@@ -177,7 +177,7 @@ export default function Actives(props) {
                                         Стоимость
                                     </div>
                                     <div className="h5 mb-0 font-weight-bold text-gray-800">
-                                        { portfolio.cost }
+                                        { Number(portfolio.cost).toFixed(2) }
                                         <span className="ml-2">
                                             <FontAwesomeIcon icon={ faRubleSign } size="sm"  />
                                         </span>

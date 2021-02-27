@@ -12,7 +12,7 @@ var moment = require('moment');
 var Finance = require('financejs');
 var finance = new Finance;
 
-var exports = module.exports = {}
+var exports = module.exports = {};
 
 // get Portfolio
 

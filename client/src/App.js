@@ -21,6 +21,8 @@ import Portfolios from './pages/Portfolios';
 import PortfolioEdit from './pages/PortfolioEdit';
 import Trades from './pages/Trades';
 import TradeEdit from './pages/TradeEdit';
+import Rebalance from './pages/Rebalance';
+import Goals from './pages/Goals';
 import Actives from './pages/Actives';
 
 import PrivateRoute from './routes/PrivateRoute';
@@ -79,6 +81,8 @@ function App(props)  {
                         <PrivateRoute exact path="/portfolio/actives" component={ Actives } />
                         <PrivateRoute exact path="/portfolio/trades" component={Trades} />
                         <PrivateRoute exact path="/portfolio/trades/edit" component={TradeEdit} />
+                        <PrivateRoute exact path="/portfolio/rebalance" component={ Rebalance } />
+                        <PrivateRoute exact path="/portfolio/rebalance/goals" component={ Goals } />
                         <PrivateRoute exact path="/preferences" component={Preferences} />
                         <PrivateRoute exact path="/user" component={UserProfile} />
                         <Route component={NotFound} />
