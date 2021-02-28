@@ -25,6 +25,7 @@ import Rebalance from './pages/Rebalance';
 import Goals from './pages/Goals';
 import Actives from './pages/Actives';
 import Analytics from './pages/Analytics';
+import Profit from './pages/Profit';
 
 import PrivateRoute from './routes/PrivateRoute';
 
@@ -84,6 +85,7 @@ function App(props)  {
                         <PrivateRoute exact path="/portfolio/trades/edit" component={TradeEdit} />
                         <PrivateRoute exact path="/portfolio/rebalance" component={ Rebalance } />
                         <PrivateRoute exact path="/portfolio/rebalance/goals" component={ Goals } />
+                        <PrivateRoute exact path="/portfolio/profit" component={ Profit } />
                         <PrivateRoute exact path="/portfolio/analytics" component={ Analytics } />
                         <PrivateRoute exact path="/preferences" component={Preferences} />
                         <PrivateRoute exact path="/user" component={UserProfile} />

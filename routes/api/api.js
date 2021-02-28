@@ -12,6 +12,7 @@ const portfolioController = require('../../controllers/api/portfoliocontroller')
 const goalsController = require('../../controllers/api/goalscontroller');
 const rebalanceController = require('../../controllers/api/rebalancecontroller');
 const analyticsController = require('../../controllers/api/analyticscontroller');
+const profitController = require('../../controllers/api/profitcontroller');
 
 router.get('/', (req, res, next) => {
   res.json({'message' : 'API router'});
@@ -130,6 +131,8 @@ router.post('/portfolio/:id/goals', goalsController.save);
 router.get('/portfolio/:id/rebalance', rebalanceController.show);
 
 router.get('/portfolio/:id/analytics', analyticsController.info);
+
+router.get('/portfolio/:id/profit', passport.authenticate('jwt', {session: false}), profitController.info);
 
 
 module.exports = router;
