@@ -151,9 +151,12 @@ export default function Trades(props) {
                             variant="primary"
                             size="sm"
                             onClick={handleNewTrade}
+                            className = "mr-2"
                         >
                             Добавить сделку
                         </Button>
+
+                        <a href="/portfolio/trades/import" className="btn btn-primary btn-sm mr-sm-2">Импорт сделок</a>
                     </Toolbar>
 
                     { loading ? SPINNER : <ReactTable columns={columns} data={ trades } /> }

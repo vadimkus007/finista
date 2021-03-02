@@ -355,7 +355,7 @@ export default function TradeEdit(props) {
 
                         <div className="form-group form-row">
                             <div className="col">
-                                <label htmlFor="operationId" classТфьу="">Операция:</label>
+                                <label htmlFor="operationId" className="">Операция:</label>
                                 <Select 
                                     id="operationId" 
                                     name="operationId" 
