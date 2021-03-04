@@ -7,7 +7,17 @@ import { faSortUp } from "@fortawesome/free-solid-svg-icons";
 import { faSortDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function ReactTableSort({columns, data}) {
+// default prop getter
+const defaultPropGetter = () => ({});
+
+export default function ReactTableSort({
+    columns, 
+    data,
+    getHeaderProps = defaultPropGetter,
+    getColumnProps = defaultPropGetter,
+    getRowProps = defaultPropGetter,
+    getCellProps = defaultPropGetter
+}) {
 
     
 
@@ -33,7 +43,17 @@ export default function ReactTableSort({columns, data}) {
                         {headerGroups.map((headerGroup) => (
                             <tr {...headerGroup.getHeaderGroupProps()}>
                                 {headerGroup.headers.map(column => (
-                                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                                    <th 
+                                        {...column.getHeaderProps([
+                                            {
+                                                className: column.className,
+                                                style: column.style
+                                            },
+                                            getColumnProps(column),
+                                            getHeaderProps(column),
+                                            column.getSortByToggleProps()
+                                        ])}
+                                    >
                                         {column.render('Header')}
                                         <span className="ml-2">
                                                 {column.isSorted
@@ -51,9 +71,23 @@ export default function ReactTableSort({columns, data}) {
                         {rows.map((row, i) => {
                             prepareRow(row);
                             return (
-                                <tr {...row.getRowProps()}>
+                                <tr {...row.getRowProps(getRowProps(row))}>
                                     {row.cells.map(cell => {
-                                        return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                        return (
+                                            <td
+                                            // Return an array of prop objects and react-table will merge them appropriately
+                                            {...cell.getCellProps([
+                                              {
+                                                className: cell.column.className,
+                                                style: cell.column.style,
+                                              },
+                                              getColumnProps(cell.column),
+                                              getCellProps(cell),
+                                            ])}
+                                          >
+                                            {cell.render('Cell')}
+                                          </td>
+                                        )
                                     })}
                                 </tr>
                             )

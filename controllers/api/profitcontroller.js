@@ -339,7 +339,7 @@ exports.info = (req, res, next) => {
 
         // get Rubs fro XIRR calculation
 
-        return LibPortfolio.getRubs(data.portfolio.id);
+        return LibPortfolio.getCurrencies(data.portfolio.id);
     })
     .then(rubs => {
 

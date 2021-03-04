@@ -32,6 +32,7 @@ const createRecord = function(trade) {
     });
 } // createRecord
 
+
 const createRecords = function(trades) {
 
     let promises = [];
@@ -54,12 +55,36 @@ exports.import = (req, res, next) => {
             // return next();
     };
 
+    // multer tries
+    /*
+    upload(req, res, (err) => {
+        if (err) {
+            console.log('first err', err);
+            return res.send({
+                message: err
+            });
+        } else {
+            if (req.file == undefined) {
+                console.log('Error: No file selected');
+                return res.send({
+                    message: 'Error: No file selected'
+                });
+            } else {
+                console.log('File Uploaded');
+                res.send({
+                    message: 'File uploaded'
+                });
+            }
+        }
+    });
+    */
+
     var tradesFilePath = '';
     var casheFilePath = '';
 
     if (!req.files || Object.keys(req.files).length === 0) {
         console.log('No files are uploaded');
-        return res.json({
+        return res.send({
             message: 'No files are uploaded'
         })
     }
@@ -100,6 +125,10 @@ exports.import = (req, res, next) => {
         const buffer = [...tradesBuffer,...casheBuffer];
 
         var trades = Sber.parse(buffer);
+
+        trades.forEach(trade => {
+            trade.portfolioId = portfolioId;
+        });
 
         return createRecords(trades);
     })

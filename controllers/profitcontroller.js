@@ -202,7 +202,7 @@ exports.info = (req, res, next) => {
         data.prices = prices;
 
         // get Rubs for XIRR calculation
-        return libPortfolio.getRubs(data.portfolio.id);
+        return libPortfolio.getCurrencies(data.portfolio.id);
     })
     .then(rubs => {
         data.rubs = rubs;

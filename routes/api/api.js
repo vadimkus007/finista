@@ -117,25 +117,24 @@ router.post('/portfolios/save', portfoliosController.save);
 
 router.get('/securities', tradesController.getSecids);
 
-router.get('/portfolio/:id/trades', tradesController.list);
+router.get('/portfolio/:id/trades', passport.authenticate('jwt', {session: false}), tradesController.list);
 
-router.post('/portfolio/trades/save', tradesController.save);
+router.post('/portfolio/trades/save', passport.authenticate('jwt', {session: false}), tradesController.save);
 
-router.post('/portfolio/trades/delete', tradesController.delete);
+router.post('/portfolio/trades/delete', passport.authenticate('jwt', {session: false}), tradesController.delete);
 
-router.get('/portfolio/:id/actives', portfolioController.actives);
+router.get('/portfolio/:id/actives', passport.authenticate('jwt', {session: false}), portfolioController.actives);
 
-router.get('/portfolio/:id/goals', goalsController.list);
+router.get('/portfolio/:id/goals', passport.authenticate('jwt', {session: false}), goalsController.list);
 
-router.post('/portfolio/:id/goals', goalsController.save);
+router.post('/portfolio/:id/goals', passport.authenticate('jwt', {session: false}), goalsController.save);
 
-router.get('/portfolio/:id/rebalance', rebalanceController.show);
+router.get('/portfolio/:id/rebalance', passport.authenticate('jwt', {session: false}), rebalanceController.show);
 
-router.get('/portfolio/:id/analytics', analyticsController.info);
+router.get('/portfolio/:id/analytics', passport.authenticate('jwt', {session: false}), analyticsController.info);
 
 router.get('/portfolio/:id/profit', passport.authenticate('jwt', {session: false}), profitController.info);
 
 router.post('/portfolio/:id/trades/import', passport.authenticate('jwt', {session: false}), importController.import);
-
 
 module.exports = router;

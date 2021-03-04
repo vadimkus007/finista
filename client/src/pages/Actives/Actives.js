@@ -103,11 +103,11 @@ export default function Actives(props) {
         {
             Header: 'Тикер',
             accessor: 'secid',
-            Cell: (row) => (<a href={'/quotes'+row.value}>{row.value}</a>)
+            Cell: (row) => (<a href={'/quotes/'+row.value}>{row.value}</a>),
         },
         {
             Header: 'Название',
-            accessor: 'SHORTNAME'
+            accessor: 'SHORTNAME',
         },
         {
             Header: 'Количество',
@@ -131,7 +131,9 @@ export default function Actives(props) {
         {
             Header: 'Курсовая прибыль, %',
             accessor: 'exchangeProfitPrc',
-            Cell: (row) => (<span className={getClassName(row.value)}>{Number(row.value).toFixed(2)}</span>),
+            Cell: (row) => {
+                return (<span className={getClassName(row.value)}>{Number(row.value).toFixed(2)}</span>)
+            },
         },
         {
             Header: 'Прибыль',
@@ -147,15 +149,6 @@ export default function Actives(props) {
             Header: 'Текущая доля',
             accessor: 'percentage',
             Cell: (row) => (<span>{Number(row.value).toFixed(2)}</span>)
-        }
-    ];
-
-    const data = [
-        {
-            secid: 'AFLT'
-        },
-        {
-            secid: 'GAZP'
         }
     ];
 
@@ -364,7 +357,7 @@ export default function Actives(props) {
                         </Card.Header>
                         <Card.Body>
 
-                           <ReactTableSort columns={columns} data={shares} />
+                            <ReactTableSort columns={columns} data={shares} />
 
                         </Card.Body>
                     </Card>

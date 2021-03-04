@@ -4,6 +4,7 @@ const path = require('path');
 const fileUpload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const multer = require('multer');
 
 const app = express();
 const passport = require('passport');
@@ -12,6 +13,8 @@ const bodyParser = require('body-parser');
 const env = require('dotenv').config({ path:'./.env' });
 const flash = require('connect-flash');
 const cors = require('cors');
+
+const upload = multer({dest: './uploads/'});
 
 const config = require('./config/config.js');
 

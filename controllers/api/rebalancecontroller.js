@@ -1,4 +1,3 @@
-const passport = require('passport');
 const models = require('../../models');
 const Goal = models.Goal;
 const Portfolio = models.Portfolio;
@@ -15,15 +14,6 @@ const ETF = ['9', 'A', 'B', 'E', 'J'];
 const BONDS = ['3', '4', '5', '6', '7', '8', 'C'];
 
 exports.show = (req, res, next) => {
-
-    passport.authenticate('jwt', {session: false}, (err, user, done) => {
-
-        if (err || !user) {
-            return res.status(401).json({
-                message: 'Unauthorized',
-                error: err
-            });
-        }
 
         const portfolioId = req.params.id;
         if (!portfolioId) {
@@ -217,6 +207,4 @@ exports.show = (req, res, next) => {
             return next(err);
         })
 
-
-    })(req, res, next);
 }

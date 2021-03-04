@@ -63,6 +63,8 @@ export default function ImportTrades(props) {
             data.append('cashe', files.cashe[0]);
         }
         uploadFiles(data);
+
+        props.history.push('/portfolio/trades');
     }
 
     const uploadFiles = (data) => {
@@ -118,17 +120,18 @@ export default function ImportTrades(props) {
 
                                 <div className="form-group form-row">
                                     <label htmlFor="trades">Загрузить отчет по сделкам</label>
-                                    <input type="file" id="trades" name="trades" class="form-control" onChange={ handleFileSelect }/>
+                                    <input type="file" id="trades" name="trades" className="form-control" onChange={ handleFileSelect }/>
                                 </div>
                                 <hr />
-                                <div class="form-group form-row">
+                                <div className="form-group form-row">
                                     <label for="cashe">Загрузить отчет по зачислениям и списаниям</label>
-                                    <input type="file" id="cashe" name="cashe" class="form-control" onChange={ handleFileSelect }/>
+                                    <input type="file" id="cashe" name="cashe" className="form-control" onChange={ handleFileSelect }/>
                                 </div>
+
                                 <hr />
-                                <div class="form-group form-row">
-                                    <button type="submit" class="btn btn-primary btn-sm mr-sm-2">Загрузить</button>
-                                    <a href="/portfolio/trades" class="btn btn-primary btn-sm mr-sm-2">Отменить</a>
+                                <div className="form-group form-row">
+                                    <button type="submit" className="btn btn-primary btn-sm mr-sm-2">Загрузить</button>
+                                    <a href="/portfolio/trades" className="btn btn-primary btn-sm mr-sm-2">Отменить</a>
                                 </div>
                             </form>
                         </Card.Body>

@@ -38,6 +38,8 @@ export default function Rebalance(props) {
 
     const [rebalanceTotal, setRebalanceTotal] = useState({});
 
+    const [totalRebalance, setTotalRebalance] = useState({});
+
     useEffect(() => {
 
         const portfolio = JSON.parse(localStorage.getItem('portfolio'));
@@ -47,7 +49,7 @@ export default function Rebalance(props) {
             props.history.push({
                 pathname: '/portfolios', 
                 state: {
-                    from: '/portfolio/rebalance'
+                    from: '/portfolio/0rebalance'
                 }
             });
         };
@@ -129,6 +131,10 @@ export default function Rebalance(props) {
         updateRebalanceTotal();
         updateRebalanceCategory();
     }, [operation]);
+
+    useEffect(() => {
+        updateTotalRebalance();
+    }, [rebalanceTotal]);
 
     const getCost = (array, key) => {
             let row = array.find((element) => {
@@ -227,6 +233,32 @@ export default function Rebalance(props) {
         });
 
         setRebalanceCategory(_rebalanceCategory);
+    }
+
+    const updateTotalRebalance = () => {
+        const _totalRebalance = totalRebalance;
+
+        let sum = 0;
+        shares.map(row => {
+            sum += rebalanceTotal[row.secid];
+        });
+        _totalRebalance.shares = sum;
+
+        sum = 0;
+        etf.map(row => {
+            sum += rebalanceTotal[row.secid];
+        });
+        _totalRebalance.etf = sum;
+
+        sum = 0;
+        bonds.map(row => {
+            sum += rebalanceTotal[row.secid];
+        });
+        _totalRebalance.bonds = sum;   
+
+        _totalRebalance.cashe = 100 - _totalRebalance.shares - _totalRebalance.etf - _totalRebalance.bonds;     
+
+        setTotalRebalance(_totalRebalance);
     }
 
     const getSum = () => {
@@ -385,7 +417,7 @@ export default function Rebalance(props) {
                                         <td>Акции</td>
                                         <td>{ Number(total.shares.currentPrc).toFixed(2) }</td>
                                         <td>{ Number(total.shares.goalPrc).toFixed(2) }</td>
-                                        <td></td>
+                                        <td>{ Number(totalRebalance.shares).toFixed(2) }</td>
                                     </tr>
                                 )}
                                 { total && total.etf && total.etf.current > 0 && (
@@ -393,7 +425,7 @@ export default function Rebalance(props) {
                                         <td>ETF/ПИФ</td>
                                         <td>{ Number(total.etf.currentPrc).toFixed(2) }</td>
                                         <td>{ Number(total.etf.goalPrc).toFixed(2) }</td>
-                                        <td></td>
+                                        <td>{ Number(totalRebalance.etf).toFixed(2) }</td>
                                     </tr>
                                 )}
                                 { total && total.bonds && total.bonds.current > 0 && (
@@ -401,7 +433,7 @@ export default function Rebalance(props) {
                                         <td>Облигации</td>
                                         <td>{ Number(total.bonds.currentPrc).toFixed(2) }</td>
                                         <td>{ Number(total.bonds.goalPrc).toFixed(2) }</td>
-                                        <td></td>
+                                        <td>{ Number(totalRebalance.bonds).toFixed(2) }</td>
                                     </tr>
                                 )}
                                 { total && total.cashe && (
@@ -409,7 +441,7 @@ export default function Rebalance(props) {
                                         <td>Рубли</td>
                                         <td>{ Number(total.cashe.currentPrc).toFixed(2) }</td>
                                         <td>{ Number(total.cashe.goalPrc).toFixed(2) }</td>
-                                        <td></td>
+                                        <td>{ Number(totalRebalance.cashe).toFixed(2) }</td>
                                     </tr>
                                 )}
                                 </tbody>

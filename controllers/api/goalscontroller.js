@@ -1,19 +1,9 @@
-const passport = require('passport');
 const models = require('../../models');
 const Goal = models.Goal;
 
 var exports = module.exports = {};
 
 exports.list = (req, res, next) => {
-
-    passport.authenticate('jwt', {session: false}, (err, user, done) => {
-
-        if (err || !user) {
-            return res.status(401).json({
-                message: 'Unauthorized',
-                error: err
-            });
-        }
 
         const portfolioId = req.params.id;
         if (!portfolioId) {
@@ -46,20 +36,10 @@ exports.list = (req, res, next) => {
                 error: err
             });
         });
-        
-    })(req, res, next);
 
 }
 
 exports.save = (req, res, next) => {
-
-    passport.authenticate('jwt', {session: false}, (err, user, done) => {
-        if (err || !user) {
-            return res.status(401).json({
-                message: 'Unauthorized',
-                error: err
-            });
-        }
 
         const portfolioId = req.params.id;
         if (!portfolioId) {
@@ -104,7 +84,5 @@ exports.save = (req, res, next) => {
                 next(err);
             });
         }
-
-    })(req, res, next);
 
 }

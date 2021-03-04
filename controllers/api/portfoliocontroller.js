@@ -3,7 +3,6 @@ const Portfolio = models.Portfolio;
 const Trade = models.Trade;
 const Moex = require('../../lib/moex');
 const LibPortfolio = require('../../lib/portfolio');
-const passport = require('passport');
 
 const sequelize = require('sequelize');
 const Op = sequelize.Op;

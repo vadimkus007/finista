@@ -1,4 +1,3 @@
-const passport = require('passport');
 const models = require('../../models');
 const Goal = models.Goal;
 const Portfolio = models.Portfolio;
@@ -32,15 +31,6 @@ const getSecid = (array, secid) => {
 }
 
 exports.info = (req, res, next) => {
-
-    passport.authenticate('jwt', {session: false}, (err, user, done) => {
-
-        if (err || !user) {
-            return res.status(401).json({
-                message: 'Unauthorized',
-                error: err
-            });
-        }
 
         var data = {};
 
@@ -279,6 +269,4 @@ exports.info = (req, res, next) => {
             });
             // return next(err);
         });
-
-    })(req, res, next);
 }
