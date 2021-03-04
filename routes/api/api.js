@@ -14,6 +14,7 @@ const rebalanceController = require('../../controllers/api/rebalancecontroller')
 const analyticsController = require('../../controllers/api/analyticscontroller');
 const profitController = require('../../controllers/api/profitcontroller');
 const importController = require('../../controllers/api/importcontroller');
+const favoritesController = require('../../controllers/api/favoritescontroller');
 
 router.get('/', (req, res, next) => {
   res.json({'message' : 'API router'});
@@ -136,5 +137,9 @@ router.get('/portfolio/:id/analytics', passport.authenticate('jwt', {session: fa
 router.get('/portfolio/:id/profit', passport.authenticate('jwt', {session: false}), profitController.info);
 
 router.post('/portfolio/:id/trades/import', passport.authenticate('jwt', {session: false}), importController.import);
+
+router.get('/favorites', passport.authenticate('jwt', {session: false}), favoritesController.list);
+
+router.post('/favorites', passport.authenticate('jwt', {session: false}), favoritesController.delete);
 
 module.exports = router;

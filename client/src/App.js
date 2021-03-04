@@ -10,7 +10,7 @@ import {
 import Home from './pages/Home';
 import Signin from './pages/Signin';
 import Signup from './pages/Signup';
-import Dashboard from './pages/Dashboard/Dashboard';
+import Dashboard from './pages/Dashboard';
 import Preferences from './pages/Preferences/Preferences';
 import UserProfile from './pages/UserProfile';
 import Quotes from './pages/Quotes';
