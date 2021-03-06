@@ -35,7 +35,7 @@ export default function TopNavigator(props) {
             as="nav"
         >
 
-            <button id="sidebarToggleTop" className="btn btn-link d-md-none rounded-circle mr-3">
+            <button id="sidebarToggleTop" className="btn btn-link d-md-none rounded-circle mr-3" data-toggle="collapse" data-target="#accordionSidebar">
                 <FontAwesomeIcon icon={faBars} />
             </button>
 

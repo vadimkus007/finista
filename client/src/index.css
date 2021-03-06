@@ -10147,6 +10147,7 @@ a:focus {
   color: rgba(255, 255, 255, 0.5);
 }
 
+
 @media (min-width: 768px) {
   .sidebar {
     width: 14rem !important;
@@ -10792,4 +10793,14 @@ body.sidebar-toggled footer.sticky-footer {
 
 .percent:after {
   content: ' %';
+}
+
+.collapse:not(.show) {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .collapse:not(.show) {
+    display: block !important;
+  }
 }

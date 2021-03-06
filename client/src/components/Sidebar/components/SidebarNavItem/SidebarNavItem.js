@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-    BrowserRouter as Router
+    BrowserRouter as Router,
+    NavLink
 } from "react-router-dom";
 
 
@@ -10,9 +11,10 @@ export default function SidebarNavItem(props) {
     return(
         <Router>
         <li className="nav-item">
-        <a className="nav-link" href={props.href}>
-            {props.icon}
-            <span>{props.text}</span></a>
+            <NavLink className="nav-link" to={props.href}>
+                {props.icon}
+                <span>{props.text}</span>
+            </NavLink>
         </li>
         </Router>
     );

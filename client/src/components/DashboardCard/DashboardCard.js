@@ -21,8 +21,6 @@ export default function DashboardCard({data, callback}) {
     const sign = (value) => ((value > 0) ? '+' : '');
 
     const getQuote = (data) => {
-        const ruble = () => (<FontAwesomeIcon icon={ faRubleSign } size='sm' />);
-        const dollar = '$';
         let currency = '';
         switch (data.currencyid) {
             case 'SUR':
@@ -30,12 +28,12 @@ export default function DashboardCard({data, callback}) {
                 break;
             case 'USD':
                 currency = '';
+                break;
             default:
                 currency = 'RUB';
                 break;
         }
         let price = Number(data.last * data.lasttoprevprice / (100 + Number(data.lasttoprevprice))).toFixed(2);
-        const result = price + ' '+currency+' ('+Number(data.lasttoprevprice).toFixed(2)+' %)';
         return (
             <span>
             { sign(price) }
