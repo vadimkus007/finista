@@ -112,25 +112,36 @@ export default function Actives(props) {
         {
             Header: 'Количество',
             accessor: 'amount',
+            className: 'text-right',
         },
         {
             Header: 'Средняя цена',
             accessor: 'meanPrice',
+            className: 'text-right',
             Cell: (row) => (<span>{Number(row.value).toFixed(2)}</span>)
         },
         {
-            Header: 'Текущая цена',
+            Header: 'Цена',
             accessor: 'last',
+            className: 'text-right',
+            Cell: (row) => (<span>{Number(row.value).toFixed(2)}</span>)
+        },
+        {
+            accessor: 'breakEven',
+            Header: 'Цена безуб.',
+            className: 'text-right',
             Cell: (row) => (<span>{Number(row.value).toFixed(2)}</span>)
         },
         {
             Header: 'Стоимость',
             accessor: 'cost',
+            className: 'text-right',
             Cell: (row) => (<span>{Number(row.value).toFixed(2)}</span>)
         },
         {
             Header: 'Курсовая прибыль, %',
             accessor: 'exchangeProfitPrc',
+            className: 'text-right',
             Cell: (row) => {
                 return (<span className={getClassName(row.value)}>{Number(row.value).toFixed(2)}</span>)
             },
@@ -138,16 +149,19 @@ export default function Actives(props) {
         {
             Header: 'Прибыль',
             accessor: 'profit',
+            className: 'text-right',
             Cell: (row) => (<span className={getClassName(row.value)}>{Number(row.value).toFixed(2)}</span>)
         },
         {
             Header: 'Изменение за день',
             accessor: 'changePrc',
+            className: 'text-right',
             Cell: (row) => (<span className={getClassName(row.value)}>{Number(row.value).toFixed(2)} %</span>)
         },
         {
             Header: 'Текущая доля',
             accessor: 'percentage',
+            className: 'text-right',
             Cell: (row) => (<span>{Number(row.value).toFixed(2)}</span>)
         }
     ];

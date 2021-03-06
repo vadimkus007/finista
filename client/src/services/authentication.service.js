@@ -1,5 +1,9 @@
 import { BehaviorSubject } from 'rxjs';
 
+import config from '../config/config.json';
+
+const SERVER_URL = config.SERVER_URL;
+
 // import config from 'config';
 // import { handleResponse } from '../helpers';
 
@@ -13,7 +17,7 @@ export const authenticationService = {
 };
 
 function signinUser(email, password) {
-    return fetch('http://localhost:3001/api/signin', {
+    return fetch(`${SERVER_URL}/signin`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json', 

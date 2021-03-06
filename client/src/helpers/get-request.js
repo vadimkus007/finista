@@ -1,6 +1,8 @@
 import { authHeader } from '../helpers';
 
-const SERVER_URL = 'http://localhost:3001/api';
+import config from '../config/config.json';
+
+const SERVER_URL = config.SERVER_URL;
 
 
 export function getRequest(endPoint) {

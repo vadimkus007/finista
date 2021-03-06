@@ -11,6 +11,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import './ReactTable.css';
 
+// default prop getter
+const defaultPropGetter = () => ({});
+
 
 // Define a default UI for filtering
     function GlobalFilter({
@@ -60,18 +63,14 @@ import './ReactTable.css';
     }
 
 
-function ReactTable(props) {
-
-    const [columns, setColumns] = useState([]);
-
-    const [data, setData] = useState([]);
-
-    useEffect(() => {
-        setColumns(props.columns);
-        if (props.data) {
-            setData(props.data);
-        }
-    });
+function ReactTable({
+    columns, 
+    data,
+    getHeaderProps = defaultPropGetter,
+    getColumnProps = defaultPropGetter,
+    getRowProps = defaultPropGetter,
+    getCellProps = defaultPropGetter
+}) {
     
     const defaultColumn = React.useMemo(
         () => ({
@@ -170,14 +169,15 @@ function ReactTable(props) {
                 {headerGroups.map((headerGroup) => (
                     <tr {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map(column => (
-                            <th {...column.getHeaderProps(column.getSortByToggleProps())}
-                            className={
-                                column.isSorted
-                                    ? column.isSortedDesc
-                                        ? ""
-                                        : ""
-                                    : ""
-                            }
+                            <th {...column.getHeaderProps([
+                                            {
+                                                className: column.className,
+                                                style: column.style
+                                            },
+                                            getColumnProps(column),
+                                            getHeaderProps(column),
+                                            column.getSortByToggleProps()
+                                        ])}
                             >
                                 {column.render('Header')}
                                 <span className="ml-2">
@@ -196,9 +196,23 @@ function ReactTable(props) {
                 {page.map((row, i) => {
                     prepareRow(row);
                     return (
-                        <tr {...row.getRowProps()}>
+                        <tr {...row.getRowProps(getRowProps(row))}>
                             {row.cells.map(cell => {
-                                return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                return (
+                                            <td
+                                            // Return an array of prop objects and react-table will merge them appropriately
+                                            {...cell.getCellProps([
+                                              {
+                                                className: cell.column.className,
+                                                style: cell.column.style,
+                                              },
+                                              getColumnProps(cell.column),
+                                              getCellProps(cell),
+                                            ])}
+                                          >
+                                            {cell.render('Cell')}
+                                          </td>
+                                        )
                             })}
                         </tr>
                     )

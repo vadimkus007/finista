@@ -424,12 +424,15 @@ exports.actives = (req, res, next) => {
             // calculate percentage for securities types
             data.shares.forEach(row => {
                 row.percentage = 100 * row.cost / data.portfolio.shares.cost;
+                row.breakEven = (row.buy - row.sell - row.dividends) / (row.amount * (1 - data.portfolio.comission / 100));
             });
             data.etf.forEach(row => {
                 row.percentage = 100 * row.cost / data.portfolio.etf.cost;
+                row.breakEven = (row.buy - row.sell - row.dividends) / (row.amount * (1 - data.portfolio.comission / 100));
             });
             data.bonds.forEach(row => {
                 row.percentage = 100 * row.cost / data.portfolio.bonds.cost;
+                row.breakEven = (row.buy - row.sell - row.dividends) / (row.amount * (1 - data.portfolio.comission / 100));
             });
 
             // xirr
@@ -515,6 +518,8 @@ exports.actives = (req, res, next) => {
 // console.log('dates', dates);
 // console.log('historyObj', historyObj);
 // console.log('RESULTS', results);
+
+            delete data.trades;
 
             res.json({
                 data
