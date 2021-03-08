@@ -15,12 +15,12 @@ import Highcharts from 'highcharts/highstock';
 
 import ReactTableSort from '../../components/ReactTableSort';
 
-import Spinner from '../../components/Spinner';
+// import Spinner from '../../components/Spinner';
 
 import { getRequest } from '../../helpers';
 
 // spinner
-const SPINNER = (<div><Spinner /></div>);
+// const SPINNER = (<div><Spinner /></div>);
 
 
 export default function Actives(props) {
@@ -168,10 +168,13 @@ export default function Actives(props) {
 
 
     return (
+
         <div className="container-fluid">
             <div className="d-sm-flex align-items-center justify-content-between mb-4">
                 <h1 className="h3 mb-4 text-gray-800">Портфель - { portfolio.title }</h1>
             </div>
+
+            { loading ? '' : '' }
 
             <div className="row">
 

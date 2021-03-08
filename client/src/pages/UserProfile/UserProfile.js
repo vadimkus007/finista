@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 import { authHeader } from '../../helpers';
 import { authenticationService } from '../../services';
 import FormErrors from '../../components/FormErrors';
@@ -19,7 +19,7 @@ export default function UserProfile(props) {
 
     const authenticateHeader = authHeader();
 
-    const history = useHistory();
+//     const history = useHistory();
 
     const handleUserInput = (e) => {
         const name = e.target.name;
@@ -47,7 +47,7 @@ export default function UserProfile(props) {
             }
         })
         .catch(error => {
-            // setFormErrors({error: error});
+            setFormErrors({error: error});
             NotificationManager.error(error, 'Error', 2000);
         })
     }

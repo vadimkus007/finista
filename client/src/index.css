@@ -1,10 +1,4 @@
 /*!
- * Start Bootstrap - SB Admin 2 v4.1.3 (https://startbootstrap.com/theme/sb-admin-2)
- * Copyright 2013-2020 Start Bootstrap
- * Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-sb-admin-2/blob/master/LICENSE)
- */
-
-/*!
  * Bootstrap v4.5.3 (https://getbootstrap.com/)
  * Copyright 2011-2020 The Bootstrap Authors
  * Copyright 2011-2020 Twitter, Inc.
@@ -58,7 +52,9 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 
 body {
   margin: 0;
-  font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  padding: 0;
+  /*font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; */
+  font-family: sans-serif;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -93,7 +89,6 @@ abbr[data-original-title] {
   text-decoration: underline dotted;
   cursor: help;
   border-bottom: 0;
-  text-decoration-skip-ink: none;
 }
 
 address {
@@ -4398,17 +4393,11 @@ input[type="button"].btn-block {
   .card-columns {
     column-count: 3;
     column-gap: 1.25rem;
-    orphans: 1;
-    widows: 1;
   }
   .card-columns .card {
     display: inline-block;
     width: 100%;
   }
-}
-
-.accordion {
-  overflow-anchor: none;
 }
 
 .accordion > .card {
@@ -9349,11 +9338,6 @@ a.text-dark:hover, a.text-dark:focus {
   text-decoration: none !important;
 }
 
-.text-break {
-  word-break: break-word !important;
-  word-wrap: break-word !important;
-}
-
 .text-reset {
   color: inherit !important;
 }
@@ -9395,11 +9379,6 @@ a.text-dark:hover, a.text-dark:focus {
     page-break-inside: avoid;
   }
   p,
-  h2,
-  h3 {
-    orphans: 3;
-    widows: 3;
-  }
   h2,
   h3 {
     page-break-after: avoid;
@@ -9521,7 +9500,7 @@ a:focus {
 .animated--grow-in, .sidebar .nav-item .collapse {
   animation-name: growIn;
   animation-duration: 200ms;
-  animation-timing-function: transform cubic-bezier(0.18, 1.25, 0.4, 1), opacity cubic-bezier(0, 1, 0.4, 1);
+  animation-timing-function: cubic-bezier(0.18, 1.25, 0.4, 1);
 }
 
 @keyframes fadeIn {
@@ -9536,54 +9515,46 @@ a:focus {
 .animated--fade-in {
   animation-name: fadeIn;
   animation-duration: 200ms;
-  animation-timing-function: opacity cubic-bezier(0, 1, 0.4, 1);
+  animation-timing-function: cubic-bezier(0, 1, 0.4, 1);
 }
 
 .bg-gradient-primary {
-  background-color: #4e73df;
-  background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+  background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
   background-size: cover;
 }
 
 .bg-gradient-secondary {
-  background-color: #858796;
-  background-image: linear-gradient(180deg, #858796 10%, #60616f 100%);
+  background: linear-gradient(180deg, #858796 10%, #60616f 100%);
   background-size: cover;
 }
 
 .bg-gradient-success {
-  background-color: #1cc88a;
-  background-image: linear-gradient(180deg, #1cc88a 10%, #13855c 100%);
+  background: linear-gradient(180deg, #1cc88a 10%, #13855c 100%);
   background-size: cover;
 }
 
 .bg-gradient-info {
-  background-color: #36b9cc;
-  background-image: linear-gradient(180deg, #36b9cc 10%, #258391 100%);
+  background: linear-gradient(180deg, #36b9cc 10%, #258391 100%);
   background-size: cover;
 }
 
 .bg-gradient-warning {
-  background-color: #f6c23e;
-  background-image: linear-gradient(180deg, #f6c23e 10%, #dda20a 100%);
+  background: #f6c23e;
   background-size: cover;
 }
 
 .bg-gradient-danger {
-  background-color: #e74a3b;
-  background-image: linear-gradient(180deg, #e74a3b 10%, #be2617 100%);
+  background: linear-gradient(180deg, #e74a3b 10%, #be2617 100%);
   background-size: cover;
 }
 
 .bg-gradient-light {
-  background-color: #f8f9fc;
-  background-image: linear-gradient(180deg, #f8f9fc 10%, #c2cbe5 100%);
+  background: linear-gradient(180deg, #f8f9fc 10%, #c2cbe5 100%);
   background-size: cover;
 }
 
 .bg-gradient-dark {
-  background-color: #5a5c69;
-  background-image: linear-gradient(180deg, #5a5c69 10%, #373840 100%);
+  background: linear-gradient(180deg, #5a5c69 10%, #373840 100%);
   background-size: cover;
 }
 
@@ -10219,7 +10190,7 @@ a:focus {
     top: 2px;
     animation-name: growIn;
     animation-duration: 200ms;
-    animation-timing-function: transform cubic-bezier(0.18, 1.25, 0.4, 1), opacity cubic-bezier(0, 1, 0.4, 1);
+    animation-timing-function: cubic-bezier(0.18, 1.25, 0.4, 1);
   }
   .sidebar.toggled .nav-item .collapse .collapse-inner {
     box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);

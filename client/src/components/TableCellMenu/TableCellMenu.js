@@ -9,7 +9,7 @@ export default function TableCellMenu(props) {
     return (
         <ul className="navbar-nav ml-auto">
                 <li className="nav-item dropdown no-arrow mx-1">
-                        <a className="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a className="nav-link dropdown-toggle" href="!#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <FontAwesomeIcon icon={faEllipsisH} />
                         </a>
                         <div className="dropdown-menu dropdown-menu-right shadow" aria-labelledby="userDropdown">

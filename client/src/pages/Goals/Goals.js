@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { 
     Card,
-    Button
+//     Button
 } from 'react-bootstrap';
 
 import { NotificationManager } from 'react-notifications';
@@ -49,7 +49,7 @@ export default function Goals(props) {
 
     useEffect(() => {
         let s = 0;
-        goals.map(goal => {
+        goals.forEach(goal => {
             s += Number(goal.amount);
         });
         setSum(s);
@@ -73,7 +73,7 @@ export default function Goals(props) {
 
             let securities = [];
 
-            request.securities.map((secid) => {
+            request.securities.forEach((secid) => {
                 securities.push({ value: secid.secid, label: secid.secid + ' (' + secid.name + ') ('+secid.group+')' });
             });
 

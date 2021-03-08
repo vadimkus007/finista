@@ -15,6 +15,7 @@ const analyticsController = require('../../controllers/api/analyticscontroller')
 const profitController = require('../../controllers/api/profitcontroller');
 const importController = require('../../controllers/api/importcontroller');
 const favoritesController = require('../../controllers/api/favoritescontroller');
+const dividendsController = require('../../controllers/api/dividendscontroller');
 
 router.get('/', (req, res, next) => {
   res.json({'message' : 'API router'});
@@ -141,5 +142,7 @@ router.post('/portfolio/:id/trades/import', passport.authenticate('jwt', {sessio
 router.get('/favorites', passport.authenticate('jwt', {session: false}), favoritesController.list);
 
 router.post('/favorites', passport.authenticate('jwt', {session: false}), favoritesController.delete);
+
+router.get('/dividends', passport.authenticate('jwt', {session: false}), dividendsController.list);
 
 module.exports = router;

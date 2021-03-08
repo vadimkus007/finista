@@ -2,7 +2,7 @@ import React from 'react';
 import PieChart from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
 
-export default function ({data, options}) {
+export default function CustomPieChart ({data, options}) {
 
     const customOptions = options ? options : {
         chart: {

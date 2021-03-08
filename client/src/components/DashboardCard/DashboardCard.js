@@ -52,7 +52,7 @@ export default function DashboardCard({data, callback}) {
 
     return (
         <Card className="shadow mb-4" style={ {position: 'relative'} }>
-            <a href={ '/quotes/'+data.secid } style={ { 'text-decoration': 'none !important', color: '#858796' } }>
+            <a href={ '/quotes/'+data.secid } style={ { color: '#858796' } }>
                 <Card.Body className="text-content-center py-3">
                     <div className="col-12 text-center font-weight-bold">
                         <h3>{ data.shortname }</h3>

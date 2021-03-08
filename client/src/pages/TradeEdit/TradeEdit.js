@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 import { 
     Card,
-    Button,
+//     Button,
     Form,
-    Row,
-    Col
+//     Row,
+//     Col
 } from 'react-bootstrap';
 
 import BaseSelect from 'react-select';
@@ -16,7 +16,7 @@ import { NotificationManager } from 'react-notifications';
 
 import Spinner from '../../components/Spinner';
 
-import SelectSecids from '../../components/SelectSecids';
+// import SelectSecids from '../../components/SelectSecids';
 
 import FixRequiredSelect from '../../components/FixRequiredSelect';
 
@@ -95,7 +95,7 @@ const shareOptions = [
 
 export default function TradeEdit(props) {
 
-    const [portfolio, setPortfolio] = useState({});
+    // const [portfolio, setPortfolio] = useState({});
 
     const [trade, setTrade] = useState({
         id: '',
@@ -132,13 +132,15 @@ export default function TradeEdit(props) {
         // get secids for options
         const fetchOptions = async () => {
             const result = await getSecids();
+            return result;
         }
+
         fetchOptions();
 
         // set portfolio state or redirect to select portfolio
         const portfolio = JSON.parse(localStorage.getItem('portfolio'));
         if (portfolio) {
-            setPortfolio(portfolio);
+            // setPortfolio(portfolio);
             let value = portfolio.id;
             setTrade({...trade, ['portfolioId']:value});
         } else {
@@ -168,7 +170,7 @@ export default function TradeEdit(props) {
                     break;
             };
 
-        if (props.location.state.secid == 'RUB') {
+        if (props.location.state.secid === 'RUB') {
             setTradeType(tradeTypeOptions[2]);
         }
 

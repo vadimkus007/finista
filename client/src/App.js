@@ -72,13 +72,13 @@ function App(props)  {
                 </AuthLayout>
             </Route>
 
-            <Route path={['/', '/dashboard', '/preferences']}>
+            <Route path={['/', '/dashboard', '/preferences', '/portfolio']}>
                 <DefaultLayout>
                     <Switch>
-                        <Route exact path="/" component={Home} />
+                        <Route exact path="/" component={ Dashboard } />
                         <Route exact path="/quotes" component={Quotes} />
                         <Route path="/quotes/:secid" component={Quote} />
-                        <Route exact path="/dashboard" component={Dashboard} />
+                        <PrivateRoute exact path="/dashboard" component={Dashboard} />
                         <PrivateRoute exact path="/portfolios" component={Portfolios} />
                         <PrivateRoute exact path="/portfolios/edit" component={PortfolioEdit} />
                         <PrivateRoute exact path="/portfolio/actives" component={ Actives } />

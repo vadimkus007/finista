@@ -84,7 +84,7 @@ export default function Trades(props) {
                 return;
             }
             if (result.error) {
-                if (result.error.name == 'SequelizeValidationError') {
+                if (result.error.name === 'SequelizeValidationError') {
                     result.error.errors.map(item => {
                         NotificationManager.error(item.message, 'Error', 2000);
                     });

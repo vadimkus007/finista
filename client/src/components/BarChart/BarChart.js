@@ -3,7 +3,7 @@ import React from 'react';
 import BarChart from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
 
-export default function ({data, options}) {
+export default function CustomBarChart({data, options}) {
 
     const processData = (data) => {
         var arr = [];
