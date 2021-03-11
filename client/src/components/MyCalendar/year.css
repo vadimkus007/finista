@@ -1,0 +1,38 @@
+.rbc-year-view {
+  position: relative;
+  border: 1px solid #DDD;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 0;
+  width: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  height: 100%;
+}
+
+.rbc-year-header {
+  display: flex;
+  flex-direction: row; }
+
+.rbc-year-row {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  flex: 1 0 0;
+  flex-basis: 0px;
+  overflow: hidden;
+  height: 100%; }
+  .rbc-year-row + .rbc-year-row {
+    border-top: 1px solid #DDD; }
+
+.rbc-month-bg {
+  flex: 1 0 0%; }
+  .rbc-month-bg + .rbc-month-bg {
+    border-left: 1px solid #DDD; }
+  .rbc-rtl .rbc-month-bg + .rbc-month-bg {
+    border-left-width: 0;
+    border-right: 1px solid #DDD; }
+
+  .rbc-event-mb-1 {
+    margin-bottom: 1px;
+  }

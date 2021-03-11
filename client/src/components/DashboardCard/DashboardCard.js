@@ -6,7 +6,7 @@ import { faRubleSign } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function DashboardCard({data, callback}) {
+export default function DashboardCard({data, callback, color = 'rgb(255,255,255,0)'}) {
 
     const getClassName = (value = 0) => {
         if (value > 0) {
@@ -50,21 +50,22 @@ export default function DashboardCard({data, callback}) {
         );
     }
 
+
     return (
-        <Card className="shadow mb-4" style={ {position: 'relative'} }>
-            <a href={ '/quotes/'+data.secid } style={ { color: '#858796' } }>
-                <Card.Body className="text-content-center py-3">
-                    <div className="col-12 text-center font-weight-bold">
-                        <h3>{ data.shortname }</h3>
+        <Card className="shadow mb-4" style={ {position: 'relative', background: color} }>
+            <a href={ '/quotes/'+data.secid } style={ { color: '#FFFFFF' } }>
+                <Card.Body className="py-3" style={ { color: '#FFFFFF' } }>
+                    <div className="col-12 text-left font-weight-bold">
+                        <h1>{ data.shortname }</h1>
                     </div>
-                    <div className="col-12 text-center">
-                        <h4>
+                    <div className={ 'col-12 text-right font-weight-bold' }>
+                        <h1>{ Number(data.lasttoprevprice).toFixed(2) } %</h1>
+                    </div>
+                    <div className="col-12 text-left">
+                        <h3>
                             { data.last }
 
-                        </h4>
-                    </div>
-                    <div className={ 'col-12 text-center ' + getClassName(data.lasttoprevprice) }>
-                        <h4>{ getQuote(data) }</h4>
+                        </h3>
                     </div>
                 </Card.Body>
             </a>

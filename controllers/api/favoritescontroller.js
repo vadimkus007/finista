@@ -56,6 +56,8 @@ exports.list = (req, res, next) => {
             arr.push(newObj);
         });
 
+        arr.sort((a,b) => b.lasttoprevprice - a.lasttoprevprice);
+
         data.favorites = arr;
 
 // console.log(data);

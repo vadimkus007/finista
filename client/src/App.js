@@ -27,6 +27,7 @@ import Actives from './pages/Actives';
 import Analytics from './pages/Analytics';
 import Profit from './pages/Profit';
 import ImportTrades from './pages/ImportTrades';
+import Calendar from './pages/Calendar';
 
 import PrivateRoute from './routes/PrivateRoute';
 
@@ -72,7 +73,7 @@ function App(props)  {
                 </AuthLayout>
             </Route>
 
-            <Route path={['/', '/dashboard', '/preferences', '/portfolio']}>
+            <Route path={['/', '/dashboard', '/preferences', '/portfolio', '/calendar']}>
                 <DefaultLayout>
                     <Switch>
                         <Route exact path="/" component={ Dashboard } />
@@ -91,6 +92,7 @@ function App(props)  {
                         <PrivateRoute exact path="/portfolio/analytics" component={ Analytics } />
                         <PrivateRoute exact path="/preferences" component={Preferences} />
                         <PrivateRoute exact path="/user" component={UserProfile} />
+                        <PrivateRoute exact path="/calendar" component={ Calendar } />
                         <Route component={NotFound} />
                     </Switch>
                 </DefaultLayout>

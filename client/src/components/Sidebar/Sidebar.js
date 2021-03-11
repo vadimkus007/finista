@@ -11,6 +11,7 @@ import { faHandshake } from "@fortawesome/free-solid-svg-icons";
 import { faChartLine } from "@fortawesome/free-solid-svg-icons";
 import { faChartPie } from "@fortawesome/free-solid-svg-icons";
 import { faBalanceScaleRight } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import SidebarDivider from './components/SidebarDivider';
@@ -37,6 +38,7 @@ export default function Sidebar(props) {
                 <SidebarNavItem text="Котировки" icon=<FontAwesomeIcon icon={faChartArea} /> href="/quotes" />
                 <SidebarNavItem text="Dashboard" icon=<FontAwesomeIcon icon={faTachometerAlt} /> href="/dashboard" />
                 <SidebarNavItem text="Preferences" icon=<FontAwesomeIcon icon={faCog} /> href="/preferences" />
+                <SidebarNavItem text="События" icon=<FontAwesomeIcon icon={faCalendarAlt} /> href="/calendar" />
                 <SidebarNavItem text="Выбор портфеля" icon=<FontAwesomeIcon icon={faBriefcase} /> href="/portfolios" />
                 <SidebarDivider />
                 <SidebarHeading text="Портфель" />

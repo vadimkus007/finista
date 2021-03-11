@@ -25,7 +25,10 @@ export default function Dashboard(props) {
                 NotificationManager.error(results.error, 'Error', 2000);
                 return;
             }
-            setFavorites(results.favorites);
+
+            const sorted = results.favorites.sort((a, b) =>  a.lasttoprevprice - b.lasttoprefprice);
+
+            setFavorites(sorted);
         })
         .catch(err => {
             NotificationManager.error(err, 'Error', 2000);
@@ -63,6 +66,23 @@ export default function Dashboard(props) {
         });
     }
 
+    const getColor = (favorite) => {
+        if (favorite.lasttoprevprice > 0) {
+            let degree = favorite.lasttoprevprice / favorites[0].lasttoprevprice;
+            let r = 84 - degree * 84;
+            let g = 180 - degree * 100;
+            let b = 108 - degree * 60;
+            return `rgb(${r},${g},${b})`;         
+        } else {
+            let degree = favorite.lasttoprevprice / favorites[favorites.length-1].lasttoprevprice;
+            let r = 223 - degree * 87;
+            let g = 119 - degree * 77;
+            let b = 126 - degree * 84;
+            return `rgb(${r},${g},${b})`;
+        }
+        
+    }
+
     return (
         <div className="container-fluid">
 
@@ -74,7 +94,11 @@ export default function Dashboard(props) {
 
                 { favorites.map(favorite => (
                     <div className="col-sm-6 col-xl-3">
-                        <DashboardCard data={ favorite } callback={ () => handleButton(favorite.id, favorite.secid) } />
+                        <DashboardCard 
+                            data={ favorite } 
+                            callback={ () => handleButton(favorite.id, favorite.secid) } 
+                            color={ getColor(favorite) }
+                        />
                     </div>
                 )) }
 
