@@ -7,7 +7,7 @@
     "server-dev": "pm2 flush && pm2 start --only server-dev && pm2 logs",
     "client-dev": "cd client && pm2 flush && pm2 start --name client-dev npm -- start && pm2 logs",
     "babel-node": "babel-node",
-    "build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
+    "server-build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
     "prepublishOnly": "npm run build",
     "eslint": "eslint . --ext .js,.jsx --ignore-path .gitignore",
     "test": "jest"

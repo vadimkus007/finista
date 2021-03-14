@@ -17,12 +17,11 @@ export default function MyCalendar(props) {
             <Calendar 
                 localizer = { localizer }
                 events = { props.events }
-                views = {{ 
+                views = { {
+                    year: Year,
                     month: true,
-                    week: true,
-                    agenda: true,
-                    year: Year
-                }}
+                    week: true
+                } }
                 messages={ { year: 'Year' } }
                     
                 style = {props.style}

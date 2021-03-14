@@ -7,7 +7,7 @@ exports.list = (req, res, next) => {
     Dohod.getDividends()
     .then(response => {
 
-        console.log(response);
+//        console.log(response);
 
         return res.json({
             data: response

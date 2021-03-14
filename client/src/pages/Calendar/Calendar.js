@@ -98,7 +98,7 @@ export default function CustomCalendar(props) {
                             <MyCalendar 
                                 localizer={ localizer }
                                 events={ events }
-                                views={['month','week','agenda']}
+                                views={['month','week','year']}
                                 style={ { height: 700 } }
                                 tooltipAccessor={ 
                                     (event) => event.resource.shortname + ' | ' + 
