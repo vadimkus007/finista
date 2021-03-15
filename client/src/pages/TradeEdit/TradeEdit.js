@@ -230,7 +230,7 @@ export default function TradeEdit(props) {
     const handleTradeType = (obj) => {
         setTradeType(obj);
         if (obj.value == '2') {
-            setTrade({...trade, ['secid']:'RUB'});
+            setTrade({...trade, ['secid']:'RUB', ['amount']: '1'});
         } else {
             if (trade.secid == 'RUB') {
                 setTrade({...trade, ['secid']:''});

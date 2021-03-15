@@ -2,6 +2,7 @@ const Moex = require('../../lib/moex');
 const passport = require('passport');
 const models = require('../../models');
 const Favorite = models.Favorite;
+const moment = require('moment');
 
 const jwt = require('jsonwebtoken');
 const config = require('../../config/config.js');
@@ -174,16 +175,16 @@ exports.info = (req, res, next) => {
         data.securities = obj;
 
         // get history
+        let startDate = moment().add(-1, 'year').format('YYYY-MM-DD');
+        let endDate = moment().format('YYYY-MM-DD');
 
-        return Moex.getHistory(board.secid, board.boardid, board.market, board.engine);
+        return Moex.getHistory(board.secid, startDate, endDate);
     })
     .then(results => {
         let history = [];
         results.forEach(rows => {
-            rows.forEach(row => {
-                row[0] = Date.parse(row[0]);
-                history.push(row);
-            })
+            let arr = [Date.parse(rows.TRADEDATE), rows.CLOSE];
+            history.push(arr);
         });
 
         data.history = history;

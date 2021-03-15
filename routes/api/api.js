@@ -107,15 +107,15 @@ router.post('/signup', (req, res, next) => {
     })(req, res, next);
 });
 
-router.get('/quotes', quotesController.list);
+router.get('/quotes', passport.authenticate('jwt', {session: false}), quotesController.list);
 
-router.get('/quotes/:secid', quotesController.info);
+router.get('/quotes/:secid', passport.authenticate('jwt', {session: false}), quotesController.info);
 
-router.post('/quotes/:secid', quotesController.toggleFavorite);
+router.post('/quotes/:secid', passport.authenticate('jwt', {session: false}), quotesController.toggleFavorite);
 
-router.get('/portfolios', portfoliosController.list);
+router.get('/portfolios', passport.authenticate('jwt', {session: false}), portfoliosController.list);
 
-router.post('/portfolios/save', portfoliosController.save);
+router.post('/portfolios/save', passport.authenticate('jwt', {session: false}), portfoliosController.save);
 
 router.get('/securities', tradesController.getSecids);
 
