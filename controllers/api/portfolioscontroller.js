@@ -63,14 +63,14 @@ exports.save = (req, res, next) => {
                                 message: 'Portfolio created successfully',
                                 portfolio: createdItem
                             });
-                            return next();
+                            // return next();
                         })
                         .catch(err => {
                             console.log('Error creating new record:', err);
                             res.json({
                                 error: err
                             });
-                            return next();
+                            // return next();
                         });
                     } else {
                         Portfolio.update({
@@ -90,14 +90,14 @@ exports.save = (req, res, next) => {
                             res.json({
                                 message: 'Portfolio saved'
                             });
-                            return next();
+                            // return next();
                         })
                         .catch(err => {
                             console.log('Error updating record: ', err);
                             res.json({
                                 error: err
                             });
-                            return next();
+                            // return next();
                         });
                     }
 
@@ -108,7 +108,7 @@ exports.save = (req, res, next) => {
                     res.json({
                         error: 'Incorrect user id'
                     });
-                    return next();
+                    // return next();
                 }
                 Portfolio.create({
                             title: req.body.title,
@@ -124,7 +124,7 @@ exports.save = (req, res, next) => {
                                 message: 'Portfolio created successfully',
                                 portfolio: createdItem
                             });
-                            return next();
+                            // return next();
                         })
                         .catch(err => {
 
@@ -133,7 +133,7 @@ exports.save = (req, res, next) => {
                             res.json({
                                 error: err
                             });
-                            return next();
+                            // return next();
                         });
             }
 

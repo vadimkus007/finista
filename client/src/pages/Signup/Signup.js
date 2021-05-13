@@ -68,7 +68,7 @@ export default function Signup(props) {
             body: JSON.stringify(user)
         })
         .then(result => result.json());
-    }
+    };
 
     const handleSubmit = e => {
         e.preventDefault();

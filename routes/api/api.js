@@ -31,7 +31,7 @@ router.post('/signin', (req, res, next) => {
 
         if (err || !user) {
             return res.status(400).json({
-                message: req.flash('message'),
+                message: req.flash('message')[0],
                 user: user
             });
         }
@@ -97,12 +97,16 @@ router.post('/signup', (req, res, next) => {
     passport.authenticate('local-signup', (err, user, done) => {
         if (err || !user) {
             return res.status(400).json({
-                message: req.flash('message'),
+                message: req.flash('message')[0],
                 error: err
             });
         }
 
-        res.json({user});
+        var userinfo = user.get();
+
+        const token = jwt.sign(userinfo, config.secret);
+
+        return res.json({user: userinfo, token});
 
     })(req, res, next);
 });
